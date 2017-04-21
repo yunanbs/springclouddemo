@@ -1,0 +1,12 @@
+server:
+  port: 8000
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:${server.port}/eureka/
+  # 驱逐下线服务的时间 默认是 60s 设定为5s 提供更快的检测
+  # 建议生产情况下使用默认值
+  server:
+    eviction-interval-timer-in-ms: 5000

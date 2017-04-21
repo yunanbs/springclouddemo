@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ConfigServer/ConfigServer.iml" filepath="$PROJECT_DIR$/ConfigServer/ConfigServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ConsumerAPI/ConsumerAPI.iml" filepath="$PROJECT_DIR$/ConsumerAPI/ConsumerAPI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DemoRestAPI/DemoRestAPI.iml" filepath="$PROJECT_DIR$/DemoRestAPI/DemoRestAPI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/EurekaServer/EurekaServer.iml" filepath="$PROJECT_DIR$/EurekaServer/EurekaServer.iml" />
+    </modules>
+  </component>
+</project>
