@@ -1,6 +1,6 @@
 spring:
   application:
-    name: demo_api
+    name: demoapi
   cloud:
     config:
       profile: dev

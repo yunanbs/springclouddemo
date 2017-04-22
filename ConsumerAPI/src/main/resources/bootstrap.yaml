@@ -1,6 +1,6 @@
 spring:
   application:
-    name: consumer_api
+    name: consumerapi
   cloud:
     config:
       profile: dev

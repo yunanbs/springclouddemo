@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 /**
  * Created by yunan on 2017/4/21.
  */
-@FeignClient("DEMO-API")
+@FeignClient("DEMOAPI")
 public interface DemoAPIProxy {
     @RequestMapping("/add")
     int add(@RequestBody String params);
