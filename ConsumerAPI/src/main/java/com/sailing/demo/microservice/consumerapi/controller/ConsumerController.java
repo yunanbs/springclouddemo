@@ -13,7 +13,10 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class ConsumerController {
 
-   // @Autowired
+
+    //region Ribbon 方案 需要定义restTemplate
+
+    // @Autowired
    // private RestTemplate restTemplate;
 
     // @RequestMapping("/add")
@@ -27,7 +30,9 @@ public class ConsumerController {
     // public String hello(){
     //     return restTemplate.getForEntity("http://DEMO-API/helloworld",String.class).getBody();
     // }
+    //endregion
 
+    // Feign 方案 类似本地调用 需要预先定义本地接口
     @Autowired
     private DemoAPIProxy demoAPIProxy;
 

@@ -1,13 +1,13 @@
 spring:
   application:
-    name: config_server
+    name: configserver
   profiles:
     active: native
   cloud:
     config:
       server:
         native:
-          search-locations: file:D:/Work/study/springclouddemo-dev/ConfigServer/yamls/
+          search-locations: file:D:/workpath/src/springclouddemo-dev/ConfigServer/yamls/
 server:
   port: 8001
 eureka:

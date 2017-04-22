@@ -11,6 +11,7 @@
     <modules>
         <module>../DemoRestAPI</module>
         <module>../ConsumerAPI</module>
+        <module>../APIGateway</module>
     </modules>
 
     <parent>

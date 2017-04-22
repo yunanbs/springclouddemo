@@ -1,6 +1,6 @@
 spring:
   application:
-    name: demoapi
+    name: apigateway
   cloud:
     config:
       profile: dev
