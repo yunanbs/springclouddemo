@@ -22,7 +22,6 @@ import java.util.List;
  */
 @RestController
 @CrossOrigin(origins = "*", methods = {RequestMethod.POST, RequestMethod.OPTIONS, RequestMethod.GET})
-@RequestMapping("/face")
 public class DatabaseController {
 
 

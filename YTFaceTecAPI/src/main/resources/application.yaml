@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ytfacetecapi
+    name: faceapi
   datasource:
     url: jdbc:oracle:thin:@172.20.22.10:1521:orcl
     username: bsits2

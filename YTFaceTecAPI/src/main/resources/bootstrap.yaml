@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: faceapi
+  cloud:
+    config:
+      profile: dev
+      discovery:
+        enabled: true
+        service-id: configserver
+eureka:
+  client:
+    service-url:
+      defaultZone: http://172.20.22.11:8181/eureka/

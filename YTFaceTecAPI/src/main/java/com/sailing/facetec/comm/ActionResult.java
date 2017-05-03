@@ -1,31 +1,28 @@
 package com.sailing.facetec.comm;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
-
 /**
  * Created by yunan on 2017/4/27.
  */
 public class ActionResult {
-    private String actioncode;
+    private String responseCode;
     private String actionmsg;
-    private Object data;
+    private Object content;
     private Object tag;
 
 
-    public ActionResult(String actioncode, String actionmsg, Object data, Object tag) {
-        this.actioncode = actioncode;
-        this.actionmsg = actionmsg;
-        this.data = data;
+    public ActionResult(String responseCode, String message, Object content, Object tag) {
+        this.responseCode = responseCode;
+        this.actionmsg = message;
+        this.content = content;
         this.tag = tag;
     }
 
-    public String getActioncode() {
-        return actioncode;
+    public String getResponseCode() {
+        return responseCode;
     }
 
-    public void setActioncode(String actioncode) {
-        this.actioncode = actioncode;
+    public void setResponseCode(String responseCode) {
+        this.responseCode = responseCode;
     }
 
     public String getActionmsg() {
@@ -36,12 +33,12 @@ public class ActionResult {
         this.actionmsg = actionmsg;
     }
 
-    public Object getData() {
-        return data;
+    public Object getContent() {
+        return content;
     }
 
-    public void setData(Object data) {
-        this.data = data;
+    public void setContent(Object content) {
+        this.content = content;
     }
 
     public Object getTag() {
@@ -55,9 +52,9 @@ public class ActionResult {
     @Override
     public String toString() {
         return "ActionResult{" +
-                "actioncode='" + actioncode + '\'' +
+                "responseCode='" + responseCode + '\'' +
                 ", actionmsg='" + actionmsg + '\'' +
-                ", data=" + data +
+                ", content=" + content +
                 ", tag=" + tag +
                 '}';
     }

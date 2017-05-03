@@ -52,17 +52,17 @@ public class JWTFilter extends ZuulFilter {
         // 获取请求对象
         HttpServletRequest httpServletRequest = requestContext.getRequest();
 
-        // 模拟jwt 从头部获取jwt信息
-        String jwttoken = httpServletRequest.getHeader("jwt");
-        if(jwttoken==null){
-            // 阻止调用
-            requestContext.setSendZuulResponse(false);
-            // 设定返回内容
-            requestContext.setResponseBody("no jwt header");
-            // 设定返回state
-            requestContext.setResponseStatusCode(401);
-            return null;
-        }
+        // // 模拟jwt 从头部获取jwt信息
+        // String jwttoken = httpServletRequest.getHeader("jwt");
+        // if(null==jwttoken){
+        //     // 阻止调用
+        //     requestContext.setSendZuulResponse(false);
+        //     // 设定返回内容
+        //     requestContext.setResponseBody("no jwt header");
+        //     // 设定返回state
+        //     requestContext.setResponseStatusCode(401);
+        //     return null;
+        // }
         return null;
     }
 }
