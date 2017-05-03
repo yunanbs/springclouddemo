@@ -5,14 +5,14 @@ package com.sailing.facetec.comm;
  */
 public class ActionResult {
     private String responseCode;
-    private String actionmsg;
+    private String message;
     private Object content;
     private Object tag;
 
 
     public ActionResult(String responseCode, String message, Object content, Object tag) {
         this.responseCode = responseCode;
-        this.actionmsg = message;
+        this.message = message;
         this.content = content;
         this.tag = tag;
     }
@@ -25,12 +25,12 @@ public class ActionResult {
         this.responseCode = responseCode;
     }
 
-    public String getActionmsg() {
-        return actionmsg;
+    public String getMessage() {
+        return message;
     }
 
-    public void setActionmsg(String actionmsg) {
-        this.actionmsg = actionmsg;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Object getContent() {
@@ -53,7 +53,7 @@ public class ActionResult {
     public String toString() {
         return "ActionResult{" +
                 "responseCode='" + responseCode + '\'' +
-                ", actionmsg='" + actionmsg + '\'' +
+                ", message='" + message + '\'' +
                 ", content=" + content +
                 ", tag=" + tag +
                 '}';

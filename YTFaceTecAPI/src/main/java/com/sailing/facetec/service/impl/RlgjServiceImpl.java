@@ -57,11 +57,7 @@ public class RlgjServiceImpl implements RlgjService {
         int counts = rlgjDetailMapper.countRlgjDetails(beginTime, endTime, customerFilterBuilder.toString());
         List<RlgjDetailEntity> datas = rlgjDetailMapper.listRlgjDetails(beginTime, endTime, orderBy, pages[0], pages[1], customerFilterBuilder.toString());
 
-        PageEntity pageEntity = new PageEntity();
-        pageEntity.setCount(counts);
-        pageEntity.setIndex(page);
-        pageEntity.setSize(size);
-        pageEntity.setPages(counts / size + 1);
+        PageEntity pageEntity = new PageEntity(counts,page,size);
 
         result.setDataContent(datas);
         result.setPageContent(pageEntity);

@@ -1,10 +1,7 @@
 package com.sailing.facetec.dao;
 
-import com.sailing.facetec.comm.ServerConst;
 import com.sailing.facetec.entity.RllrDetailEntity;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;

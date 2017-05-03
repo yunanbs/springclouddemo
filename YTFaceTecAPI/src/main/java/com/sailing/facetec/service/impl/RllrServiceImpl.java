@@ -53,11 +53,7 @@ public class RllrServiceImpl implements RllrService {
         int counts = rllrDetailMapper.countRllrDetails(beginTime,endTime,customerFilterBuilder.toString());
         List<RllrDetailEntity> datas  = rllrDetailMapper.listRllrDetails(beginTime,endTime,orderBy,pages[0],pages[1],customerFilterBuilder.toString());
 
-        PageEntity pageEntity = new PageEntity();
-        pageEntity.setCount(counts);
-        pageEntity.setIndex(page);
-        pageEntity.setSize(size);
-        pageEntity.setPages(counts/size+1);
+        PageEntity pageEntity = new PageEntity(counts,page,size);
 
         result.setDataContent(datas);
         result.setPageContent(pageEntity);

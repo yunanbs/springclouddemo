@@ -16,5 +16,9 @@ logging:
   level:
     root: info
   file: logfile.log
-
+actioncode:
+  SUCCEED_CODE: 1000
+  SUCCEED_MSG: 请求成功
+  SERVER_ERROR_CODE: 9999
+  SERVER_ERROR_MSG: 服务端异常:%s
 

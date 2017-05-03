@@ -1,5 +1,7 @@
 package com.sailing.facetec.util;
 
+import com.sailing.facetec.comm.PageEntity;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

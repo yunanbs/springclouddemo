@@ -12,6 +12,13 @@ public class PageEntity {
     public PageEntity() {
     }
 
+    public PageEntity(long count, int index, int size) {
+        this.count = count;
+        this.pages = (int)Math.ceil((double) count/(double)size);
+        this.index = index;
+        this.size = size;
+    }
+
     public long getCount() {
         return count;
     }
