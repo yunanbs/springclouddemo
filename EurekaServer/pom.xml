@@ -12,6 +12,9 @@
         <module>../DemoRestAPI</module>
         <module>../ConsumerAPI</module>
         <module>../APIGateway</module>
+        <module>../ServerCenter</module>
+        <module>../ConfigServer</module>
+        <module>../YTFaceTecAPI</module>
     </modules>
 
     <parent>

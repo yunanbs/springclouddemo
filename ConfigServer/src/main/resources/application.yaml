@@ -1,6 +1,7 @@
 spring:
   application:
     name: configserver
+  # 使用本地配置文件目录
   profiles:
     active: native
   cloud:
@@ -8,9 +9,11 @@ spring:
       server:
         native:
           search-locations: file:D:/workpath/src/springclouddemo-dev/ConfigServer/yamls/
+# 设置服务端口 8001
 server:
   port: 8001
+# 设置 EurekaServer 地址 注册服务
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8000/eureka/
+      defaultZone: http://172.20.25.142:8000/eureka/

@@ -7,6 +7,8 @@
       <module fileurl="file://$PROJECT_DIR$/ConsumerAPI/ConsumerAPI.iml" filepath="$PROJECT_DIR$/ConsumerAPI/ConsumerAPI.iml" />
       <module fileurl="file://$PROJECT_DIR$/DemoRestAPI/DemoRestAPI.iml" filepath="$PROJECT_DIR$/DemoRestAPI/DemoRestAPI.iml" />
       <module fileurl="file://$PROJECT_DIR$/EurekaServer/EurekaServer.iml" filepath="$PROJECT_DIR$/EurekaServer/EurekaServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ServerCenter/ServerCenter.iml" filepath="$PROJECT_DIR$/ServerCenter/ServerCenter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/YTFaceTecAPI/YTFaceTecAPI.iml" filepath="$PROJECT_DIR$/YTFaceTecAPI/YTFaceTecAPI.iml" />
     </modules>
   </component>
 </project>

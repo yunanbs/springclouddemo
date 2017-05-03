@@ -1,9 +1,13 @@
+# 设定服务端口 8000
 server:
   port: 8000
 eureka:
+  # EurekaClient 配置
   client:
+    # 设定不将自身注册到服务中心
     register-with-eureka: false
     fetch-registry: false
+    # 设定EurekaServer 的服务中心地址
     service-url:
       defaultZone: http://localhost:${server.port}/eureka/
   # 驱逐下线服务的时间 默认是 60s 设定为5s 提供更快的检测
