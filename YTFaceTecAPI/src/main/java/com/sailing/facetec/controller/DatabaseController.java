@@ -7,6 +7,7 @@ import com.sailing.facetec.entity.RlgjDetailEntity;
 import com.sailing.facetec.entity.RllrDetailEntity;
 import com.sailing.facetec.entity.RlsxtEntity;
 import com.sailing.facetec.service.RlgjService;
+import com.sailing.facetec.service.RlkService;
 import com.sailing.facetec.service.RllrService;
 import com.sailing.facetec.service.RlsxtService;
 import com.sun.org.apache.xerces.internal.impl.xs.XSDDescription;
@@ -33,6 +34,9 @@ public class DatabaseController {
 
     @Autowired
     private RlsxtService rlsxtService;
+
+    @Autowired
+    private RlkService rlkService;
 
     @RequestMapping("/")
     public String test() {
@@ -84,5 +88,14 @@ public class DatabaseController {
                 rlgjService.updateRlgjBZ(params.getLong("xh"),params.getString("bzsfxt"),params.getString("bzbz")),
                 null
         );
+    }
+
+    @RequestMapping("/RLK")
+    public ActionResult listRLK(){
+        return  new ActionResult(
+                ActionCode.SUCCEED_CODE,
+                ActionCode.SUCCEED_MSG,
+                rlkService.listAllRlk(),
+                null);
     }
 }

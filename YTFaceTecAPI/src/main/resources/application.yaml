@@ -6,16 +6,21 @@ spring:
     username: bsits2
     password: bsits2
     driver-class-name: oracle.jdbc.OracleDriver
-  jpa:
-    show-sql: true
 server:
-  port: 8090
+  port: 8191
 mybatis:
   type-aliases-package: com.sailing.facetec.entiry
 logging:
   level:
     root: info
   file: logfile.log
+eureka:
+  client:
+    service-url:
+      defaultZone: http://172.20.22.11:8181/eureka/
+  instance:
+    lease-expiration-duration-in-seconds: 15
+    lease-renewal-interval-in-seconds: 5
 actioncode:
   SUCCEED_CODE: 1000
   SUCCEED_MSG: 请求成功
