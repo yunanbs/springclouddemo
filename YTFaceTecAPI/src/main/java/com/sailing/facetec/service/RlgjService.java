@@ -9,7 +9,7 @@ import java.util.List;
  * Created by yunan on 2017/4/28.
  */
 public interface RlgjService {
-    DataEntity<RlgjDetailEntity> listRlgjDetail(String beginTime, String endTime, String orderBy, int page, int size,Double XSD, String bz);
+    DataEntity<RlgjDetailEntity> listRlgjDetail(String beginTime, String endTime, String orderBy, int page, int size,Double XSD, String BZ,String RLID);
 
     int updateRlgjBZ(Long xh,String bzsfxt,String bzbz);
 

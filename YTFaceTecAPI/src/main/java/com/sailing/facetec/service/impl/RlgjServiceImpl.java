@@ -10,6 +10,7 @@ import com.sailing.facetec.entity.RllrDetailEntity;
 import com.sailing.facetec.service.RlgjService;
 import com.sailing.facetec.util.CommUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -28,7 +29,7 @@ public class RlgjServiceImpl implements RlgjService {
     private RlgjbzMapper rlgjbzMapper;
 
     @Override
-    public DataEntity<RlgjDetailEntity> listRlgjDetail(String beginTime, String endTime, String orderBy, int page, int size, Double XSD, String BZ) {
+    public DataEntity<RlgjDetailEntity> listRlgjDetail(String beginTime, String endTime, String orderBy, int page, int size, Double XSD, String BZ,String RLID) {
         DataEntity<RlgjDetailEntity> result = new DataEntity<>();
 
         // 设置检索开始时间
@@ -49,6 +50,11 @@ public class RlgjServiceImpl implements RlgjService {
         // 添加标注
         if (!CommUtils.isNullObject(BZ)) {
             customerFilterBuilder.append(String.format(" and d.BZSFXT in (%s)", BZ));
+        }
+
+        // 添加序号
+        if (!CommUtils.isNullObject(RLID)) {
+            customerFilterBuilder.append(String.format(" and a.LRKRLID = '%s'", RLID));
         }
 
         // 计算分页
@@ -73,4 +79,5 @@ public class RlgjServiceImpl implements RlgjService {
         rlgjbzEntity.setBZBZ(bzbz);
         return rlgjbzMapper.updateRlgjBz(rlgjbzEntity);
     }
+
 }

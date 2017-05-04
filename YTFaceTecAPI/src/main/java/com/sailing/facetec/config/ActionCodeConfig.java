@@ -1,5 +1,6 @@
-package com.sailing.facetec.comm;
+package com.sailing.facetec.config;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -7,14 +8,17 @@ import org.springframework.context.annotation.Configuration;
  * Created by yunan on 2017/4/27.
  */
 @Configuration
-@ConfigurationProperties(prefix = "actioncode")
-public class ActionCode {
+@ConfigurationProperties(prefix = "actioncodes")
+public class ActionCodeConfig {
 
     public static String SUCCEED_CODE;
     public static String SUCCEED_MSG;
 
     public static String SERVER_ERROR_CODE;
     public static String SERVER_ERROR_MSG;
+
+    public static String PARAMS_ERROR_CODE;
+    public static String PARAMS_ERROR_MSG;
 
     public static String getSucceedCode() {
         return SUCCEED_CODE;
@@ -46,5 +50,21 @@ public class ActionCode {
 
     public static void setServerErrorMsg(String serverErrorMsg) {
         SERVER_ERROR_MSG = serverErrorMsg;
+    }
+
+    public static String getParamsErrorCode() {
+        return PARAMS_ERROR_CODE;
+    }
+
+    public static void setParamsErrorCode(String paramsErrorCode) {
+        PARAMS_ERROR_CODE = paramsErrorCode;
+    }
+
+    public static String getParamsErrorMsg() {
+        return PARAMS_ERROR_MSG;
+    }
+
+    public static void setParamsErrorMsg(String paramsErrorMsg) {
+        PARAMS_ERROR_MSG = paramsErrorMsg;
     }
 }

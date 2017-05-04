@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RlgjbzEntity {
+    private static final long serialVersionID = 1L;
+
     private Long XH;
     private String RLKRLID;
     private String LRKRLID;

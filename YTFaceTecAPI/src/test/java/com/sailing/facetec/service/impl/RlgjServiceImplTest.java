@@ -27,6 +27,7 @@ public class RlgjServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
+
     }
 
     @After
@@ -35,17 +36,17 @@ public class RlgjServiceImplTest {
 
     @Test
     public void listRlgjDetail() throws Exception {
-    //     DataEntity<RlgjDetailEntity> result = rlgjService.listRlgjDetail("2017-04-01 00:00:00","2017-04-30 00:00:00","",1,10,null,"");
-    //     Assert.assertEquals(10,result.getDataContent().size());
-    //
-    //     result = rlgjService.listRlgjDetail("2017-04-01 00:00:00","2017-04-30 00:00:00","",1,10,Double.valueOf(90),"0");
-    //     Assert.assertEquals(54,result.getPageContent().getCount());
-    // }
-    //
-    // @Test
-    // public void updateRlgjBZ() throws Exception {
-    //     int result = rlgjService.updateRlgjBZ(922599L,"-1","test");
-    //     Assert.assertEquals(1,result);
+        DataEntity<RlgjDetailEntity> result = rlgjService.listRlgjDetail("2017-04-01 00:00:00","2017-04-30 00:00:00","",1,10,null,"","");
+        Assert.assertEquals(10,result.getDataContent().size());
+
+        result = rlgjService.listRlgjDetail("2017-04-01 00:00:00","2017-04-30 00:00:00","",1,10,Double.valueOf(90),"0","");
+        Assert.assertEquals(54,result.getPageContent().getCount());
+    }
+
+    @Test
+    public void updateRlgjBZ() throws Exception {
+        int result = rlgjService.updateRlgjBZ(922599L,"-1","test");
+        Assert.assertEquals(1,result);
     }
 
 }
