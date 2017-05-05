@@ -22,7 +22,7 @@ public class RllrServiceImpl implements RllrService {
     private RllrDetailMapper rllrDetailMapper;
 
     @Override
-    public DataEntity listRllrDetail(String beginTime, String endTime, String orderBy, int page, int size, String xb, String cameras) {
+    public DataEntity<RllrDetailEntity> listRllrDetail(String beginTime, String endTime, String orderBy, int page, int size, String xb, String cameras) {
 
         DataEntity<RllrDetailEntity> result = new DataEntity<>();
 
@@ -35,17 +35,10 @@ public class RllrServiceImpl implements RllrService {
 
         // 创建自定义过滤条件
         StringBuilder customerFilterBuilder = new StringBuilder();
-
         // 添加摄像头过滤
-        if(!CommUtils.isNullObject(cameras))
-        {
-            customerFilterBuilder.append(String.format(" and a.SXTID in (%s) ",cameras));
-        }
-
+        customerFilterBuilder.append(CommUtils.isNullObject(cameras)?"":String.format(" and a.SXTID in (%s) ",cameras));
         // 添加性别过滤
-        if(!CommUtils.isNullObject(xb)){
-            customerFilterBuilder.append(String.format(" and a.XB in (%s) ",xb));
-        }
+        customerFilterBuilder.append(CommUtils.isNullObject(xb)?"":String.format(" and a.XB in (%s) ",xb));
 
         // 计算分页
         int[] pages = CommUtils.countPage(page,size);

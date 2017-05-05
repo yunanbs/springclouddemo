@@ -42,20 +42,12 @@ public class RlgjServiceImpl implements RlgjService {
         // 创建自定义过滤条件
         StringBuilder customerFilterBuilder = new StringBuilder();
 
-        // 添加阀值
-        if (!CommUtils.isNullObject(XSD)) {
-            customerFilterBuilder.append(String.format(" and a.XSD >= %s ", XSD));
-        }
-
-        // 添加标注
-        if (!CommUtils.isNullObject(BZ)) {
-            customerFilterBuilder.append(String.format(" and d.BZSFXT in (%s)", BZ));
-        }
-
-        // 添加序号
-        if (!CommUtils.isNullObject(RLID)) {
-            customerFilterBuilder.append(String.format(" and a.LRKRLID = '%s'", RLID));
-        }
+        // 添加阀值条件
+        customerFilterBuilder.append(CommUtils.isNullObject(XSD)?"":String.format(" and a.XSD >= %s ", XSD));
+        // 添加标注条件
+        customerFilterBuilder.append(CommUtils.isNullObject(BZ)?"":String.format(" and d.BZSFXT in (%s)", BZ));
+        // 添加路人人脸编号条件
+        customerFilterBuilder.append(CommUtils.isNullObject(RLID)?"":String.format(" and a.LRKRLID = '%s'", RLID));
 
         // 计算分页
         int[] pages = CommUtils.countPage(page, size);

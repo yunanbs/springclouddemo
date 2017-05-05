@@ -1,22 +1,18 @@
 package com.sailing.facetec.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.comm.DataEntity;
-import com.sailing.facetec.config.SupplyConfig;
 import com.sailing.facetec.entity.RlgjDetailEntity;
-import com.sailing.facetec.entity.RlsxtEntity;
+import com.sailing.facetec.entity.SXTDetailEntity;
 import com.sailing.facetec.service.*;
 import com.sailing.facetec.util.CommUtils;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import javax.xml.crypto.Data;
 
 /**
  * Created by yunan on 2017/4/26.
@@ -50,7 +46,7 @@ public class DatabaseController {
     public ActionResult listRealDetails(
             @RequestParam(name = "beginTime", defaultValue = "") String beginTime,
             @RequestParam(name = "endTime", defaultValue = "") String endTime,
-            @RequestParam(name = "orderby", defaultValue = "a.XH") String orderBy,
+            @RequestParam(name = "orderby", defaultValue = "a.XH desc") String orderBy,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "cameras", defaultValue = "") String cameras,
@@ -65,7 +61,7 @@ public class DatabaseController {
     public ActionResult listAlertDetails(
             @RequestParam(name = "beginTime", defaultValue = "") String beginTime,
             @RequestParam(name = "endTime", defaultValue = "") String endTime,
-            @RequestParam(name = "orderby", defaultValue = "a.XH") String orderBy,
+            @RequestParam(name = "orderby", defaultValue = "a.XH desc") String orderBy,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "xsd", defaultValue = "0") double xsd,
@@ -79,8 +75,15 @@ public class DatabaseController {
 
     @RequestMapping("/SXT")
     public ActionResult listSXT() {
-        DataEntity<RlsxtEntity> rlsxtEntityDataEntity = rlsxtService.listAll();
+        DataEntity<SXTDetailEntity> rlsxtEntityDataEntity = rlsxtService.listAllXST();
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtEntityDataEntity, null);
+    }
+
+    @RequestMapping("/SXT/DW")
+    public ActionResult listSXTDW(){
+        DataEntity rlsxtdwEntityDataEntity = rlsxtService.listAllSXTDW();
+        DataEntity rlsxtDataEntity = rlsxtService.listAllXST();
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtdwEntityDataEntity, rlsxtDataEntity);
     }
 
     @RequestMapping(value = "/LR/Rlgjbz", method = RequestMethod.POST, consumes = {"application/json"})

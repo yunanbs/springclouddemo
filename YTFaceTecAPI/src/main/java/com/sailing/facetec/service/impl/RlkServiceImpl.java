@@ -1,5 +1,6 @@
 package com.sailing.facetec.service.impl;
 
+import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.dao.RlkMapper;
 import com.sailing.facetec.entity.RlkEntity;
 import com.sailing.facetec.service.RlkService;
@@ -18,7 +19,9 @@ public class RlkServiceImpl implements RlkService {
     private RlkMapper rlkMapper;
 
     @Override
-    public List<RlkEntity> listAllRlk() {
-        return rlkMapper.listAllRlk();
+    public DataEntity<RlkEntity> listAllRlk() {
+        DataEntity<RlkEntity> result = new DataEntity<>();
+        result.setDataContent(rlkMapper.listAllRlk());
+        return result;
     }
 }

@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RlsxtEntity implements Serializable{
+public class SXTDetailEntity implements Serializable{
 
     private static final long serialVersionID=1L;
 
@@ -26,4 +26,5 @@ public class RlsxtEntity implements Serializable{
     private String YLZD3;
     private String YLZD4;
     private String YLZD5;
+    private String YHZ;
 }

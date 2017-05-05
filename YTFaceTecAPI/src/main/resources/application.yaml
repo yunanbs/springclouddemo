@@ -6,6 +6,9 @@ spring:
     username: bsits2
     password: bsits2
     driver-class-name: oracle.jdbc.OracleDriver
+  output:
+    ansi:
+      enabled: always
 server:
   port: 8191
 mybatis:
@@ -18,9 +21,17 @@ eureka:
   client:
     service-url:
       defaultZone: http://172.20.22.11:8181/eureka/
+    healthcheck:
+      enabled: true
   instance:
     lease-expiration-duration-in-seconds: 15
     lease-renewal-interval-in-seconds: 5
+management:
+  security:
+    enabled: false
+info:
+  com: sailing
+  product: faceapi
 actioncodes:
   SUCCEED_CODE: 1000
   SUCCEED_MSG: 请求成功
@@ -37,4 +48,9 @@ supplys:
         hr_rlk_rlkid: rlk.rlkid2
         hr_rl_rlkid: rl.rlkid
         hr_rl_rlid: rl.rlid
+upload:
+  image-folder: D:\
+ytface:
+  api-url: http://172.20.25.226:11180
+
 

@@ -2,6 +2,7 @@ package com.sailing.facetec.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.SupplyConfig;
 import com.sailing.facetec.dao.RlDetailMapper;
 import com.sailing.facetec.dao.RlkMapper;
@@ -10,6 +11,7 @@ import com.sailing.facetec.service.RlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class RlServiceImpl implements RlService {
     private SupplyConfig supplyConfig;
 
     @Override
-    public List<RlDetailEntity> listRlDetail(JSONArray detailInfo) {
+    public DataEntity<RlDetailEntity> listRlDetail(JSONArray detailInfo) {
         StringBuilder customerFilterBuilder = new StringBuilder();
         for(Iterator iterator = detailInfo.iterator();iterator.hasNext();){
             JSONObject tmp = (JSONObject) iterator.next();
@@ -44,6 +46,8 @@ public class RlServiceImpl implements RlService {
             customerFilterBuilder.append(" ) or ");
         }
         customerFilterBuilder.append("1=0");
-        return rlDetailMapper.listRlDetail(customerFilterBuilder.toString());
+        DataEntity<RlDetailEntity> result = new DataEntity<>();
+        result.setDataContent(rlDetailMapper.listRlDetail(customerFilterBuilder.toString()));
+        return result;
     }
 }
