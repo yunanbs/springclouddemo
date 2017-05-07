@@ -35,5 +35,15 @@ public class RllrDetailEntity implements Serializable {
     private String YLDZ4;
     private String YLDZ5;
     private String LRRKSJ;
+    private String RLTZ1;
+    private String RLTZ2;
+    private String RLTZ3;
+    private String RLTZ4;
+    private String RLTZ5;
+    private String RLTZ6;
+    private String RLTZ7;
+    private String RLTZ8;
+    private String RLTZ9;
+    private String RLTZ10;
     private String SXTMC;
 }

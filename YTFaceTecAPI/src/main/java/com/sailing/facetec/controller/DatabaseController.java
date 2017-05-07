@@ -49,11 +49,15 @@ public class DatabaseController {
             @RequestParam(name = "orderby", defaultValue = "a.XH desc") String orderBy,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam(name = "cameras", defaultValue = "") String cameras,
-            @RequestParam(name = "xb", defaultValue = "") String xb
+            @RequestParam(name = "rlkids", defaultValue = "") String rlkids,
+            @RequestParam(name = "sex", defaultValue = "") String sex,
+            @RequestParam(name = "age", defaultValue = "") String age,
+            @RequestParam(name = "glass", defaultValue = "") String glass,
+            @RequestParam(name = "fringe", defaultValue = "") String fringe,
+            @RequestParam(name = "uygur", defaultValue = "") String uygur
     ) {
 
-        DataEntity result = rllrService.listRllrDetail(beginTime, endTime, orderBy, page, size, xb, cameras);
+        DataEntity result = rllrService.listRllrDetail(beginTime, endTime, orderBy, page, size,rlkids,sex,age,glass,fringe,uygur);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result, null);
     }
 
@@ -66,10 +70,16 @@ public class DatabaseController {
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "xsd", defaultValue = "0") double xsd,
             @RequestParam(name = "bz", defaultValue = "") String bz,
-            @RequestParam(name = "rlid", defaultValue = "") String rlid
+            @RequestParam(name = "rlid", defaultValue = "") String rlid,
+            @RequestParam(name = "rlkids", defaultValue = "") String rlkids,
+            @RequestParam(name = "sex", defaultValue = "") String sex,
+            @RequestParam(name = "age", defaultValue = "") String age,
+            @RequestParam(name = "glass", defaultValue = "") String glass,
+            @RequestParam(name = "fringe", defaultValue = "") String fringe,
+            @RequestParam(name = "uygur", defaultValue = "") String uygur
     ) {
 
-        DataEntity<RlgjDetailEntity> rlgjDetailEntityDataEntity = rlgjService.listRlgjDetail(beginTime, endTime, orderBy, page, size, xsd, bz,rlid);
+        DataEntity<RlgjDetailEntity> rlgjDetailEntityDataEntity = rlgjService.listRlgjDetail(beginTime, endTime, orderBy, page, size, xsd, bz,rlid,rlkids,sex,age,glass,fringe,uygur);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlgjDetailEntityDataEntity, null);
     }
 

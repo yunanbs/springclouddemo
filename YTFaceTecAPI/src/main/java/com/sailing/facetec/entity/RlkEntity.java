@@ -37,5 +37,15 @@ public class RlkEntity implements Serializable {
     private String YLZD3;
     private String YLZD4;
     private String YLZD5;
+    private String RLKID1;
+    private String RLKID2;
+    private String RLKID3;
+    private String RLKID4;
+    private String RLKID5;
+    private String RLKID6;
+    private String RLKID7;
+    private String RLKID8;
+    private String RLKID9;
+    private String RLKID10;
 
 }

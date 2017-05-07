@@ -9,6 +9,10 @@ spring:
   output:
     ansi:
       enabled: always
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
 server:
   port: 8191
 mybatis:
@@ -32,6 +36,11 @@ management:
 info:
   com: sailing
   product: faceapi
+
+tasks:
+  capture: 0/1 * * * * ?
+  alter: 0/1 * * * * ?
+
 actioncodes:
   SUCCEED_CODE: 1000
   SUCCEED_MSG: 请求成功
@@ -43,11 +52,11 @@ actioncodes:
 supplys:
     supply-map:
         yt_rlk_rlkid: rlk.rlkid1
-        yt_rl_rlkid: rl.rlkid
-        yt_rl_rlid: rl.rlid
+        yt_rl_rlkid: rl.rlkid1
+        yt_rl_rlid: rl.rlid1
         hr_rlk_rlkid: rlk.rlkid2
-        hr_rl_rlkid: rl.rlkid
-        hr_rl_rlid: rl.rlid
+        hr_rl_rlkid: rl.rlkid2
+        hr_rl_rlid: rl.rlid2
 upload:
   image-folder: D:\
 ytface:

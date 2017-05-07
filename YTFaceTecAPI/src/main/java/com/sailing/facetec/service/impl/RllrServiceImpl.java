@@ -22,7 +22,7 @@ public class RllrServiceImpl implements RllrService {
     private RllrDetailMapper rllrDetailMapper;
 
     @Override
-    public DataEntity<RllrDetailEntity> listRllrDetail(String beginTime, String endTime, String orderBy, int page, int size, String xb, String cameras) {
+    public DataEntity<RllrDetailEntity> listRllrDetail(String beginTime,String endTime,String orderBy, int page, int size,String rlkids,String sex,String age,String glass,String fringe,String uygur) {
 
         DataEntity<RllrDetailEntity> result = new DataEntity<>();
 
@@ -36,9 +36,17 @@ public class RllrServiceImpl implements RllrService {
         // 创建自定义过滤条件
         StringBuilder customerFilterBuilder = new StringBuilder();
         // 添加摄像头过滤
-        customerFilterBuilder.append(CommUtils.isNullObject(cameras)?"":String.format(" and a.SXTID in (%s) ",cameras));
+        customerFilterBuilder.append(CommUtils.isNullObject(rlkids)?"":String.format(" and a.LRKID in (%s) ",rlkids));
         // 添加性别过滤
-        customerFilterBuilder.append(CommUtils.isNullObject(xb)?"":String.format(" and a.XB in (%s) ",xb));
+        customerFilterBuilder.append(CommUtils.isNullObject(sex)?"":String.format(" and a.RLTZ1 in (%s) ",sex));
+        // 添加年龄过滤
+        customerFilterBuilder.append(CommUtils.isNullObject(age)?"":String.format(" and a.RLTZ2 in (%s) ",age));
+        // 添加眼镜过滤
+        customerFilterBuilder.append(CommUtils.isNullObject(glass)?"":String.format(" and a.RLTZ3 in (%s) ",glass));
+        // 添加刘海过滤
+        customerFilterBuilder.append(CommUtils.isNullObject(fringe)?"":String.format(" and a.RLTZ4 in (%s) ",fringe));
+        // 添加种族过滤
+        customerFilterBuilder.append(CommUtils.isNullObject(uygur)?"":String.format(" and a.RLTZ5 in (%s) ",uygur));
 
         // 计算分页
         int[] pages = CommUtils.countPage(page,size);
