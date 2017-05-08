@@ -1,11 +1,10 @@
 package com.sailing.facetec.task;
 
-import com.alibaba.fastjson.JSONObject;
-import com.netflix.ribbon.Ribbon;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RlgjService;
 import com.sailing.facetec.service.RllrService;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,27 +27,32 @@ public class TaskScheduler {
     @Autowired
     private RedisService redisService;
 
-    private final String CAPTURE_LOCK_KEY = "capture-lock";
-    private final String ALERT_LOCK_KEY = "alert-lock";
-    private final String LOCK_VAL = "ok";
-    private final String CAPTURE_DATA_KEY = "capture-data";
-    private final String ALERT_DATA_KEY = "alert-data";
+    @Value("${redis-keys.capture-lock}")
+    private String captureLock;
+    @Value("${redis-keys.alert-lock}")
+    private String alertLock;
+    @Value("${redis-keys.lock-val}")
+    private String lockVal;
+    @Value("${redis-keys.capture-data}")
+    private String captureData;
+    @Value("${redis-keys.alert-data}")
+    private String alertData;
 
     @Scheduled(cron = "${tasks.capture}")
     public void captureScheduler() {
-        if(redisService.setValNX(CAPTURE_LOCK_KEY,LOCK_VAL,1, TimeUnit.SECONDS)){
-            DataEntity result = rllrService.listRllrDetail("", "", "", 1, 10, "", "", "", "", "", "");
-            redisService.setVal(CAPTURE_DATA_KEY, JSONObject.toJSONString(result),1,TimeUnit.DAYS);
-            redisService.delKey(CAPTURE_LOCK_KEY);
+        if(redisService.setValNX(captureLock, lockVal,1, TimeUnit.SECONDS)){
+            DataEntity result = rllrService.listRllrDetail("2017-01-01 00:00:00", "", "", 1, 50, "", "", "", "", "", "");
+            redisService.setVal(captureData, JSONObject.fromObject(result).toString(),1,TimeUnit.DAYS);
+            redisService.delKey(captureLock);
         }
     }
 
     @Scheduled(cron = "${tasks.alert}")
     public void alterScheduler() {
-        if(redisService.setValNX(ALERT_LOCK_KEY,LOCK_VAL,1, TimeUnit.SECONDS)){
-            DataEntity result = rlgjService.listRlgjDetail("", "", "", 1, 10,0d, "", "", "", "", "","","","");
-            redisService.setVal(ALERT_DATA_KEY, JSONObject.toJSONString(result),1,TimeUnit.DAYS);
-            redisService.delKey(ALERT_LOCK_KEY);
+        if(redisService.setValNX(alertLock, lockVal,1, TimeUnit.SECONDS)){
+            DataEntity result = rlgjService.listRlgjDetail("2017-01-01 00:00:00", "", "", 1, 50,0d, "", "", "", "", "","","","");
+            redisService.setVal(alertData, JSONObject.fromObject(result).toString(),1,TimeUnit.DAYS);
+            redisService.delKey(alertLock);
         }
     }
 

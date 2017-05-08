@@ -22,7 +22,7 @@ public class RllrServiceImpl implements RllrService {
     private RllrDetailMapper rllrDetailMapper;
 
     @Override
-    public DataEntity<RllrDetailEntity> listRllrDetail(String beginTime,String endTime,String orderBy, int page, int size,String rlkids,String sex,String age,String glass,String fringe,String uygur) {
+    public DataEntity<RllrDetailEntity> listRllrDetail(String beginTime,String endTime,String orderBy, int page, int size,String lrkids,String sex,String age,String glass,String fringe,String uygur) {
 
         DataEntity<RllrDetailEntity> result = new DataEntity<>();
 
@@ -36,7 +36,7 @@ public class RllrServiceImpl implements RllrService {
         // 创建自定义过滤条件
         StringBuilder customerFilterBuilder = new StringBuilder();
         // 添加摄像头过滤
-        customerFilterBuilder.append(CommUtils.isNullObject(rlkids)?"":String.format(" and a.LRKID in (%s) ",rlkids));
+        customerFilterBuilder.append(CommUtils.isNullObject(lrkids)?"":String.format(" and a.LRKID in (%s) ",lrkids));
         // 添加性别过滤
         customerFilterBuilder.append(CommUtils.isNullObject(sex)?"":String.format(" and a.RLTZ1 in (%s) ",sex));
         // 添加年龄过滤

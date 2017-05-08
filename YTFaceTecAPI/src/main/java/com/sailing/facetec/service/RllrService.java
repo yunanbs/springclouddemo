@@ -9,5 +9,5 @@ import java.util.List;
  * Created by yunan on 2017/4/28.
  */
 public interface RllrService {
-    DataEntity<RllrDetailEntity> listRllrDetail(String beginTime,String endTime,String orderBy, int page, int size,String rlkids,String sex,String age,String glass,String fringe,String uygur);
+    DataEntity<RllrDetailEntity> listRllrDetail(String beginTime,String endTime,String orderBy, int page, int size,String lrkids,String sex,String age,String glass,String fringe,String uygur);
 }

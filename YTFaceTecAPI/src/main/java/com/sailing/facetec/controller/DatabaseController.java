@@ -1,6 +1,8 @@
 package com.sailing.facetec.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.netflix.discovery.converters.Auto;
 import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.comm.DataEntity;
@@ -10,6 +12,7 @@ import com.sailing.facetec.service.*;
 import com.sailing.facetec.util.CommUtils;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.crypto.Data;
@@ -37,19 +40,27 @@ public class DatabaseController {
     @Autowired
     private RlService rlService;
 
+    @Autowired
+    private RedisService redisService;
+
+    @Value("${redis-keys.capture-data}")
+    private String captureData;
+    @Value("${redis-keys.alert-data}")
+    private String alertData;
+
     @RequestMapping("/")
     public String test() {
         return "hello sailling";
     }
 
     @RequestMapping("/LR/Captures")
-    public ActionResult listRealDetails(
+    public ActionResult listCaptureDetails(
             @RequestParam(name = "beginTime", defaultValue = "") String beginTime,
             @RequestParam(name = "endTime", defaultValue = "") String endTime,
             @RequestParam(name = "orderby", defaultValue = "a.XH desc") String orderBy,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam(name = "rlkids", defaultValue = "") String rlkids,
+            @RequestParam(name = "lrkids", defaultValue = "") String lrkids,
             @RequestParam(name = "sex", defaultValue = "") String sex,
             @RequestParam(name = "age", defaultValue = "") String age,
             @RequestParam(name = "glass", defaultValue = "") String glass,
@@ -57,8 +68,14 @@ public class DatabaseController {
             @RequestParam(name = "uygur", defaultValue = "") String uygur
     ) {
 
-        DataEntity result = rllrService.listRllrDetail(beginTime, endTime, orderBy, page, size,rlkids,sex,age,glass,fringe,uygur);
+        DataEntity result = rllrService.listRllrDetail(beginTime, endTime, orderBy, page, size, lrkids, sex, age, glass, fringe, uygur);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result, null);
+    }
+
+    @RequestMapping("/LR/Captures/Real")
+    public ActionResult listRealCaptureDetails() {
+        String jsonStr = redisService.getVal(captureData);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG, JSON.parse(jsonStr),null);
     }
 
     @RequestMapping("/LR/Alerts")
@@ -79,8 +96,14 @@ public class DatabaseController {
             @RequestParam(name = "uygur", defaultValue = "") String uygur
     ) {
 
-        DataEntity<RlgjDetailEntity> rlgjDetailEntityDataEntity = rlgjService.listRlgjDetail(beginTime, endTime, orderBy, page, size, xsd, bz,rlid,rlkids,sex,age,glass,fringe,uygur);
+        DataEntity<RlgjDetailEntity> rlgjDetailEntityDataEntity = rlgjService.listRlgjDetail(beginTime, endTime, orderBy, page, size, xsd, bz, rlid, rlkids, sex, age, glass, fringe, uygur);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlgjDetailEntityDataEntity, null);
+    }
+
+    @RequestMapping("/LR/Alerts/Real")
+    public ActionResult listRealAlertDetails() {
+        String jsonStr = redisService.getVal(alertData);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG, JSON.parse(jsonStr),null);
     }
 
     @RequestMapping("/SXT")
@@ -90,7 +113,7 @@ public class DatabaseController {
     }
 
     @RequestMapping("/SXT/DW")
-    public ActionResult listSXTDW(){
+    public ActionResult listSXTDW() {
         DataEntity rlsxtdwEntityDataEntity = rlsxtService.listAllSXTDW();
         DataEntity rlsxtDataEntity = rlsxtService.listAllXST();
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtdwEntityDataEntity, rlsxtDataEntity);

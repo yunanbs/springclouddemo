@@ -1,5 +1,6 @@
 package com.sailing.facetec.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class RllrDetailEntity implements Serializable {
     private static final long serialVersionID = 1L;
 
     private Long RN;
+    @JSONField(name = "XH")
     private Long XH;
     private String SXTID;
     private String LRKID;

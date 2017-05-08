@@ -11,7 +11,7 @@ spring:
       enabled: always
   redis:
     database: 0
-    host: localhost
+    host: 172.20.22.11
     port: 6379
 server:
   port: 8191
@@ -40,6 +40,12 @@ info:
 tasks:
   capture: 0/1 * * * * ?
   alter: 0/1 * * * * ?
+redis-keys:
+  capture-lock: capture-lock
+  alert-lock: alert-lock
+  lock-val: ok
+  capture-data: capture-data
+  alert-data: alert-data
 
 actioncodes:
   SUCCEED_CODE: 1000
