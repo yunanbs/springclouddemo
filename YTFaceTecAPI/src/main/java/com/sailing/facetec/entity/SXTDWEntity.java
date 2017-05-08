@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SXTDWEntity implements Serializable{
+public class SxtdwEntity implements Serializable{
 
     private static final long serialVersionID =1L;
 

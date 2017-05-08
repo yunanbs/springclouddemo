@@ -2,20 +2,17 @@ package com.sailing.facetec.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.netflix.discovery.converters.Auto;
 import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.entity.RlgjDetailEntity;
-import com.sailing.facetec.entity.SXTDetailEntity;
+import com.sailing.facetec.entity.SxtDetailEntity;
 import com.sailing.facetec.service.*;
 import com.sailing.facetec.util.CommUtils;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-
-import javax.xml.crypto.Data;
 
 /**
  * Created by yunan on 2017/4/26.
@@ -42,6 +39,9 @@ public class DatabaseController {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private SfpjService sfpjService;
 
     @Value("${redis-keys.capture-data}")
     private String captureData;
@@ -75,7 +75,7 @@ public class DatabaseController {
     @RequestMapping("/LR/Captures/Real")
     public ActionResult listRealCaptureDetails() {
         String jsonStr = redisService.getVal(captureData);
-        return new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG, JSON.parse(jsonStr),null);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, JSON.parse(jsonStr), null);
     }
 
     @RequestMapping("/LR/Alerts")
@@ -103,12 +103,12 @@ public class DatabaseController {
     @RequestMapping("/LR/Alerts/Real")
     public ActionResult listRealAlertDetails() {
         String jsonStr = redisService.getVal(alertData);
-        return new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG, JSON.parse(jsonStr),null);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, JSON.parse(jsonStr), null);
     }
 
     @RequestMapping("/SXT")
     public ActionResult listSXT() {
-        DataEntity<SXTDetailEntity> rlsxtEntityDataEntity = rlsxtService.listAllXST();
+        DataEntity<SxtDetailEntity> rlsxtEntityDataEntity = rlsxtService.listAllXST();
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtEntityDataEntity, null);
     }
 
@@ -159,5 +159,31 @@ public class DatabaseController {
             );
         }
         return result;
+    }
+
+    @RequestMapping(value = "/SF/SFPJ",consumes = "application/json",method = {RequestMethod.POST})
+    public ActionResult addSfpj(@RequestBody String params) {
+        JSONObject jsonObject = JSONObject.fromObject(params);
+        return new ActionResult(
+                ActionCodeConfig.SUCCEED_CODE,
+                ActionCodeConfig.SUCCEED_MSG,
+                sfpjService.insertSfpj(
+                        jsonObject.getInt("pjflag"),
+                        jsonObject.getString("cxdm"),
+                        jsonObject.getString("sfdm"),
+                        jsonObject.getDouble("fz"),
+                        jsonObject.getString("bz")
+                ),
+                null);
+    }
+
+    @RequestMapping(value = "/SF/SFPJ/Avg")
+    public ActionResult listSfAvg(@RequestParam(value = "pjflag",defaultValue = "0") int pjflag,@RequestParam(value = "sfdm",defaultValue = "") String sfdm){
+        return  new ActionResult(
+                ActionCodeConfig.SUCCEED_CODE,
+                ActionCodeConfig.SUCCEED_MSG,
+                sfpjService.getSfAvg(pjflag,sfdm),
+                null
+        );
     }
 }

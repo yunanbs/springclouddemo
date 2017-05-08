@@ -11,8 +11,7 @@ import java.util.List;
  */
 public interface RllrDetailMapper {
 
-    // String baseRllrDetailSelSql = "select * from (select  row_number() over (order by ${orderColumn}) as rn, a.XH,a.RLID,a.SXTID,a.LRKID,a.RKSJ,a.SFZH,a.XB,a.CSNF,a.XM,a.DTDZ,a.RLDZ,a.RKKSSJ,a.RKJSSJ,a.SFMZ,a.YSDTID,a.YLZD1,a.YLZD2,a.YLZD3,a.YLZD4,a.YLZD5,a.LRRKSJ,b.SXTMC from B_TZ_RLLR a left join B_TZ_RLSXT b on a.SXTID = b.SXTID where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') ${customerFilter}) a where a.rn between ${min} and ${max}";
-    String baseRllrDetailSelSql = "select * from (select  row_number() over (order by ${orderColumn}) as rn, a.*,b.SXTMC from B_TZ_RLLR a left join B_TZ_RLSXT b on a.SXTID = b.SXTID where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') ${customerFilter}) a where a.rn between ${min} and ${max}";
+    String baseRllrDetailSelSql = "select * from (select  row_number() over (order by ${orderColumn}) as rn, a.*,b.SXTMC from B_TZ_RLLR a left join B_TZ_RLSXT b on a.SXTID = b.SXTID where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') and (a.YLZD3='0' or (a.YLZD4='0' and a.SFMZ=0)) ${customerFilter}) a where a.rn between ${min} and ${max}";
 
 
     String countSql = "select  count(*) from B_TZ_RLLR a where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') ${customerFilter}";
