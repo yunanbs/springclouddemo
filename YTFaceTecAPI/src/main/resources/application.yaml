@@ -46,7 +46,9 @@ redis-keys:
   lock-val: ok
   capture-data: capture-data
   alert-data: alert-data
-
+  capture-cache: 500
+  alert-cache: 500
+  alert-limit: 0
 actioncodes:
   SUCCEED_CODE: 1000
   SUCCEED_MSG: 请求成功

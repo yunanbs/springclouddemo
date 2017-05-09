@@ -10,4 +10,6 @@ import java.util.List;
  */
 public interface RllrService {
     DataEntity<RllrDetailEntity> listRllrDetail(String beginTime,String endTime,String orderBy, int page, int size,String lrkids,String sex,String age,String glass,String fringe,String uygur);
+
+    String listRllrDetailReal(String lrkids);
 }

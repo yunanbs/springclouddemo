@@ -13,8 +13,7 @@ public interface RllrDetailMapper {
 
     String baseRllrDetailSelSql = "select * from (select  row_number() over (order by ${orderColumn}) as rn, a.*,b.SXTMC from B_TZ_RLLR a left join B_TZ_RLSXT b on a.SXTID = b.SXTID where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') and (a.YLZD3='0' or (a.YLZD4='0' and a.SFMZ=0)) ${customerFilter}) a where a.rn between ${min} and ${max}";
 
-
-    String countSql = "select  count(*) from B_TZ_RLLR a where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') ${customerFilter}";
+    String countSql = "select  count(*) from B_TZ_RLLR a where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') and (a.YLZD3='0' or (a.YLZD4='0' and a.SFMZ=0)) ${customerFilter}";
 
     @Select(baseRllrDetailSelSql)
     List<RllrDetailEntity> listRllrDetails(

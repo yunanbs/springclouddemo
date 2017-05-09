@@ -73,9 +73,9 @@ public class DatabaseController {
     }
 
     @RequestMapping("/LR/Captures/Real")
-    public ActionResult listRealCaptureDetails() {
-        String jsonStr = redisService.getVal(captureData);
-        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, JSON.parse(jsonStr), null);
+    public ActionResult listRealCaptureDetails(@RequestParam(name = "lrkids",defaultValue = "")String lrkids) {
+        String result = rllrService.listRllrDetailReal(lrkids);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG,JSONObject.fromObject(result),null);
     }
 
     @RequestMapping("/LR/Alerts")

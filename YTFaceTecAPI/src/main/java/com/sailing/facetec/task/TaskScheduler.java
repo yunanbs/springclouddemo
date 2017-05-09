@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by yunan on 2017/5/7.
  */
-@Component
+@Component(value = "com.sailing.facetec.task.TaskScheduler")
 public class TaskScheduler {
 
     @Autowired
@@ -37,11 +37,17 @@ public class TaskScheduler {
     private String captureData;
     @Value("${redis-keys.alert-data}")
     private String alertData;
+    @Value("${redis-keys.capture-cache}")
+    private int captureCache;
+    @Value("${redis-keys.alert-cache}")
+    private int alertCache;
+    @Value("${redis-keys.alert-limit}")
+    private double alertLimit;
 
     @Scheduled(cron = "${tasks.capture}")
     public void captureScheduler() {
         if(redisService.setValNX(captureLock, lockVal,1, TimeUnit.SECONDS)){
-            DataEntity result = rllrService.listRllrDetail("2017-01-01 00:00:00", "", "", 1, 50, "", "", "", "", "", "");
+            DataEntity result = rllrService.listRllrDetail("2017-01-01 00:00:00", "", "", 1, captureCache, "", "", "", "", "", "");
             redisService.setVal(captureData, JSONObject.fromObject(result).toString(),1,TimeUnit.DAYS);
             redisService.delKey(captureLock);
         }
@@ -50,7 +56,7 @@ public class TaskScheduler {
     @Scheduled(cron = "${tasks.alert}")
     public void alterScheduler() {
         if(redisService.setValNX(alertLock, lockVal,1, TimeUnit.SECONDS)){
-            DataEntity result = rlgjService.listRlgjDetail("2017-01-01 00:00:00", "", "", 1, 50,0d, "", "", "", "", "","","","");
+            DataEntity result = rlgjService.listRlgjDetail("2017-01-01 00:00:00", "", "", 1, alertCache,alertLimit, "", "", "", "", "","","","");
             redisService.setVal(alertData, JSONObject.fromObject(result).toString(),1,TimeUnit.DAYS);
             redisService.delKey(alertLock);
         }

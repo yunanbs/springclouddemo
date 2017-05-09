@@ -1,6 +1,7 @@
 package com.sailing.facetec.util;
 
 import com.sailing.facetec.comm.PageEntity;
+import net.sf.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,6 +42,12 @@ public class CommUtils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return  result;
+    }
+
+    public static String[] getJsonKeys(JSONObject jsonObject){
+        String[] result = new String[jsonObject.keySet().size()];
+        jsonObject.keySet().toArray(result);
         return  result;
     }
 }
