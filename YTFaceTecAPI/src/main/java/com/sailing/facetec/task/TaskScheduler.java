@@ -8,6 +8,7 @@ import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RlgjService;
 import com.sailing.facetec.service.RllrService;
+import com.sailing.facetec.util.FastJsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -47,19 +48,12 @@ public class TaskScheduler {
     @Value("${redis-keys.alert-limit}")
     private double alertLimit;
 
-    private  NameFilter nameFilter = new NameFilter() {
-        @Override
-        public String process(Object o, String s, Object o1) {
-            return s.toLowerCase();
-        }
-    };
-
     @Scheduled(cron = "${tasks.capture}")
     public void captureScheduler() {
         if(redisService.setValNX(captureLock, lockVal,1, TimeUnit.SECONDS)){
             DataEntity result = rllrService.listRllrDetail("", "", "", 1, captureCache, "", "", "", "", "", "");
 
-            redisService.setVal(captureData, JSON.toJSONString(result,nameFilter, SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteNullNumberAsZero),1,TimeUnit.DAYS);
+            redisService.setVal(captureData, JSON.toJSONString(result, FastJsonUtils.nameFilter, SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteNullNumberAsZero),1,TimeUnit.DAYS);
             redisService.delKey(captureLock);
         }
     }
@@ -68,7 +62,7 @@ public class TaskScheduler {
     public void alterScheduler() {
         if(redisService.setValNX(alertLock, lockVal,1, TimeUnit.SECONDS)){
             DataEntity result = rlgjService.listRlgjDetail("", "", "", 1, alertCache,alertLimit, "", "", "", "", "","","","");
-            redisService.setVal(alertData, JSON.toJSONString(result,nameFilter,SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteNullNumberAsZero),1,TimeUnit.DAYS);
+            redisService.setVal(alertData, JSON.toJSONString(result,FastJsonUtils.nameFilter,SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteNullNumberAsZero),1,TimeUnit.DAYS);
             redisService.delKey(alertLock);
         }
     }
