@@ -29,7 +29,7 @@ public class RlgjServiceImpl implements RlgjService {
     private RlgjbzMapper rlgjbzMapper;
 
     @Override
-    public DataEntity<RlgjDetailEntity> listRlgjDetail(String beginTime, String endTime, String orderBy, int page, int size, Double XSD, String BZ,String RLID,String rlkids,String sex,String age,String glass,String fringe,String uygur) {
+    public DataEntity<RlgjDetailEntity> listRlgjDetail(String beginTime, String endTime, String orderBy, int page, int size, Double XSD, String BZ,String RLID,String lrkids,String sex,String age,String glass,String fringe,String uygur) {
         DataEntity<RlgjDetailEntity> result = new DataEntity<>();
 
         // 设置检索开始时间
@@ -49,7 +49,7 @@ public class RlgjServiceImpl implements RlgjService {
         // 添加路人人脸编号条件
         customerFilterBuilder.append(CommUtils.isNullObject(RLID)?"":String.format(" and a.LRKRLID = '%s'", RLID));
         // 添加摄像头过滤
-        customerFilterBuilder.append(CommUtils.isNullObject(rlkids)?"":String.format(" and a.LRKID in (%s) ",rlkids));
+        customerFilterBuilder.append(CommUtils.isNullObject(lrkids)?"":String.format(" and a.LRKID in (%s) ",lrkids));
         // 添加性别过滤
         customerFilterBuilder.append(CommUtils.isNullObject(sex)?"":String.format(" and a.RLTZ1 in (%s) ",sex));
         // 添加年龄过滤

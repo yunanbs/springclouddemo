@@ -16,7 +16,6 @@ public class RllrDetailEntity implements Serializable {
     private static final long serialVersionID = 1L;
 
     private Long RN;
-    @JSONField(name = "XH")
     private Long XH;
     private String SXTID;
     private String LRKID;

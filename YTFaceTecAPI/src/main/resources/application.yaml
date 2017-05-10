@@ -13,13 +13,8 @@ spring:
     database: 0
     host: localhost
     port: 6379
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: sailing
-    password: sailing
 server:
-  port: 8191
+  port: 8291
 mybatis:
   type-aliases-package: com.sailing.facetec.entiry
 logging:
@@ -41,10 +36,9 @@ management:
 info:
   com: sailing
   product: faceapi
-
 tasks:
   capture: 0/1 * * * * ?
-  alter: 0/1 * * * * ?
+  alert: 0/1 * * * * ?
 redis-keys:
   capture-lock: capture-lock
   alert-lock: alert-lock
@@ -61,15 +55,14 @@ actioncodes:
   SERVER_ERROR_MSG: 服务端异常:%s
   PARAMS_ERROR_CODE: 2001
   PARAMS_ERROR_MSG: 参数错误:%s
-
 supplys:
     supply-map:
-        yt_rlk_rlkid: rlk.rlkid1
-        yt_rl_rlkid: rl.rlkid1
-        yt_rl_rlid: rl.rlid1
-#        hr_rlk_rlkid: rlk.rlkid2
-#        hr_rl_rlkid: rl.rlkid2
-#        hr_rl_rlid: rl.rlid2
+        yt_rlk_rlkid: rlk.rlkid
+        yt_rl_rlkid: rl.rlkid
+        yt_rl_rlid: rl.rlid
+#        hr_rlk_rlkid: rlk.rlkid
+#        hr_rl_rlkid: rl.rlkid
+#        hr_rl_rlid: rl.rlid
 upload:
   image-folder: D:\
 ytface:

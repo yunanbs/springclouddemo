@@ -88,7 +88,7 @@ public class DatabaseController {
             @RequestParam(name = "xsd", defaultValue = "0") double xsd,
             @RequestParam(name = "bz", defaultValue = "") String bz,
             @RequestParam(name = "rlid", defaultValue = "") String rlid,
-            @RequestParam(name = "rlkids", defaultValue = "") String rlkids,
+            @RequestParam(name = "lrkids", defaultValue = "") String lrkids,
             @RequestParam(name = "sex", defaultValue = "") String sex,
             @RequestParam(name = "age", defaultValue = "") String age,
             @RequestParam(name = "glass", defaultValue = "") String glass,
@@ -96,7 +96,7 @@ public class DatabaseController {
             @RequestParam(name = "uygur", defaultValue = "") String uygur
     ) {
 
-        DataEntity<RlgjDetailEntity> rlgjDetailEntityDataEntity = rlgjService.listRlgjDetail(beginTime, endTime, orderBy, page, size, xsd, bz, rlid, rlkids, sex, age, glass, fringe, uygur);
+        DataEntity<RlgjDetailEntity> rlgjDetailEntityDataEntity = rlgjService.listRlgjDetail(beginTime, endTime, orderBy, page, size, xsd, bz, rlid, lrkids, sex, age, glass, fringe, uygur);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlgjDetailEntityDataEntity, null);
     }
 
