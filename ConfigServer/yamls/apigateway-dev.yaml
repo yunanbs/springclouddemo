@@ -2,13 +2,13 @@ spring:
   application:
     name: apigateway
 server:
-  port: 8300
+  port: 8183
 zuul:
   routes:
-    - demoapi:
-        path: /demoapi/**
-        serviceId: demoapi
+    - faceapi:
+        path: /faceapi/**
+        serviceId: faceapi
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8000/eureka/
+      defaultZone: http://localhost:8181/eureka/

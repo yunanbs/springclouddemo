@@ -48,6 +48,20 @@ public class RlgjDetailEntity implements Serializable{
     private String RLTZ8;
     private String RLTZ9;
     private String RLTZ10;
+
+    private String RLXZDT;
+    private String RLXZXT;
+    private String LRXZDT;
+    private String LRXZXT;
+
+    private String GXRLXZDT;
+    private String GXRLXZXT;
+    private String GXLRXZDT;
+    private String GXLRXZXT;
+
+    private String LRWZ;
+    private String LRTPKG;
+
     private String SXSD;
     private String LRKMC;
     private String RLKMC;

@@ -1,14 +1,12 @@
 package com.sailing.facetec.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.sailing.facetec.comm.ActionResult;
-import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.comm.DataEntity;
+import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.entity.RlgjDetailEntity;
 import com.sailing.facetec.entity.SxtDetailEntity;
 import com.sailing.facetec.service.*;
-import com.sailing.facetec.util.CommUtils;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -73,9 +71,9 @@ public class DatabaseController {
     }
 
     @RequestMapping("/LR/Captures/Real")
-    public ActionResult listRealCaptureDetails(@RequestParam(name = "lrkids",defaultValue = "")String lrkids) {
+    public ActionResult listRealCaptureDetails(@RequestParam(name = "lrkids", defaultValue = "") String lrkids) {
         String result = rllrService.listRllrDetailReal(lrkids);
-        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG,JSONObject.fromObject(result),null);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, JSONObject.fromObject(result), null);
     }
 
     @RequestMapping("/LR/Alerts")
@@ -103,7 +101,7 @@ public class DatabaseController {
     @RequestMapping("/LR/Alerts/Real")
     public ActionResult listRealAlertDetails() {
         String jsonStr = redisService.getVal(alertData);
-        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, JSON.parse(jsonStr), null);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, JSONObject.fromObject(jsonStr), null);
     }
 
     @RequestMapping("/SXT")
@@ -141,27 +139,18 @@ public class DatabaseController {
 
     @RequestMapping(value = "/RL", consumes = "application/json", method = {RequestMethod.POST})
     public ActionResult listRL(@RequestBody String params) {
-        JSONArray jsonArray = JSONArray.parseArray(params);
-        ActionResult result = null;
-        if (CommUtils.isNullObject(jsonArray)) {
-            result = new ActionResult(
-                    ActionCodeConfig.PARAMS_ERROR_CODE,
-                    ActionCodeConfig.getParamsErrorMsg(),
-                    null,
-                    null
-            );
-        } else {
-            result = new ActionResult(
-                    ActionCodeConfig.SUCCEED_CODE,
-                    ActionCodeConfig.SUCCEED_MSG,
-                    rlService.listRlDetail(jsonArray),
-                    null
-            );
-        }
+        JSONArray jsonArray = JSONArray.fromObject(params);
+        ActionResult result = new ActionResult(
+                ActionCodeConfig.SUCCEED_CODE,
+                ActionCodeConfig.SUCCEED_MSG,
+                rlService.listRlDetail(jsonArray),
+                null
+        );
+
         return result;
     }
 
-    @RequestMapping(value = "/SF/SFPJ",consumes = "application/json",method = {RequestMethod.POST})
+    @RequestMapping(value = "/SF/SFPJ", consumes = "application/json", method = {RequestMethod.POST})
     public ActionResult addSfpj(@RequestBody String params) {
         JSONObject jsonObject = JSONObject.fromObject(params);
         return new ActionResult(
@@ -178,11 +167,11 @@ public class DatabaseController {
     }
 
     @RequestMapping(value = "/SF/SFPJ/Avg")
-    public ActionResult listSfAvg(@RequestParam(value = "pjflag",defaultValue = "0") int pjflag,@RequestParam(value = "sfdm",defaultValue = "") String sfdm){
-        return  new ActionResult(
+    public ActionResult listSfAvg(@RequestParam(value = "pjflag", defaultValue = "0") int pjflag, @RequestParam(value = "sfdm", defaultValue = "") String sfdm) {
+        return new ActionResult(
                 ActionCodeConfig.SUCCEED_CODE,
                 ActionCodeConfig.SUCCEED_MSG,
-                sfpjService.getSfAvg(pjflag,sfdm),
+                sfpjService.getSfAvg(pjflag, sfdm),
                 null
         );
     }

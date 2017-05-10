@@ -1,25 +1,13 @@
 spring:
   application:
-    name: faceapi
+    name: faceapidemo
   datasource:
     url: jdbc:oracle:thin:@172.20.22.10:1521:orcl
     username: bsits2
     password: bsits2
     driver-class-name: oracle.jdbc.OracleDriver
-  output:
-    ansi:
-      enabled: always
-  redis:
-    database: 0
-    host: 172.20.22.11
-    port: 6379
-  rabbitmq:
-    host: 172.20.25.45
-    port: 5672
-    username: sailing
-    password: sailing
 server:
-  port: 8191
+  port: 8292
 mybatis:
   type-aliases-package: com.sailing.facetec.entiry
 logging:
@@ -29,31 +17,10 @@ logging:
 eureka:
   client:
     service-url:
-      defaultZone: http://172.20.22.11:8181/eureka/
-    healthcheck:
-      enabled: true
+      defaultZone: http://localhost:8181/eureka/
   instance:
     lease-expiration-duration-in-seconds: 15
     lease-renewal-interval-in-seconds: 5
-management:
-  security:
-    enabled: false
-info:
-  com: sailing
-  product: faceapi
-
-tasks:
-  capture: 0/1 * * * * ?
-  alter: 0/1 * * * * ?
-redis-keys:
-  capture-lock: capture-lock
-  alert-lock: alert-lock
-  lock-val: ok
-  capture-data: capture-data
-  alert-data: alert-data
-  capture-cache: 500
-  alert-cache: 500
-  alert-limit: 0
 actioncodes:
   SUCCEED_CODE: 1000
   SUCCEED_MSG: 请求成功
@@ -65,14 +32,15 @@ actioncodes:
 supplys:
     supply-map:
         yt_rlk_rlkid: rlk.rlkid1
-        yt_rl_rlkid: rl.rlkid1
-        yt_rl_rlid: rl.rlid1
+        yt_rl_rlkid: rl.rlkid
+        yt_rl_rlid: rl.rlid
         hr_rlk_rlkid: rlk.rlkid2
-        hr_rl_rlkid: rl.rlkid2
-        hr_rl_rlid: rl.rlid2
+        hr_rl_rlkid: rl.rlkid
+        hr_rl_rlid: rl.rlid
 upload:
   image-folder: D:\
 ytface:
   api-url: http://172.20.25.226:11180
-
+rlapi:
+  api-url: http://localhost:8183
 

@@ -3,12 +3,15 @@ server:
 spring:
   application:
     name: demoapi
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8000/eureka/
-  instance:
-    # 心跳包周期 默认 30s
-    lease-renewal-interval-in-seconds: 5
-    # 距离上一次心跳 15s 后服务下线 默认 90s
-    lease-expiration-duration-in-seconds: 15
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8000/eureka/
+#  instance:
+#    # 心跳包周期 默认 30s
+#    lease-renewal-interval-in-seconds: 5
+#    # 距离上一次心跳 15s 后服务下线 默认 90s
+#    lease-expiration-duration-in-seconds: 15
+management:
+  security:
+    enabled: false

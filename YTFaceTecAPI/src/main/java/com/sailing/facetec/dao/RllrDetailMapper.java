@@ -15,6 +15,8 @@ public interface RllrDetailMapper {
 
     String countSql = "select  count(*) from B_TZ_RLLR a where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') and (a.YLZD3='0' or (a.YLZD4='0' and a.SFMZ=0)) ${customerFilter}";
 
+    String selRllrDetailByRLID = "select * from B_TZ_RLLR where RLID in (${rlids})";
+
     @Select(baseRllrDetailSelSql)
     List<RllrDetailEntity> listRllrDetails(
             @Param("beginTime")String beginTime,
@@ -27,4 +29,7 @@ public interface RllrDetailMapper {
 
     @Select(countSql)
     int countRllrDetails(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("customerFilter") String customerFilter);
+
+    @Select(selRllrDetailByRLID)
+    List<RllrDetailEntity> listRllrDetailsByRLIDs(@Param("rlids")String rlids);
 }

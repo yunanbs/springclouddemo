@@ -8,12 +8,17 @@ spring:
     config:
       server:
         native:
-          search-locations: file:D:/workpath/src/springclouddemo-dev/ConfigServer/yamls/
+          search-locations: file:D:/yunan/tools/Services/ConfigServer/yamls/
+  rabbitmq:
+    host: 172.20.25.45
+    port: 5672
+    username: sailing
+    password: sailing
 # 设置服务端口 8001
 server:
-  port: 8001
+  port: 8182
 # 设置 EurekaServer 地址 注册服务
 eureka:
   client:
     service-url:
-      defaultZone: http://172.20.25.142:8000/eureka/
+      defaultZone: http://172.20.22.11:8181/eureka/

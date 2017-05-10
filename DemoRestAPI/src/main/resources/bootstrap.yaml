@@ -1,13 +1,13 @@
-spring:
-  application:
-    name: demoapi
-  cloud:
-    config:
-      profile: dev
-      discovery:
-        enabled: true
-        service-id: configserver
-eureka:
-  client:
-    service-url:
-      defaultZone: http://172.20.25.142:8000/eureka/
+#spring:
+#  application:
+#    name: demoapi
+#  cloud:
+#    config:
+#      profile: demo
+#      discovery:
+#        enabled: true
+#        service-id: configserver
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://172.20.25.142:8000/eureka/

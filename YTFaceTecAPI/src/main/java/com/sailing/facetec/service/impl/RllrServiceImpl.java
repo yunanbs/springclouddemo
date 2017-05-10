@@ -80,7 +80,7 @@ public class RllrServiceImpl implements RllrService {
         JSONArray dataArray = result.getJSONArray("dataContent");
         if(!CommUtils.isNullObject(lrkids)){
             // result.getDataContent().removeIf(s->!lrkids.contains(s.getLRKID()));
-            dataArray.removeIf(s->!lrkids.contains(((JSONObject)s).getString("LRKID")));
+            //dataArray.removeIf(s->!lrkids.contains(((JSONObject)s).getString("LRKID")));
             // result.remove("dataContent");
             // result.put("dataContent",dataArray);
         }
