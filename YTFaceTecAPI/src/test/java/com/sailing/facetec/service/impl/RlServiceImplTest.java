@@ -1,9 +1,9 @@
 package com.sailing.facetec.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.service.RlService;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

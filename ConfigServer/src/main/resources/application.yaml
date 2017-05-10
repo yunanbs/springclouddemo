@@ -8,9 +8,9 @@ spring:
     config:
       server:
         native:
-          search-locations: file:D:/yunan/tools/Services/ConfigServer/yamls/
+          search-locations: file:D:/workpath/svn/springclouddemo-dev/ConfigServer/yamls/
   rabbitmq:
-    host: 172.20.25.45
+    host: localhost
     port: 5672
     username: sailing
     password: sailing
@@ -21,4 +21,4 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://172.20.22.11:8181/eureka/
+      defaultZone: http://localhost:8181/eureka/

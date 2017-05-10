@@ -1,6 +1,6 @@
 # 设定服务端口 8000
 server:
-  port: 8000
+  port: 8181
 eureka:
   # EurekaClient 配置
   client:

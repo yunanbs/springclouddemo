@@ -1,5 +1,7 @@
 package com.sailing.facetec.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.comm.PageEntity;
 import com.sailing.facetec.dao.RllrDetailMapper;
@@ -7,8 +9,6 @@ import com.sailing.facetec.entity.RllrDetailEntity;
 import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RllrService;
 import com.sailing.facetec.util.CommUtils;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -76,13 +76,12 @@ public class RllrServiceImpl implements RllrService {
 
     @Override
     public String listRllrDetailReal(String lrkids) {
-        JSONObject result = JSONObject.fromObject(redisService.getVal(captureData));
+        JSONObject result = JSONObject.parseObject(redisService.getVal(captureData));
         JSONArray dataArray = result.getJSONArray("dataContent");
         if(!CommUtils.isNullObject(lrkids)){
-            // result.getDataContent().removeIf(s->!lrkids.contains(s.getLRKID()));
-            //dataArray.removeIf(s->!lrkids.contains(((JSONObject)s).getString("LRKID")));
-            // result.remove("dataContent");
-            // result.put("dataContent",dataArray);
+            dataArray.removeIf(s->!lrkids.contains(((JSONObject)s).getString("LRKID")));
+            result.remove("dataContent");
+            result.put("dataContent",dataArray);
         }
         return result.toString();
     }

@@ -1,15 +1,14 @@
 package com.sailing.facetec.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.service.FileService;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by yunan on 2017/5/9.

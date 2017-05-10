@@ -1,8 +1,8 @@
 package com.sailing.facetec.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.sailing.facetec.service.FileService;
 import com.sailing.facetec.util.FileUtils;
-import net.sf.json.JSONArray;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class FileServiceImpl implements FileService {
 
     @Override
-    public String createExcel(JSONArray sourceData, String fileFullName,String sheetName,boolean autoHeader) throws IOException {
+    public String createExcel(JSONArray sourceData, String fileFullName, String sheetName, boolean autoHeader) throws IOException {
         return FileUtils.arrayToExcel(sourceData,fileFullName,sheetName,autoHeader);
     }
 

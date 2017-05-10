@@ -1,13 +1,13 @@
 package com.sailing.facetec.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.entity.RlgjDetailEntity;
 import com.sailing.facetec.entity.SxtDetailEntity;
 import com.sailing.facetec.service.*;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -73,7 +73,7 @@ public class DatabaseController {
     @RequestMapping("/LR/Captures/Real")
     public ActionResult listRealCaptureDetails(@RequestParam(name = "lrkids", defaultValue = "") String lrkids) {
         String result = rllrService.listRllrDetailReal(lrkids);
-        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, JSONObject.fromObject(result), null);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, JSONObject.parseObject(result), null);
     }
 
     @RequestMapping("/LR/Alerts")
@@ -101,7 +101,7 @@ public class DatabaseController {
     @RequestMapping("/LR/Alerts/Real")
     public ActionResult listRealAlertDetails() {
         String jsonStr = redisService.getVal(alertData);
-        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, JSONObject.fromObject(jsonStr), null);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, JSONObject.parseObject(jsonStr), null);
     }
 
     @RequestMapping("/SXT")
@@ -119,7 +119,7 @@ public class DatabaseController {
 
     @RequestMapping(value = "/LR/Rlgjbz", method = RequestMethod.POST, consumes = {"application/json"})
     public ActionResult updateRlgjBZ(@RequestBody String jsonObject) {
-        JSONObject params = JSONObject.fromObject(jsonObject);
+        JSONObject params = JSONObject.parseObject(jsonObject);
         return new ActionResult(
                 ActionCodeConfig.SUCCEED_CODE,
                 ActionCodeConfig.SUCCEED_MSG,
@@ -139,7 +139,7 @@ public class DatabaseController {
 
     @RequestMapping(value = "/RL", consumes = "application/json", method = {RequestMethod.POST})
     public ActionResult listRL(@RequestBody String params) {
-        JSONArray jsonArray = JSONArray.fromObject(params);
+        JSONArray jsonArray = JSONArray.parseArray(params);
         ActionResult result = new ActionResult(
                 ActionCodeConfig.SUCCEED_CODE,
                 ActionCodeConfig.SUCCEED_MSG,
@@ -152,12 +152,12 @@ public class DatabaseController {
 
     @RequestMapping(value = "/SF/SFPJ", consumes = "application/json", method = {RequestMethod.POST})
     public ActionResult addSfpj(@RequestBody String params) {
-        JSONObject jsonObject = JSONObject.fromObject(params);
+        JSONObject jsonObject = JSONObject.parseObject(params);
         return new ActionResult(
                 ActionCodeConfig.SUCCEED_CODE,
                 ActionCodeConfig.SUCCEED_MSG,
                 sfpjService.insertSfpj(
-                        jsonObject.getInt("pjflag"),
+                        jsonObject.getInteger("pjflag"),
                         jsonObject.getString("cxdm"),
                         jsonObject.getString("sfdm"),
                         jsonObject.getDouble("fz"),
