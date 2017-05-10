@@ -74,5 +74,9 @@ upload:
   image-folder: D:\
 ytface:
   api-url: http://172.20.25.226:11180
+endpoints:
+  shutdown:
+    enabled: true
+    sensitive: false
 
 

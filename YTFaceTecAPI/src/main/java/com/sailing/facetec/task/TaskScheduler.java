@@ -1,6 +1,6 @@
 package com.sailing.facetec.task;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RlgjService;
@@ -47,8 +47,8 @@ public class TaskScheduler {
     @Scheduled(cron = "${tasks.capture}")
     public void captureScheduler() {
         if(redisService.setValNX(captureLock, lockVal,1, TimeUnit.SECONDS)){
-            DataEntity result = rllrService.listRllrDetail("2017-01-01 00:00:00", "", "", 1, captureCache, "", "", "", "", "", "");
-            redisService.setVal(captureData, JSONObject.toJSONString(result),1,TimeUnit.DAYS);
+            DataEntity result = rllrService.listRllrDetail("", "", "", 1, captureCache, "", "", "", "", "", "");
+            redisService.setVal(captureData, JSON.toJSONString(result),1,TimeUnit.DAYS);
             redisService.delKey(captureLock);
         }
     }
@@ -56,8 +56,8 @@ public class TaskScheduler {
     @Scheduled(cron = "${tasks.alert}")
     public void alterScheduler() {
         if(redisService.setValNX(alertLock, lockVal,1, TimeUnit.SECONDS)){
-            DataEntity result = rlgjService.listRlgjDetail("2017-01-01 00:00:00", "", "", 1, alertCache,alertLimit, "", "", "", "", "","","","");
-            redisService.setVal(alertData, JSONObject.toJSONString(result),1,TimeUnit.DAYS);
+            DataEntity result = rlgjService.listRlgjDetail("", "", "", 1, alertCache,alertLimit, "", "", "", "", "","","","");
+            redisService.setVal(alertData, JSON.toJSONString(result),1,TimeUnit.DAYS);
             redisService.delKey(alertLock);
         }
     }

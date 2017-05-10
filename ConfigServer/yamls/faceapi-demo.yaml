@@ -74,4 +74,10 @@ management:
 info:
   com: sailing
   product: faceapi
+endpoints:
+  shutdown:
+    enabled: true
+    sensitive: false
+testkey: 2
+
 

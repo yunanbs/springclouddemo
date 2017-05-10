@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * Created by yunan on 2017/4/26.
  */
 @SpringCloudApplication
-@EnableScheduling
 @MapperScan("com.sailing.facetec.dao")
 @EnableTransactionManagement
 public class app {
     public static void main(String... args) {
         SpringApplication.run(app.class, args);
         TypeUtils.compatibleWithJavaBean = true;
+        TypeUtils.compatibleWithFieldName = true;
     }
 }
