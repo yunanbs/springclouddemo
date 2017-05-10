@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: apigateway
+server:
+  port: 8183
+zuul:
+  routes:
+    - faceapi:
+        path: /faceapi/**
+        serviceId: faceapi
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8181/eureka/

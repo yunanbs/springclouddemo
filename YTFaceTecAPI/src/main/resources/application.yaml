@@ -11,10 +11,10 @@ spring:
       enabled: always
   redis:
     database: 0
-    host: 172.20.22.11
+    host: localhost
     port: 6379
   rabbitmq:
-    host: 172.20.25.45
+    host: localhost
     port: 5672
     username: sailing
     password: sailing
@@ -29,7 +29,7 @@ logging:
 eureka:
   client:
     service-url:
-      defaultZone: http://172.20.22.11:8181/eureka/
+      defaultZone: http://localhost:8181/eureka/
     healthcheck:
       enabled: true
   instance:
@@ -51,8 +51,8 @@ redis-keys:
   lock-val: ok
   capture-data: capture-data
   alert-data: alert-data
-  capture-cache: 500
-  alert-cache: 500
+  capture-cache: 50
+  alert-cache: 50
   alert-limit: 0
 actioncodes:
   SUCCEED_CODE: 1000
@@ -67,13 +67,15 @@ supplys:
         yt_rlk_rlkid: rlk.rlkid1
         yt_rl_rlkid: rl.rlkid1
         yt_rl_rlid: rl.rlid1
-        hr_rlk_rlkid: rlk.rlkid2
-        hr_rl_rlkid: rl.rlkid2
-        hr_rl_rlid: rl.rlid2
+#        hr_rlk_rlkid: rlk.rlkid2
+#        hr_rl_rlkid: rl.rlkid2
+#        hr_rl_rlid: rl.rlid2
 upload:
   image-folder: D:\
 ytface:
   api-url: http://172.20.25.226:11180
+rlapi:
+  api-url: http://localhost:8183
 endpoints:
   shutdown:
     enabled: true

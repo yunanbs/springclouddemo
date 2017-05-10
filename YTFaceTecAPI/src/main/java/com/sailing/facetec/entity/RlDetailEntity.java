@@ -63,6 +63,10 @@ public class RlDetailEntity implements Serializable{
     private String RLID8;
     private String RLID9;
     private String RLID10;
+    private String XZDTDZ;
+    private String XZRLDZ;
+    private String XZGXDTDZ;
+    private String XZGXRLDZ;
     private String RLKMC;
 
 }
