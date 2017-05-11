@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @CrossOrigin(origins = "*",allowedHeaders = {"*"},methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.OPTIONS})
+@RefreshScope
 public class DemoController {
 
     private final Logger logger = LoggerFactory.getLogger(DemoController.class);
@@ -30,6 +32,9 @@ public class DemoController {
     @Value("${server.port}")
     private String port;
 
+    @Value("${testkey}")
+    private String testkey;
+
     @RequestMapping("/helloworld")
     public String helloWorld(){
         return "hello world";
@@ -42,5 +47,10 @@ public class DemoController {
         int x = tmp.getInt("x");
         int y = tmp.getInt("y");
         return  x+y;
+    }
+
+    @RequestMapping("/testkey")
+    public String test(){
+        return  testkey;
     }
 }

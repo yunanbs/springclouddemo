@@ -8,6 +8,9 @@ zuul:
     - faceapi:
         path: /faceapi/**
         serviceId: faceapi
+    - demoapi:
+        path: /demoapi/**
+        serviceId: demoapi
 eureka:
   client:
     service-url:
