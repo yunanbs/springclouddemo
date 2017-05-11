@@ -9,7 +9,9 @@ public class FastJsonUtils {
     public static NameFilter nameFilter= new NameFilter() {
         @Override
         public String process(Object o, String s, Object o1) {
-            return s.toLowerCase();
+            String firstChar= s.substring(0,1);
+            String result=firstChar.equals(firstChar.toUpperCase())?s.toLowerCase():s;
+            return result;
         }
     };
 }

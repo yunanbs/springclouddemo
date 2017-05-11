@@ -12,4 +12,6 @@ public interface FileService  {
     String createExcel(JSONArray sourceData, String fileFullName, String sheetName, boolean autoHeader) throws IOException;
 
     String createZip(String dirName,String zipFileFullName) throws IOException;
+
+    String expDataWithPic(JSONArray sourceData) throws IOException;
 }

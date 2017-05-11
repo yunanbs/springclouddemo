@@ -17,6 +17,7 @@ public class RllrDetailEntity implements Serializable {
 
     private Long RN;
     private Long XH;
+    private String RLID;
     private String SXTID;
     private String LRKID;
     private String RKSJ;

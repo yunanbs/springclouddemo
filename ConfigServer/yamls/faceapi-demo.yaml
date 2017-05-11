@@ -78,5 +78,8 @@ endpoints:
   shutdown:
     enabled: true
     sensitive: false
+exp:
+  root-dir: D:\Services\exproot
+  web-path: http://www.sailing.com/
 
 

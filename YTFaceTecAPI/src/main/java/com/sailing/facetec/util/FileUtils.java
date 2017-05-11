@@ -2,11 +2,11 @@ package com.sailing.facetec.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.BorderStyle;
 
 import java.io.*;
-import java.rmi.ConnectIOException;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -26,6 +26,7 @@ public class FileUtils {
      * @return
      * @throws IOException
      */
+    @SuppressWarnings(value = "all")
     public static String arrayToExcel(JSONArray jsonArray, String excelFullName, String sheetName, boolean autoHeader) throws IOException {
         String result = "";
         // 创建工作簿
@@ -57,8 +58,24 @@ public class FileUtils {
             hssfRow = hssfSheet.createRow(rowIndex);
             for (int i = 0; i < headers.length; i++) {
                 HSSFCell hssfCell = hssfRow.createCell(i);
-                hssfCell.setCellValue(jsonObject.getString(headers[i]));
                 hssfCell.setCellStyle(0 == rowIndex ? hssfHeaderCellStyle : hssfCellStyle);
+                String header = headers[i];
+                if (header.startsWith("link-")) {
+                    try {
+                        JSONObject linkObject = jsonObject.getJSONObject(header);
+
+                        HSSFCreationHelper hssfCreationHelper = hssfWorkbook.getCreationHelper();
+                        HSSFHyperlink hssfHyperlink =  hssfCreationHelper.createHyperlink(HyperlinkType.URL);
+                        hssfHyperlink.setAddress(linkObject.getString("link-value"));
+
+                        hssfCell.setCellValue(linkObject.getString("link-text"));
+                        hssfCell.setHyperlink(hssfHyperlink);
+                    } catch (Exception e) {
+                        hssfCell.setCellValue(jsonObject.getString(header));
+                    }
+                } else {
+                    hssfCell.setCellValue(jsonObject.getString(header));
+                }
             }
             rowIndex++;
         }
@@ -95,7 +112,7 @@ public class FileUtils {
     public static String zipFiles(String fileName, String zipFileFullName) throws IOException {
         String result = "";
         byte[] buff = new byte[1024];
-        InputStream inputStream=null;
+        InputStream inputStream = null;
         File sourceFile = new File(fileName);
         File zipFile = new File(zipFileFullName);
         ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipFile));
@@ -107,8 +124,7 @@ public class FileUtils {
                 }
                 zipOutputStream.putNextEntry(new ZipEntry(String.format("%s/%s", sourceFile.getName(), file.getName())));
                 inputStream = new FileInputStream(file);
-                while (inputStream.read(buff)>0)
-                {
+                while (inputStream.read(buff) > 0) {
                     zipOutputStream.write(buff);
                 }
                 inputStream.close();

@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class FileServiceImplTest {
 
 
+
     @Autowired
     private FileService fileService;
 
@@ -47,6 +48,28 @@ public class FileServiceImplTest {
     @Test
     public void createZip() throws Exception {
         System.out.println(fileService.createZip("D:\\test","d:\\test\\1.zip"));
+    }
+
+    @Test
+    public void expDataWithPic() throws Exception {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id","序号");
+        jsonObject.put("datacol1","测试属性1");
+        jsonObject.put("datacol2","测试属性2");
+        jsonObject.put("link-L","大图地址");
+        jsonObject.put("link-X","小图地址");
+        jsonArray.add(jsonObject);
+
+        jsonObject = new JSONObject();
+        jsonObject.put("id","1");
+        jsonObject.put("datacol1","11");
+        jsonObject.put("datacol2","22");
+        jsonObject.put("link-L","\\\\172.20.22.10\\tomcat5.0.28\\webapps\\main\\images\\ytlr\\2017051016\\952932ytlrdt.jpg");
+        jsonObject.put("link-X","\\\\172.20.22.10\\tomcat5.0.28\\webapps\\main\\images\\ytlr\\2017051016\\952932ytlrxt.jpg");
+        jsonArray.add(jsonObject);
+
+        fileService.expDataWithPic(jsonArray);
     }
 
 }
