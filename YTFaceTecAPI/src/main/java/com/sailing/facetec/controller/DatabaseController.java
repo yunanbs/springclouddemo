@@ -1,7 +1,9 @@
 package com.sailing.facetec.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 /**
  * Created by yunan on 2017/4/26.
@@ -42,6 +46,9 @@ public class DatabaseController {
 
     @Autowired
     private SfpjService sfpjService;
+
+    @Autowired
+    private FileService fileService;
 
     @Value("${redis-keys.capture-data}")
     private String captureData;
@@ -168,12 +175,23 @@ public class DatabaseController {
                 null);
     }
 
-    @RequestMapping(value = "/SF/SFPJ/Avg")
+    @RequestMapping("/SF/SFPJ/Avg")
     public ActionResult listSfAvg(@RequestParam(value = "pjflag", defaultValue = "0") int pjflag, @RequestParam(value = "sfdm", defaultValue = "") String sfdm) {
         return new ActionResult(
                 ActionCodeConfig.SUCCEED_CODE,
                 ActionCodeConfig.SUCCEED_MSG,
                 sfpjService.getSfAvg(pjflag, sfdm),
+                null
+        );
+    }
+
+    @RequestMapping(value = "/comm/exp",consumes = "application/json",method = RequestMethod.POST)
+    public ActionResult expByArray(@RequestBody String params) throws IOException {
+        JSONArray jsonArray = (JSONArray) JSON.parse(params, Feature.OrderedField);
+        return new ActionResult(
+                ActionCodeConfig.SUCCEED_CODE,
+                ActionCodeConfig.SUCCEED_MSG,
+                fileService.expDataWithPic(jsonArray),
                 null
         );
     }

@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -34,9 +36,11 @@ public class FileUtils {
         // 创建sheet
         HSSFSheet hssfSheet = hssfWorkbook.createSheet(CommUtils.isNullObject(sheetName) ? "sheet1" : sheetName);
         // 设置普通单元格格式 边框
-        HSSFCellStyle hssfCellStyle = setCellStyle(hssfWorkbook, BorderStyle.THIN, false);
+        HSSFCellStyle hssfCellStyle = setCellStyle(hssfWorkbook, BorderStyle.THIN, false, false);
         // 设置表头格式 边框 字体加粗
-        HSSFCellStyle hssfHeaderCellStyle = setCellStyle(hssfWorkbook, BorderStyle.THIN, true);
+        HSSFCellStyle hssfHeaderCellStyle = setCellStyle(hssfWorkbook, BorderStyle.THIN, true, false);
+        // 设置链接样式 蓝色 下划线
+        HSSFCellStyle hssfLinkCellStyle = setCellStyle(hssfWorkbook, BorderStyle.THIN, false, true);
 
         int rowIndex = 0;
         HSSFRow hssfRow = null;
@@ -58,23 +62,33 @@ public class FileUtils {
             hssfRow = hssfSheet.createRow(rowIndex);
             for (int i = 0; i < headers.length; i++) {
                 HSSFCell hssfCell = hssfRow.createCell(i);
-                hssfCell.setCellStyle(0 == rowIndex ? hssfHeaderCellStyle : hssfCellStyle);
+
+                if (0 == rowIndex) {
+                    hssfSheet.setColumnWidth(i, 5000);
+                }
                 String header = headers[i];
                 if (header.startsWith("link-")) {
-                    try {
-                        JSONObject linkObject = jsonObject.getJSONObject(header);
 
-                        HSSFCreationHelper hssfCreationHelper = hssfWorkbook.getCreationHelper();
-                        HSSFHyperlink hssfHyperlink =  hssfCreationHelper.createHyperlink(HyperlinkType.URL);
-                        hssfHyperlink.setAddress(linkObject.getString("link-value"));
-
-                        hssfCell.setCellValue(linkObject.getString("link-text"));
-                        hssfCell.setHyperlink(hssfHyperlink);
-                    } catch (Exception e) {
+                    if(0==rowIndex){
                         hssfCell.setCellValue(jsonObject.getString(header));
                     }
+                    else{
+                        JSONObject linkJson = jsonObject.getJSONObject(header);
+                        String text = linkJson.getString("text");
+                        String val = linkJson.getString("val");
+                        hssfCell.setCellValue(text);
+
+                        HSSFCreationHelper hssfCreationHelper = hssfWorkbook.getCreationHelper();
+                        HSSFHyperlink hssfHyperlink = hssfCreationHelper.createHyperlink(HyperlinkType.FILE);
+                        hssfHyperlink.setAddress(val);
+                        hssfCell.setHyperlink(hssfHyperlink);
+                    }
+
+
+                    hssfCell.setCellStyle(0 == rowIndex ? hssfHeaderCellStyle : hssfLinkCellStyle);
                 } else {
                     hssfCell.setCellValue(jsonObject.getString(header));
+                    hssfCell.setCellStyle(0 == rowIndex ? hssfHeaderCellStyle : hssfCellStyle);
                 }
             }
             rowIndex++;
@@ -97,7 +111,7 @@ public class FileUtils {
      * @param fontBold     字体
      * @return 单元格样式
      */
-    private static HSSFCellStyle setCellStyle(HSSFWorkbook hssfWorkbook, BorderStyle borderStyle, boolean fontBold) {
+    private static HSSFCellStyle setCellStyle(HSSFWorkbook hssfWorkbook, BorderStyle borderStyle, boolean fontBold, boolean link) {
         HSSFCellStyle hssfCellStyle = hssfWorkbook.createCellStyle();
         hssfCellStyle.setBorderTop(borderStyle);
         hssfCellStyle.setBorderBottom(borderStyle);
@@ -106,6 +120,10 @@ public class FileUtils {
         HSSFFont hssfFont = hssfWorkbook.createFont();
         hssfFont.setBold(fontBold);
         hssfCellStyle.setFont(hssfFont);
+        if (link) {
+            hssfFont.setColor(HSSFColor.HSSFColorPredefined.BLUE.getIndex());
+            hssfFont.setUnderline((byte) 1);
+        }
         return hssfCellStyle;
     }
 
@@ -131,6 +149,7 @@ public class FileUtils {
             }
         }
         zipOutputStream.close();
+        result = zipFile.getPath();
         return result;
     }
 }

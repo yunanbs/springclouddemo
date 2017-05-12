@@ -40,35 +40,54 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String expDataWithPic(JSONArray sourceData) throws IOException {
-        String result = "";
+        // 获取带有链接的字段
         JSONObject linkHeads = linkColumns((JSONObject) sourceData.get(0));
-        String filePath = createFilePath(UUID.randomUUID().toString());
+
+        String localFilePath = String.format("%s%s\\查询结果",rootDir,UUID.randomUUID().toString());
+        // 创建临时目录
+        String filePath = createFilePath(localFilePath);
+
         sourceData.forEach(s -> {
+            // 读取记录
             JSONObject subData = (JSONObject) s;
             linkHeads.keySet().forEach(linkHead -> {
+                // 判断 如果是表头数据 则不处理
                 if (!subData.getString(linkHead).equals(linkHeads.getString(linkHead))) {
+
+                    // 获取链接字段中的原始文件地址
                     String sourceFilename = subData.getString(linkHead);
+
+                    // 拼接目标文件的文件名
                     StringBuilder desFileName = new StringBuilder();
-                    desFileName.append(String.format("%s-%s.%s", subData.getString("id"), linkHeads.getString(linkHead), sourceFilename.substring(sourceFilename.lastIndexOf(".") + 1)));
-                    JSONObject tmp = new JSONObject();
-                    tmp.put("link-text",desFileName.toString());
-                    desFileName.insert(0, filePath + "\\");
-                    tmp.put("link-value",desFileName.toString());
+                    // desFileName.append(String.format("%s-%s.%s", subData.getString("id"), linkHeads.getString(linkHead), sourceFilename.substring(sourceFilename.lastIndexOf(".") + 1)));
+                    desFileName.append(String.format("%s-%s.%s", subData.getString("id"), linkHead, sourceFilename.substring(sourceFilename.lastIndexOf(".") + 1)));
+
+                    JSONObject linkJson = new JSONObject();
+                    linkJson.put("text",desFileName.toString().replace(linkHead,linkHeads.getString(linkHead)));
+                    linkJson.put("val",desFileName.toString());
+
+                    // 更新原始数据中的数据 将链接地址字段内容变为json
                     subData.remove(linkHead);
-                    subData.put(linkHead, tmp);
+                    subData.put(linkHead, linkJson);
+
+                    desFileName.insert(0, filePath + "\\");
 
                     try {
+                        // 复制文件
                         copyFile(sourceFilename, desFileName.toString());
                     } catch (IOException e) {
+                        // 文件复制失败进行记录
                         logger.error(e.getMessage());
                     }
                 }
             });
         });
 
+        // 创建Excel
         createExcel(sourceData, String.format("%s\\%s-查询结果.xls", filePath,CommUtils.dateToStr(new Date(),"yyyyMMddHHmmss")), "查询结果", false);
 
-        return filePath;
+        String zipLocalPath = FileUtils.zipFiles(filePath,String.format("%s\\查询结果.zip",filePath));
+        return zipLocalPath.replace(rootDir,webDir).replace("\\","/");
     }
 
     /**
@@ -91,12 +110,12 @@ public class FileServiceImpl implements FileService {
     /**
      * 创建随机文件夹
      *
-     * @param uuid
+     * @param filePath
      * @return
      */
-    private String createFilePath(String uuid) {
+    private String createFilePath(String filePath) {
         String result = "";
-        File file = new File(rootDir + "\\" + uuid);
+        File file = new File(filePath);
         if (file.mkdirs()) {
             result = file.getPath();
         }
