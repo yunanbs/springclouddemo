@@ -11,6 +11,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 /**
+ * 定时任务配置项 启用线程池 支持多scheduler并发
  * Created by yunan on 2017/5/7.
  */
 @Configuration
@@ -24,6 +25,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
     @Bean(destroyMethod = "shutdown")
     public Executor taskExecutor()
     {
+        // 获取线程池
         return Executors.newScheduledThreadPool(100);
     }
 }

@@ -6,11 +6,9 @@ import com.sailing.facetec.dao.RlgjDetailMapper;
 import com.sailing.facetec.dao.RlgjbzMapper;
 import com.sailing.facetec.entity.RlgjDetailEntity;
 import com.sailing.facetec.entity.RlgjbzEntity;
-import com.sailing.facetec.entity.RllrDetailEntity;
 import com.sailing.facetec.service.RlgjService;
 import com.sailing.facetec.util.CommUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -29,7 +27,7 @@ public class RlgjServiceImpl implements RlgjService {
     private RlgjbzMapper rlgjbzMapper;
 
     @Override
-    public DataEntity<RlgjDetailEntity> listRlgjDetail(String beginTime, String endTime, String orderBy, int page, int size, Double XSD, String BZ,String RLID,String lrkids,String sex,String age,String glass,String fringe,String uygur) {
+    public DataEntity<RlgjDetailEntity> listRlgjDetail(String beginTime, String endTime, String orderBy, int page, int size, Double xsd, String bz, String rlid, String lrkids, String sex, String age, String glass, String fringe, String uygur) {
         DataEntity<RlgjDetailEntity> result = new DataEntity<>();
 
         // 设置检索开始时间
@@ -43,11 +41,11 @@ public class RlgjServiceImpl implements RlgjService {
         // 创建自定义过滤条件
         StringBuilder customerFilterBuilder = new StringBuilder();
         // 添加阀值条件
-        customerFilterBuilder.append(CommUtils.isNullObject(XSD)?"":String.format(" and a.XSD >= %s ", XSD));
+        customerFilterBuilder.append(CommUtils.isNullObject(xsd)?"":String.format(" and a.xsd >= %s ", xsd));
         // 添加标注条件
-        customerFilterBuilder.append(CommUtils.isNullObject(BZ)?"":String.format(" and d.BZSFXT in (%s)", BZ));
+        customerFilterBuilder.append(CommUtils.isNullObject(bz)?"":String.format(" and d.BZSFXT in (%s)", bz));
         // 添加路人人脸编号条件
-        customerFilterBuilder.append(CommUtils.isNullObject(RLID)?"":String.format(" and a.LRKRLID = '%s'", RLID));
+        customerFilterBuilder.append(CommUtils.isNullObject(rlid)?"":String.format(" and a.LRKRLID = '%s'", rlid));
         // 添加摄像头过滤
         customerFilterBuilder.append(CommUtils.isNullObject(lrkids)?"":String.format(" and a.LRKID in (%s) ",lrkids));
         // 添加性别过滤

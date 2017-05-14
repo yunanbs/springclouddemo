@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
+ * 摄像头详细数据
  * Created by yunan on 2017/4/28.
  */
 @Data

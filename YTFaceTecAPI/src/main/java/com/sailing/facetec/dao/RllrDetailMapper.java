@@ -15,8 +15,18 @@ public interface RllrDetailMapper {
 
     String countSql = "select  count(*) from B_TZ_RLLR a where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') and (a.YLZD3='0' or (a.YLZD4='0' and a.SFMZ=0)) ${customerFilter}";
 
-    String selRllrDetailByRLID = "select * from B_TZ_RLLR where RLID in (${rlids})";
+    String selRllrDetailByRLID = "select a.*,b.SXTMC from B_TZ_RLLR a left join B_TZ_RLSXT b on a.SXTID = b.SXTID where a.RLID in (${rlids})";
 
+    /**
+     * 获取人脸抓拍数据
+     * @param beginTime 查询开始时间
+     * @param endTime 查询截止时间
+     * @param orderColumn 排序字段
+     * @param min 分页开始
+     * @param max 分页截止
+     * @param customerFilter 自定义条件
+     * @return
+     */
     @Select(baseRllrDetailSelSql)
     List<RllrDetailEntity> listRllrDetails(
             @Param("beginTime")String beginTime,
@@ -27,9 +37,21 @@ public interface RllrDetailMapper {
             @Param("customerFilter") String customerFilter
     );
 
+    /**
+     * 获取查询总记录数
+     * @param beginTime 查询开始时间
+     * @param endTime 查询截止时间
+     * @param customerFilter 自定义条件
+     * @return
+     */
     @Select(countSql)
     int countRllrDetails(@Param("beginTime")String beginTime, @Param("endTime")String endTime, @Param("customerFilter") String customerFilter);
 
+    /**
+     * 查询符合指定人脸id的人脸记录
+     * @param rlids
+     * @return
+     */
     @Select(selRllrDetailByRLID)
     List<RllrDetailEntity> listRllrDetailsByRLIDs(@Param("rlids")String rlids);
 }

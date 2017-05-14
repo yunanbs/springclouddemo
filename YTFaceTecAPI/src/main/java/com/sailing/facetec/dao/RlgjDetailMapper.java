@@ -14,6 +14,16 @@ public interface RlgjDetailMapper {
 
     String countSql = "select count(*) from b_tz_rlgj a left join b_tz_rlgj_bz d on a.rlkrlid = d.rlkrlid and a.lrkrlid = d.lrkrlid where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') and a.YLZD3='0' ${customerFilter}";
 
+    /**
+     * 获取报警详细信息
+     * @param beginTime 查询开始时间
+     * @param endTime 查询截止时间
+     * @param orderColumn 排序字段
+     * @param min 分页开始
+     * @param max 分页截止
+     * @param customerFilter 自定义条件
+     * @return
+     */
     @Select(baseLrgjDetailSelSql)
     List<RlgjDetailEntity> listRlgjDetails(
             @Param("beginTime") String beginTime,
@@ -25,6 +35,13 @@ public interface RlgjDetailMapper {
     );
 
 
+    /**
+     * 获取查询总记录数
+     * @param beginTime 查询开始时间
+     * @param endTime 查询截止时间
+     * @param customerFilter 自定义条件
+     * @return
+     */
     @Select(countSql)
     int countRlgjDetails(@Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("customerFilter") String customerFilter);
 

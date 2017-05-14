@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
+ * 算法均值数据
  * Created by yunan on 2017/5/8.
  */
 @Data

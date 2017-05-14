@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * 自动算法评价数据
  * Created by yunan on 2017/5/8.
  */
 @Data

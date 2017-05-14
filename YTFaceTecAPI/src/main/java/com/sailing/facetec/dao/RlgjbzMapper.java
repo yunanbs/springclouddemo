@@ -10,6 +10,11 @@ public interface RlgjbzMapper {
 
     String updateSql = "update B_TZ_RLGJ_BZ set BZSFXT = #{BZSFXT},BZBZ=#{BZBZ} WHERE XH = #{XH}";
 
+    /**
+     * 更新报警备注
+     * @param rlgjbzEntity 待更新内容
+     * @return
+     */
     @Update(updateSql)
     int updateRlgjBz(RlgjbzEntity rlgjbzEntity);
 }

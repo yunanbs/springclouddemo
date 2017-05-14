@@ -11,6 +11,10 @@ import java.util.List;
 public interface RlkMapper {
     String baseSelSql = "select * from B_TZ_RLK";
 
+    /**
+     * 获取人脸库数据库
+     * @return
+     */
     @Select(baseSelSql)
     List<RlkEntity> listAllRlk();
 

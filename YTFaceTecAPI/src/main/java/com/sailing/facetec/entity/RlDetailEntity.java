@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * 人脸详细数据
  * Created by yunan on 2017/5/4.
  */
 @Data

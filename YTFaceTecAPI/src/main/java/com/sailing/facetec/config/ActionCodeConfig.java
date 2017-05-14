@@ -1,10 +1,10 @@
 package com.sailing.facetec.config;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * 操作编码配置项
  * Created by yunan on 2017/4/27.
  */
 @Configuration
