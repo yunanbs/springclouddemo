@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.service.FileService;
 import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FileUtils;
-import org.apache.ibatis.executor.ReuseExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +37,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String createZip(String dirName, String zipFileFullName) throws IOException {
-        return FileUtils.zipFiles(dirName, zipFileFullName);
+        return FileUtils.createZipFile(dirName, zipFileFullName);
     }
 
     @Override
@@ -98,7 +97,7 @@ public class FileServiceImpl implements FileService {
         createExcel(sourceData, String.format("%s\\%s-查询结果.xls", filePath, CommUtils.dateToStr(new Date(), "yyyyMMddHHmmss")), "查询结果", false);
 
         // zip打包查询结果及相关文件
-        String zipLocalPath = FileUtils.zipFiles(filePath, String.format("%s\\查询结果.zip", filePath));
+        String zipLocalPath = FileUtils.createZipFile(filePath, String.format("%s\\查询结果.zip", filePath));
         return zipLocalPath.replace(rootDir, webDir).replace("\\", "/");
     }
 

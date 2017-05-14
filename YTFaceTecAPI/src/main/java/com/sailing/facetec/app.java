@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class app {
     public static void main(String... args) {
         SpringApplication.run(app.class, args);
+
+        // fastjson 解决属性为大写时 自动将首字母改为小写
         TypeUtils.compatibleWithJavaBean = true;
     }
 }
