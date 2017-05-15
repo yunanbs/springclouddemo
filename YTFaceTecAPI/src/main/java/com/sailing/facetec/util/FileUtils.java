@@ -2,14 +2,12 @@ package com.sailing.facetec.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import jdk.nashorn.internal.ir.ContinueNode;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
@@ -75,17 +73,6 @@ public class FileUtils {
                         hssfCell.setCellValue(jsonObject.getString(header));
                     }
                     else{
-                        // JSONObject linkJson = jsonObject.getJSONObject(header);
-                        // String text = linkJson.getString("text");
-                        // String val = linkJson.getString("val");
-                        // hssfCell.setCellValue(text);
-                        //
-                        // HSSFCreationHelper hssfCreationHelper = hssfWorkbook.getCreationHelper();
-                        // HSSFHyperlink hssfHyperlink = hssfCreationHelper.createHyperlink(HyperlinkType.FILE);
-                        // hssfHyperlink.setAddress(val);
-                        // hssfCell.setHyperlink(hssfHyperlink);
-                        //
-
                         String fileName = jsonObject.getString(header);
                         hssfCell.setCellValue(fileName);
 
@@ -136,42 +123,9 @@ public class FileUtils {
         return hssfCellStyle;
     }
 
-    // /**
-    //  * 压缩文件
-    //  * @param fileName 需要压缩的目录名
-    //  * @param zipFileFullName zip文件全路径
-    //  * @return
-    //  * @throws IOException
-    //  */
-    // public static String createZipFile(String fileName, String zipFileFullName) throws IOException {
-    //     String result;
-    //     byte[] buff = new byte[8192];
-    //     InputStream inputStream = null;
-    //     File sourceFile = new File(fileName);
-    //     File zipFile = new File(zipFileFullName);
-    //     ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipFile));
-    //
-    //     if (sourceFile.isDirectory()) {
-    //         File[] listFiles = sourceFile.listFiles();
-    //         for (File file : listFiles) {
-    //             if (file.getName().equals(zipFile.getName())) {
-    //                 continue;
-    //             }
-    //             zipOutputStream.putNextEntry(new ZipEntry(String.format("%s/%s", sourceFile.getName(), file.getName())));
-    //             inputStream = new FileInputStream(file);
-    //             while (inputStream.read(buff) > 0) {
-    //                 zipOutputStream.write(buff);
-    //             }
-    //             inputStream.close();
-    //         }
-    //     }
-    //     zipOutputStream.close();
-    //     result = zipFile.getPath();
-    //     return result;
-    // }
-
-    public static String createZipFile(String fileName,String zipFileFullname) throws IOException {
-        File zipFile = new File(zipFileFullname);
+   public static String createZipFile(String fileName) throws IOException {
+        String desZipFileName = fileName+".zip";
+        File zipFile = new File(desZipFileName);
         ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipFile));
         try {
             zipFile(fileName,new File(fileName).getParent(),zipOutputStream);

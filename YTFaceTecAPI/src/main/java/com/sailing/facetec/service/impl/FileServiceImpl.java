@@ -37,7 +37,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String createZip(String dirName, String zipFileFullName) throws IOException {
-        return FileUtils.createZipFile(dirName, zipFileFullName);
+        return FileUtils.createZipFile(dirName);
     }
 
     @Override
@@ -58,37 +58,7 @@ public class FileServiceImpl implements FileService {
             linkHeads.keySet().forEach(linkHead -> {
                 // 判断是否为表头 表头数据不用处理
                 if (!subData.getString(linkHead).equals(linkHeads.getString(linkHead))) {
-
-                    // TODO: 2017/5/14 代码重构 需要测试
                     createLinkFile(subData, linkHead, filePath);
-
-                    // // 获取链接字段中的原始文件地址
-                    // String sourceFilename = subData.getString(linkHead);
-                    //
-                    // // 拼接目标文件的文件名
-                    // StringBuilder desFileName = new StringBuilder();
-                    // desFileName.append(String.format("%s-%s.%s", subData.getString("id"), linkHead, sourceFilename.substring(sourceFilename.lastIndexOf(".") + 1)));
-                    //
-                    //
-                    // JSONObject linkJson = new JSONObject();
-                    // linkJson.put("text", desFileName.toString().replace(linkHead, linkHeads.getString(linkHead)));
-                    // linkJson.put("val", desFileName.toString());
-                    //
-                    // // 更新原始数据中的数据 将链接地址字段内容变为json
-                    // subData.remove(linkHead);
-                    // subData.put(linkHead, linkJson);
-                    //
-                    // desFileName.insert(0, filePath + "\\");
-                    //
-                    // try {
-                    //     // 复制文件
-                    //     copyFile(sourceFilename, desFileName.toString());
-                    // } catch (IOException e) {
-                    //     // 文件复制失败进行记录
-                    //     logger.error(e.getMessage());
-                    // }
-
-
                 }
             });
         });
@@ -97,7 +67,7 @@ public class FileServiceImpl implements FileService {
         createExcel(sourceData, String.format("%s\\%s-查询结果.xls", filePath, CommUtils.dateToStr(new Date(), "yyyyMMddHHmmss")), "查询结果", false);
 
         // zip打包查询结果及相关文件
-        String zipLocalPath = FileUtils.createZipFile(filePath, String.format("%s\\查询结果.zip", filePath));
+        String zipLocalPath = FileUtils.createZipFile(filePath);
         return zipLocalPath.replace(rootDir, webDir).replace("\\", "/");
     }
 
@@ -142,32 +112,7 @@ public class FileServiceImpl implements FileService {
      * @throws IOException
      */
     private boolean copyFile(String sourceFile, String desFile) throws IOException {
-        boolean result = false;
-        // File inFile = new File(sourceFile);
-        // File outFile = new File(desFile);
-        // if (!inFile.exists()) {
-        //     return result;
-        // }
-        //
-        // if (outFile.exists()) {
-        //     new File(desFile).delete();
-        // }
-        //
-        // InputStream inputStream = new FileInputStream(inFile);
-        // OutputStream outputStream = new FileOutputStream(outFile);
-        // byte[] buff = new byte[4096];
-        //
-        // try {
-        //     while (inputStream.read(buff) > 0) {
-        //         outputStream.write(buff);
-        //     }
-        //     result = true;
-        // } finally {
-        //     outputStream.close();
-        //     inputStream.close();
-        // }
-
-        // TODO: 2017/5/14 验证文件复制方法
+        boolean result;
         result = desFile.equals(Files.copy(Paths.get(sourceFile),Paths.get(desFile)));
         return result;
     }
@@ -189,14 +134,6 @@ public class FileServiceImpl implements FileService {
         // 更新原始数据中的文件名
         dataObject.remove(linkKey);
         dataObject.put(linkKey,desFileName.toString());
-
-        // JSONObject linkJson = new JSONObject();
-        // linkJson.put("text", desFileName.toString());
-        // linkJson.put("val", desFileName.toString());
-
-        // 更新原始数据中的数据 将链接地址字段内容变为json
-        // dataObject.remove(linkKey);
-        // dataObject.put(linkKey, linkJson);
 
         // 拼接目标文件的全路径
         desFileName.insert(0, fileRootPath + "\\");
