@@ -1,9 +1,12 @@
 package com.sailing.facetec.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.dao.RlsxtMapper;
 import com.sailing.facetec.entity.SxtDetailEntity;
+import com.sailing.facetec.entity.SxtEntity;
 import com.sailing.facetec.entity.SxtdwEntity;
+import com.sailing.facetec.remoteservice.YTService;
 import com.sailing.facetec.service.RlsxtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,9 @@ public class RlsxtServiceImpl implements RlsxtService {
 
     @Autowired
     private RlsxtMapper rlsxtMapper;
+
+    @Autowired
+    private YTService ytService;
 
     @Override
     public DataEntity<SxtDetailEntity> listAllXST() {
@@ -42,5 +48,23 @@ public class RlsxtServiceImpl implements RlsxtService {
 
         }
         return result;
+    }
+
+    @Override
+    public int addSXT(SxtEntity sxtEntity) {
+        JSONObject params = new JSONObject();
+
+        String result = ytService.addCamera(params.toJSONString());
+        params = JSONObject.parseObject(result);
+        sxtEntity.setSXTID(params.getString("sxtid"));
+        sxtEntity.setLRKID(params.getString("lrkid"));
+
+        params.clear();
+        result = ytService.enableCamera(params.toJSONString());
+        params = JSONObject.parseObject(result);
+        sxtEntity.setYLZD1(params.getString("state"));
+
+        rlsxtMapper.addSXT(sxtEntity);
+        return 0;
     }
 }

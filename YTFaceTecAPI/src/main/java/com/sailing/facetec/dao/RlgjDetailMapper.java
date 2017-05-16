@@ -16,29 +16,24 @@ public interface RlgjDetailMapper {
 
     /**
      * 获取报警详细信息
-     * @param beginTime 查询开始时间
-     * @param endTime 查询截止时间
-     * @param orderColumn 排序字段
-     * @param min 分页开始
-     * @param max 分页截止
+     *
+     * @param beginTime      查询开始时间
+     * @param endTime        查询截止时间
+     * @param orderColumn    排序字段
+     * @param min            分页开始
+     * @param max            分页截止
      * @param customerFilter 自定义条件
      * @return
      */
     @Select(baseLrgjDetailSelSql)
-    List<RlgjDetailEntity> listRlgjDetails(
-            @Param("beginTime") String beginTime,
-            @Param("endTime") String endTime,
-            @Param("orderColumn") String orderColumn,
-            @Param("min") int min,
-            @Param("max") int max,
-            @Param("customerFilter") String customerFilter
-    );
+    List<RlgjDetailEntity> listRlgjDetails(@Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("orderColumn") String orderColumn, @Param("min") int min, @Param("max") int max, @Param("customerFilter") String customerFilter);
 
 
     /**
      * 获取查询总记录数
-     * @param beginTime 查询开始时间
-     * @param endTime 查询截止时间
+     *
+     * @param beginTime      查询开始时间
+     * @param endTime        查询截止时间
      * @param customerFilter 自定义条件
      * @return
      */

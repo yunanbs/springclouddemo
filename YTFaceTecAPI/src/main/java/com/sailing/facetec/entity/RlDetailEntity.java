@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RlDetailEntity implements Serializable{
-    private static final long serialVersionID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private long XH;
     private String RLID;

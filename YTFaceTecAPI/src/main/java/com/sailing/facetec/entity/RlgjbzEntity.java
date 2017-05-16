@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RlgjbzEntity {
-    private static final long serialVersionID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private Long XH;
     private String RLKRLID;

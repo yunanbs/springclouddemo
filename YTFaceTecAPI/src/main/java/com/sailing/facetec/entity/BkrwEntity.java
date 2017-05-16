@@ -6,14 +6,11 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 算法均值数据
- * Created by yunan on 2017/5/8.
+ * Created by yunan on 2017/5/16.
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SfpjAvgEntity implements Serializable {
+public class BkrwEntity implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    private String SFDM;
-    private String FZ;
 }

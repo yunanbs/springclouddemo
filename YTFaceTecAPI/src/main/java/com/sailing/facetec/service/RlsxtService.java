@@ -2,6 +2,7 @@ package com.sailing.facetec.service;
 
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.entity.SxtDetailEntity;
+import com.sailing.facetec.entity.SxtEntity;
 import com.sailing.facetec.entity.SxtdwEntity;
 
 /**
@@ -10,4 +11,5 @@ import com.sailing.facetec.entity.SxtdwEntity;
 public interface RlsxtService {
     DataEntity<SxtDetailEntity> listAllXST();
     DataEntity<SxtdwEntity> listAllSXTDW();
+    int addSXT(SxtEntity sxtEntity);
 }

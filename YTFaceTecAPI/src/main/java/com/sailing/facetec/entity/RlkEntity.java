@@ -14,7 +14,7 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RlkEntity implements Serializable {
 
-    private static final long serialVersionID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private long XH;
     private String RLKID;

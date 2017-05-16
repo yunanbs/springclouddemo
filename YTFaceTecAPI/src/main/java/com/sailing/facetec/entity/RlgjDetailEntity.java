@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RlgjDetailEntity implements Serializable{
-    private static final long serialVersionID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private Long RN;
     private Long XH;

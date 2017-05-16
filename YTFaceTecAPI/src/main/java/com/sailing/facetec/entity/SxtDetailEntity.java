@@ -6,14 +6,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 摄像头详细数据
- * Created by yunan on 2017/4/28.
+ * Created by yunan on 2017/5/16.
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SxtDetailEntity implements Serializable{
-
-    private static final long serialVersionID=1L;
+    private static final long serialVersionUID=1L;
 
     private Long XH;
     private String SBBH;
