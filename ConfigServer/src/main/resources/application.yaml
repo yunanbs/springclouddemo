@@ -25,6 +25,11 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8181/eureka/
+    healthcheck:
+      enabled: true
+  instance:
+    lease-expiration-duration-in-seconds: 15
+    lease-renewal-interval-in-seconds: 5
 management:
   security:
     enabled: false

@@ -14,6 +14,7 @@ eureka:
   # 建议生产情况下使用默认值
   server:
     eviction-interval-timer-in-ms: 5000
+    enable-self-preservation: false
 spring:
   output:
     ansi:

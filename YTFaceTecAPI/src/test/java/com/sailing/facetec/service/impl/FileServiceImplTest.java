@@ -1,7 +1,9 @@
 package com.sailing.facetec.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.sailing.facetec.service.FileService;
 
 import org.junit.Test;
@@ -9,6 +11,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.LinkedHashMap;
 
 /**
  * Created by yunan on 2017/5/9.
@@ -47,13 +51,14 @@ public class FileServiceImplTest {
 
     @Test
     public void createZip() throws Exception {
-        System.out.println(fileService.createZip("D:\\test","d:\\test\\1.zip"));
+        System.out.println(fileService.createZip("D:\\test\\sbu","d:\\sbu.zip"));
     }
 
     @Test
     public void expDataWithPic() throws Exception {
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = new JSONObject();
+
         jsonObject.put("id","序号");
         jsonObject.put("datacol1","测试属性1");
         jsonObject.put("datacol2","测试属性2");
@@ -69,7 +74,16 @@ public class FileServiceImplTest {
         jsonObject.put("link-X","\\\\172.20.22.10\\tomcat5.0.28\\webapps\\main\\images\\ytlr\\2017051016\\952932ytlrxt.jpg");
         jsonArray.add(jsonObject);
 
-        fileService.expDataWithPic(jsonArray);
+        jsonObject = new JSONObject();
+        jsonObject.put("id","2");
+        jsonObject.put("datacol1","33");
+        jsonObject.put("datacol2","44");
+        jsonObject.put("link-L","\\\\172.20.22.10\\tomcat5.0.28\\webapps\\main\\images\\ytlr\\2017051211\\953081ytlrdt.jpg");
+        jsonObject.put("link-X","\\\\172.20.22.10\\tomcat5.0.28\\webapps\\main\\images\\ytlr\\2017051211\\953081ytlrxt.jpg");
+        jsonArray.add(jsonObject);
+
+
+        System.out.println(fileService.expDataWithPic(jsonArray));
     }
 
 }

@@ -69,10 +69,9 @@ public class FileUtils {
                 String header = headers[i];
                 if (header.startsWith("link-")) {
 
-                    if(0==rowIndex){
+                    if (0 == rowIndex) {
                         hssfCell.setCellValue(jsonObject.getString(header));
-                    }
-                    else{
+                    } else {
                         String fileName = jsonObject.getString(header);
                         hssfCell.setCellValue(fileName);
 
@@ -123,34 +122,36 @@ public class FileUtils {
         return hssfCellStyle;
     }
 
-   public static String createZipFile(String fileName) throws IOException {
-        String desZipFileName = fileName+".zip";
+    public static String createZipFile(String fileName) throws IOException {
+        String desZipFileName = fileName + ".zip";
         File zipFile = new File(desZipFileName);
         ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipFile));
         try {
-            zipFile(fileName,new File(fileName).getParent(),zipOutputStream);
+            zipFile(fileName, new File(fileName).getParent(), zipOutputStream);
         } finally {
             zipOutputStream.close();
         }
-        return  zipFile.getPath();
+        return zipFile.getPath();
     }
 
-    private static void zipFile(String currentFilename,String rootPath,ZipOutputStream zipOutputStream) throws IOException {
+    private static void zipFile(String currentFilename, String rootPath, ZipOutputStream zipOutputStream) throws IOException {
         File sourceFile = new File(currentFilename);
         if (sourceFile.isDirectory()) {
-            File[] subFiles= sourceFile.listFiles();
-            Arrays.asList(subFiles).forEach(f->{
-                try {
-                    zipFile(f.getPath(),rootPath,zipOutputStream);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        }else{
-            zipOutputStream.putNextEntry(new ZipEntry(currentFilename.replace(rootPath,"")));
+            File[] subFiles = sourceFile.listFiles();
+            if (null != subFiles) {
+                Arrays.asList(subFiles).forEach(f -> {
+                    try {
+                        zipFile(f.getPath(), rootPath, zipOutputStream);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        } else {
+            zipOutputStream.putNextEntry(new ZipEntry(currentFilename.replace(rootPath, "")));
             BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(currentFilename));
             byte[] buffer = new byte[8192];
-            while (bufferedInputStream.read(buffer)>0){
+            while (bufferedInputStream.read(buffer) > 0) {
                 zipOutputStream.write(buffer);
             }
             bufferedInputStream.close();

@@ -49,15 +49,15 @@ public class RlgjServiceImpl implements RlgjService {
         // 添加摄像头过滤
         customerFilterBuilder.append(CommUtils.isNullObject(lrkids)?"":String.format(" and a.LRKID in (%s) ",lrkids));
         // 添加性别过滤
-        customerFilterBuilder.append(CommUtils.isNullObject(sex)?"":String.format(" and a.RLTZ1 in (%s) ",sex));
+        customerFilterBuilder.append(CommUtils.isNullObject(sex)?"":String.format(" and a.LRTZ1 in (%s) ",sex));
         // 添加年龄过滤
-        customerFilterBuilder.append(CommUtils.isNullObject(age)?"":String.format(" and a.RLTZ2 in (%s) ",age));
+        customerFilterBuilder.append(CommUtils.isNullObject(age)?"":String.format(" and a.LRTZ2 in (%s) ",age));
         // 添加眼镜过滤
-        customerFilterBuilder.append(CommUtils.isNullObject(glass)?"":String.format(" and a.RLTZ3 in (%s) ",glass));
+        customerFilterBuilder.append(CommUtils.isNullObject(glass)?"":String.format(" and a.LRTZ3 in (%s) ",glass));
         // 添加刘海过滤
-        customerFilterBuilder.append(CommUtils.isNullObject(fringe)?"":String.format(" and a.RLTZ4 in (%s) ",fringe));
+        customerFilterBuilder.append(CommUtils.isNullObject(fringe)?"":String.format(" and a.LRTZ4 in (%s) ",fringe));
         // 添加种族过滤
-        customerFilterBuilder.append(CommUtils.isNullObject(uygur)?"":String.format(" and a.RLTZ5 in (%s) ",uygur));
+        customerFilterBuilder.append(CommUtils.isNullObject(uygur)?"":String.format(" and a.LRTZ5 in (%s) ",uygur));
 
         // 计算分页
         int[] pages = CommUtils.countPage(page, size);

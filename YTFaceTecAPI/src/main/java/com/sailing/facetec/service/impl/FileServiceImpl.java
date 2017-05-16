@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.UUID;
@@ -113,7 +114,8 @@ public class FileServiceImpl implements FileService {
      */
     private boolean copyFile(String sourceFile, String desFile) throws IOException {
         boolean result;
-        result = desFile.equals(Files.copy(Paths.get(sourceFile),Paths.get(desFile)));
+        Path copyResult =Files.copy(Paths.get(sourceFile),Paths.get(desFile));
+        result = desFile.equals(copyResult.toString());
         return result;
     }
 

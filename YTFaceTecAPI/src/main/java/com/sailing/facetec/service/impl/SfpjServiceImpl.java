@@ -23,10 +23,11 @@ public class SfpjServiceImpl implements SfpjService {
     private String seqName;
 
     @Override
-    public int insertSfpj(int pjFlag, String cxdm, String sfdm, double fz, String bz) {
+    public DataEntity insertSfpj(int pjFlag, String cxdm, String sfdm, double fz, String bz) {
         tableName = pjFlag==1?"B_TZ_RLZDSFPJ":"B_TZ_RLSDSFPJ";
         seqName = pjFlag==1?"B_TZ_RLZDSFPJ_XH":"B_TZ_RLSDSFPJ_XH";
-        return sfpjMapper.insertPJ(tableName,seqName,cxdm,sfdm,fz,bz);
+        sfpjMapper.insertPJ(tableName,seqName,cxdm,sfdm,fz,bz);
+        return this.getSfAvg(pjFlag,sfdm);
     }
 
     @Override
