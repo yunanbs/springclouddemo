@@ -33,6 +33,7 @@ public interface RlsxtMapper {
 
     //@Insert("insert into b_tz_rlsxt values(seqs.nextval,'${sbbh}','${sxtid}','${sxtmc}','${sxtlx}','${spdz}','${lrkid}','${ylzd1}','${ylzd2}','${ylzd3}','${ylzd4}','${ylzd5}')")
     //int addCamera(@Param("sbbh") String sbbh, @Param("sxtid") String sxtid, @Param("sxtmc") String sxtmc, @Param("sxtlx") String sxtlx, @Param("spdz") String spdz, @Param("lrkid") String lrkid, @Param("ylzd1") String ylzd1, @Param("ylzd2") String ylzd2, @Param("ylzd3") String ylzd3, @Param("ylzd4") String ylzd4, @Param("ylzd5") String ylzd5);
-     @Insert("insert into b_tz_rlsxt values(seqs.nextval,'${sbbh}','${sxtid}','${sxtmc}','${sxtlx}','${spdz}','${lrkid}','${ylzd1}','${ylzd2}','${ylzd3}','${ylzd4}','${ylzd5}')")
+
+     @Insert("insert into b_tz_rlsxt values(seqs.nextval,#{SBBH},#SXTID,#SXTMC,#SXTLX,#SPDZ,#LRKID,#YLZD1,#YLZD2,#YLZD3,#YLZD4,#YLZD5)")
     int addSXT(SxtEntity sxtEntity);
 }
