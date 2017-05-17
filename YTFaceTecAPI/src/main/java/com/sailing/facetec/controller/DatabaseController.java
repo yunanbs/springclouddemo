@@ -9,6 +9,7 @@ import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.entity.RlgjDetailEntity;
 import com.sailing.facetec.entity.SxtDetailEntity;
+import com.sailing.facetec.entity.SxtEntity;
 import com.sailing.facetec.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +60,7 @@ public class DatabaseController {
 
     /**
      * 测试接口
+     *
      * @return
      */
     @RequestMapping("/")
@@ -68,17 +70,18 @@ public class DatabaseController {
 
     /**
      * 路人抓拍数据查询接口
+     *
      * @param beginTime 查询开始时间 默认为当天00:00:00
-     * @param endTime 查询截至时间 默认为当点 23:59:59
-     * @param orderBy 排序字段 默认为主表xh字段降序排序
-     * @param page 分页-页码 默认 1
-     * @param size 分页-分页大小 默认 10
-     * @param lrkids 路人库编号，多个编号使用 , 分割 默认为空
-     * @param sex  性别编号，多个编号使用 , 分割 默认为空
-     * @param age 年龄段编号，多个编号使用 , 分割 默认为空
-     * @param glass 眼镜特征编号，多个编号使用 , 分割 默认为空
-     * @param fringe 刘海特征编号，多个编号使用 , 分割 默认为空
-     * @param uygur 种族特征编号，多个编号使用 , 分割 默认为空
+     * @param endTime   查询截至时间 默认为当点 23:59:59
+     * @param orderBy   排序字段 默认为主表xh字段降序排序
+     * @param page      分页-页码 默认 1
+     * @param size      分页-分页大小 默认 10
+     * @param lrkids    路人库编号，多个编号使用 , 分割 默认为空
+     * @param sex       性别编号，多个编号使用 , 分割 默认为空
+     * @param age       年龄段编号，多个编号使用 , 分割 默认为空
+     * @param glass     眼镜特征编号，多个编号使用 , 分割 默认为空
+     * @param fringe    刘海特征编号，多个编号使用 , 分割 默认为空
+     * @param uygur     种族特征编号，多个编号使用 , 分割 默认为空
      * @return content中包含查询结果
      */
     @RequestMapping("/LR/Captures")
@@ -103,6 +106,7 @@ public class DatabaseController {
 
     /**
      * 路人抓拍实时数据查询
+     *
      * @param lrkids 路人库编号，多个编号使用 , 分割 默认为空
      * @return 获取redis中缓存的查询结果
      */
@@ -114,20 +118,21 @@ public class DatabaseController {
 
     /**
      * 报警数据查询
+     *
      * @param beginTime 查询开始时间 默认为当天00:00:00
-     * @param endTime 查询截止时间 默认为当天23:59:59
-     * @param orderBy 排序字段 默认按照报警记录xh字段降序排列
-     * @param page 分页-页码
-     * @param size 分页-分页大小
-     * @param xsd 最小相似度 默认为0
-     * @param bz 标注编号，多个编号使用 , 分割 默认为空
-     * @param rlid 人脸编号 默认为空
-     * @param lrkids 路人库编号，多个编号使用 , 分割 默认为空
-     * @param sex 性别编号 多个编号使用 , 分割 默认为空
-     * @param age 年龄段编号 多个编号使用 , 分割 默认为空
-     * @param glass 眼镜特征编号 多个编号使用 , 分割 默认为空
-     * @param fringe 刘海特征编号 多个编号使用 , 分割 默认为空
-     * @param uygur 种族特征编号 多个编号使用 , 分割 默认为空
+     * @param endTime   查询截止时间 默认为当天23:59:59
+     * @param orderBy   排序字段 默认按照报警记录xh字段降序排列
+     * @param page      分页-页码
+     * @param size      分页-分页大小
+     * @param xsd       最小相似度 默认为0
+     * @param bz        标注编号，多个编号使用 , 分割 默认为空
+     * @param rlid      人脸编号 默认为空
+     * @param lrkids    路人库编号，多个编号使用 , 分割 默认为空
+     * @param sex       性别编号 多个编号使用 , 分割 默认为空
+     * @param age       年龄段编号 多个编号使用 , 分割 默认为空
+     * @param glass     眼镜特征编号 多个编号使用 , 分割 默认为空
+     * @param fringe    刘海特征编号 多个编号使用 , 分割 默认为空
+     * @param uygur     种族特征编号 多个编号使用 , 分割 默认为空
      * @return datacontent中保存查询结果
      */
     @RequestMapping("/LR/Alerts")
@@ -154,6 +159,7 @@ public class DatabaseController {
 
     /**
      * 实时报警数据
+     *
      * @return redis中缓存的当天报警数据
      */
     @RequestMapping("/LR/Alerts/Real")
@@ -164,6 +170,7 @@ public class DatabaseController {
 
     /**
      * 获取摄像头列表
+     *
      * @return
      */
     @RequestMapping("/SXT")
@@ -174,6 +181,7 @@ public class DatabaseController {
 
     /**
      * 获取摄像头所属单位信息及摄像头信息
+     *
      * @return datacontent中保存包含摄像头的单位信息，tag中保存相关摄像头信息
      */
     @RequestMapping("/SXT/DW")
@@ -183,8 +191,14 @@ public class DatabaseController {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtdwEntityDataEntity, rlsxtDataEntity);
     }
 
+    @RequestMapping(value = "/SXT",consumes = "application/json",method = {RequestMethod.POST})
+    public ActionResult addSXT(@RequestBody SxtEntity sxtEntity){
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtService.addSXT(sxtEntity), null);
+    }
+
     /**
      * 报警标注
+     *
      * @param jsonObject {xh:报警记录序号,bzsfxt:是否相同编码,bzbz:备注信息}
      * @return datacontent中记录操作结果
      */
@@ -201,6 +215,7 @@ public class DatabaseController {
 
     /**
      * 获取人脸库信息
+     *
      * @return 返回人脸库信息
      */
     @RequestMapping("/RLK")
@@ -214,6 +229,7 @@ public class DatabaseController {
 
     /**
      * 查询人脸信息
+     *
      * @param params
      * @return 返回人脸库人脸记录查询结果
      */
@@ -232,6 +248,7 @@ public class DatabaseController {
 
     /**
      * 算法评分
+     *
      * @param params
      * @return 返回评分操作结果
      */
@@ -253,8 +270,9 @@ public class DatabaseController {
 
     /**
      * 算法评分统计
+     *
      * @param pjflag 评价标记 0-评价手动评价结果 1-统计自动评价结果
-     * @param sfdm 算法代码编号 默认为空
+     * @param sfdm   算法代码编号 默认为空
      * @return 返回算法评分统计结果
      */
     @RequestMapping("/SF/SFPJ/Avg")
@@ -269,11 +287,12 @@ public class DatabaseController {
 
     /**
      * 通用数据导出
+     *
      * @param params
      * @return
      * @throws IOException
      */
-    @RequestMapping(value = "/comm/exp",consumes = "application/json",method = RequestMethod.POST)
+    @RequestMapping(value = "/comm/exp", consumes = "application/json", method = RequestMethod.POST)
     public ActionResult expByArray(@RequestBody String params) throws IOException {
         JSONArray jsonArray = (JSONArray) JSON.parse(params, Feature.OrderedField);
         return new ActionResult(
@@ -283,4 +302,6 @@ public class DatabaseController {
                 null
         );
     }
+
+
 }

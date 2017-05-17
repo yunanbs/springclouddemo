@@ -13,8 +13,13 @@ spring:
     database: 0
     host: localhost
     port: 6379
+  jpa:
+    show-sql: true
 server:
   port: 8291
+  compression:
+    enabled: true
+    mime-types: application/json
 mybatis:
   type-aliases-package: com.sailing.facetec.entiry
 logging:
@@ -73,5 +78,3 @@ endpoints:
   shutdown:
     enabled: true
     sensitive: false
-
-

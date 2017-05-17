@@ -4,8 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.remoteservice.YTApi;
 import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
+import org.apache.ibatis.executor.ReuseExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.nio.file.Files;
 
 /**
  * Created by yunan on 2017/5/17.
@@ -13,17 +18,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class YTServiceImpl  implements YTService{
 
+    private static final Logger logger = LoggerFactory.getLogger(YTServiceImpl.class);
+
     @Autowired
     private YTApi ytApi;
 
     @Override
     public String login(String userName, String passWord) {
-        userName = "admin";
-        passWord = "21232f297a57a5a743894a0e4a801fc3";
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name",userName);
         jsonObject.put("password",passWord);
-        return ytApi.login(jsonObject.toJSONString());
+        String result = ytApi.login(jsonObject.toJSONString());
+        logger.info("yt login result:{}", result);
+        return result;
     }
 
     @Override
@@ -34,7 +41,9 @@ public class YTServiceImpl  implements YTService{
         jsonObject.put("type",cameraType);
 
         String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
-        return ytApi.addCamera(headerStr, jsonObject.toJSONString());
+        String result = ytApi.addCamera(headerStr, jsonObject.toJSONString());
+        logger.info("yt addCamera result:{}", result);
+        return result;
     }
 
     @Override
@@ -51,11 +60,14 @@ public class YTServiceImpl  implements YTService{
             jsonObject.put("enabled",enabled);
         }
         String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
-        return ytApi.updateCamera(headerStr, jsonObject.toJSONString());
+
+        String result = ytApi.updateCamera(headerStr, jsonObject.toJSONString());
+        logger.info("yt updateCamera result:{}", result);
+        return result;
     }
 
     @Override
-    public String setMonitorRepository(String sid,int cameraId, int repositoryId, double limit, int stSec, int endSec) {
+    public String setMonitorRepository(String sid,int cameraId, int repositoryId, double limit, long stSec, long endSec) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("camera_id",cameraId);
         jsonObject.put("repository_id",repositoryId);

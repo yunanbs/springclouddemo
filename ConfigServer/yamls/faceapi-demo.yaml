@@ -18,8 +18,13 @@ spring:
     port: 5672
     username: sailing
     password: sailing
+  jpa:
+    show-sql: true
 server:
   port: 8291
+  compression:
+    enabled: true
+    mime-types: application/json
 mybatis:
   type-aliases-package: com.sailing.facetec.entiry
 logging:
@@ -66,6 +71,8 @@ upload:
   image-folder: D:\
 ytface:
   api-url: http://172.20.25.226:11180
+  username: admin
+  password: 21232f297a57a5a743894a0e4a801fc3
 rlapi:
   api-url: http://localhost:8183
 management:
@@ -81,5 +88,6 @@ endpoints:
 exp:
   root-dir: D:\Services\exproot\
   web-path: http://www.sailing.com/
+
 
 

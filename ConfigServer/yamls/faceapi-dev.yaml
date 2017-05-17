@@ -67,6 +67,8 @@ upload:
   image-folder: D:\
 ytface:
   api-url: http://172.20.25.226:11180
+  username: admin
+  password: 21232f297a57a5a743894a0e4a801fc3
 rlapi:
   api-url: http://localhost:8183
 endpoints:
