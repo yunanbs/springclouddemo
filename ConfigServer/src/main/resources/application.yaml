@@ -8,7 +8,7 @@ spring:
     config:
       server:
         native:
-          search-locations: file:D:/workpath/svn/springclouddemo-dev/ConfigServer/yamls/
+          search-locations: file:D:/workpath/svn/springclouddemo/ConfigServer/yamls
   rabbitmq:
     host: localhost
     port: 5672
