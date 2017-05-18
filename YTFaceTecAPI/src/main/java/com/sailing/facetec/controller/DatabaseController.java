@@ -266,10 +266,6 @@ public class DatabaseController {
     @RequestMapping(value = "/SF/SFPJ", consumes = "application/json", method = {RequestMethod.POST})
     public ActionResult addSfpj(@RequestBody String params) {
         JSONObject jsonObject = JSONObject.parseObject(params);
-
-        // JSONArray jsonArray = JSONArray.parseArray(params);
-        // DataEntity result = new DataEntity();
-
         return new ActionResult(
                 ActionCodeConfig.SUCCEED_CODE,
                 ActionCodeConfig.SUCCEED_MSG,

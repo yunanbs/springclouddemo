@@ -14,3 +14,9 @@ eureka:
       defaultZone: http://localhost:8181/eureka/
   server:
     enableSelfPreservation: false
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false
