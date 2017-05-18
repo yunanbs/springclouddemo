@@ -13,17 +13,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
         name = "yt-api",
         url = "${ytface.api-url}"
 )
-public interface YTApi
-{
-    @RequestMapping(value = "/resource_manager/user/login",consumes = "application/json",method = {RequestMethod.POST})
+public interface YTApi {
+    @RequestMapping(value = "/resource_manager/user/login", consumes = "application/json", method = {RequestMethod.POST})
     String login(@RequestBody String params);
 
-    @RequestMapping(value = "/face/v1/framework/face_video/camera",consumes = "application/json",method = {RequestMethod.POST})
+    @RequestMapping(value = "/face/v1/framework/face_video/camera", consumes = "application/json", method = {RequestMethod.POST})
     String addCamera(@RequestHeader("Cookie") String cookie, @RequestBody String params);
 
-    @RequestMapping(value = "/face/v1/framework/face_video/camera",consumes = "application/json",method = {RequestMethod.PUT})
+    @RequestMapping(value = "/face/v1/framework/face_video/camera", consumes = "application/json", method = {RequestMethod.PUT})
     String updateCamera(@RequestHeader("Cookie") String cookie, @RequestBody String params);
 
-    @RequestMapping(value = "/face/v1/framework/face_video/surveillance",consumes = "application/json",method = {RequestMethod.POST})
+    @RequestMapping(value = "/face/v1/framework/face_video/surveillance", consumes = "application/json", method = {RequestMethod.POST})
     String setMonitorRepository(@RequestHeader("Cookie") String cookie, @RequestBody String params);
+
+    @RequestMapping(value = "/v2/surveillance", consumes = "application/json", method = {RequestMethod.POST})
+    String setMonitorByCamera(@RequestHeader("Cookie") String cookie, @RequestBody String params);
 }

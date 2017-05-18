@@ -7,6 +7,7 @@ import com.alibaba.fastjson.parser.Feature;
 import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
+import com.sailing.facetec.entity.BkrwEntity;
 import com.sailing.facetec.entity.RlgjDetailEntity;
 import com.sailing.facetec.entity.SxtDetailEntity;
 import com.sailing.facetec.entity.SxtEntity;
@@ -17,6 +18,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by yunan on 2017/4/26.
@@ -191,8 +196,14 @@ public class DatabaseController {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtdwEntityDataEntity, rlsxtDataEntity);
     }
 
-    @RequestMapping(value = "/SXT",consumes = "application/json",method = {RequestMethod.POST})
-    public ActionResult addSXT(@RequestBody SxtEntity sxtEntity){
+    /**
+     * 添加摄像头
+     *
+     * @param sxtEntity
+     * @return
+     */
+    @RequestMapping(value = "/SXT", consumes = "application/json", method = {RequestMethod.POST})
+    public ActionResult addSXT(@RequestBody SxtEntity sxtEntity) {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtService.addSXT(sxtEntity), null);
     }
 
@@ -255,6 +266,10 @@ public class DatabaseController {
     @RequestMapping(value = "/SF/SFPJ", consumes = "application/json", method = {RequestMethod.POST})
     public ActionResult addSfpj(@RequestBody String params) {
         JSONObject jsonObject = JSONObject.parseObject(params);
+
+        // JSONArray jsonArray = JSONArray.parseArray(params);
+        // DataEntity result = new DataEntity();
+
         return new ActionResult(
                 ActionCodeConfig.SUCCEED_CODE,
                 ActionCodeConfig.SUCCEED_MSG,
@@ -301,6 +316,22 @@ public class DatabaseController {
                 fileService.expDataWithPic(jsonArray),
                 null
         );
+    }
+
+    @RequestMapping(value = "/BK/BKRW", consumes = "application/json", method = RequestMethod.POST)
+    public ActionResult expByArray(@RequestBody BkrwEntity[] bkrwEntities) throws IOException {
+
+        int count = 0;
+        List<BkrwEntity> bkrwEntityList = Arrays.asList(bkrwEntities);
+        for (Iterator iterator = bkrwEntityList.iterator(); iterator.hasNext(); ) {
+            try {
+                count = count + rlsxtService.addMonitorByCamera((BkrwEntity) iterator.next());
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
+        }
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, count, null);
     }
 
 

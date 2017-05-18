@@ -57,14 +57,13 @@ public class RlsxtServiceImpl implements RlsxtService {
     public DataEntity<SxtdwEntity> listAllSXTDW() {
         DataEntity<SxtdwEntity> result = new DataEntity<>();
         result.setDataContent(rlsxtMapper.listAllSXTDW());
-        for(Iterator iterator = result.getDataContent().iterator();iterator.hasNext();){
+        for (Iterator iterator = result.getDataContent().iterator(); iterator.hasNext(); ) {
             SxtdwEntity sxtdwEntity = (SxtdwEntity) iterator.next();
             String[] dwIDs = sxtdwEntity.getDWNBBM().split("\\.");
             sxtdwEntity.setLevel(dwIDs.length);
-            int parentIDIndex = dwIDs.length-2;
-            if(parentIDIndex>=0)
-            {
-                sxtdwEntity.setParentID(dwIDs[dwIDs.length-2]);
+            int parentIDIndex = dwIDs.length - 2;
+            if (parentIDIndex >= 0) {
+                sxtdwEntity.setParentID(dwIDs[dwIDs.length - 2]);
             }
 
         }
@@ -81,12 +80,12 @@ public class RlsxtServiceImpl implements RlsxtService {
         String repositoryId;
 
         // 添加摄像头
-        jsonObject = JSONObject.parseObject(ytService.addCamera(sid,sxtEntity.getSXTMC(),sxtEntity.getSPDZ(),0));
+        jsonObject = JSONObject.parseObject(ytService.addCamera(sid, sxtEntity.getSXTMC(), sxtEntity.getSPDZ(), 0));
         cameraId = jsonObject.getString("id");
         repositoryId = jsonObject.getString("history_repository_id");
 
         // 更新摄像头状态
-        jsonObject = JSONObject.parseObject(ytService.updateCamera(sid,Integer.parseInt(cameraId),"","",1));
+        jsonObject = JSONObject.parseObject(ytService.updateCamera(sid, Integer.parseInt(cameraId), "", "", 1));
 
         sxtEntity.setSXTID(cameraId);
         sxtEntity.setLRKID(repositoryId);
@@ -104,16 +103,57 @@ public class RlsxtServiceImpl implements RlsxtService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date stTime = simpleDateFormat.parse(bkrwEntity.getQSSJ());
         Date endTime = simpleDateFormat.parse(bkrwEntity.getZZSJ());
-        long sec = (endTime.getTime()-stTime.getTime())/1000;
+        long sec = (endTime.getTime() - stTime.getTime()) / 1000;
 
         // 设置布控
-        jsonObject =JSONObject.parseObject(ytService.setMonitorRepository(sid,Integer.parseInt(bkrwEntity.getSXTID()),Integer.parseInt(bkrwEntity.getRLKID()),Double.parseDouble(bkrwEntity.getBJFSX()),0,sec));
+        jsonObject = JSONObject.parseObject(ytService.setMonitorRepository(sid, Integer.parseInt(bkrwEntity.getSXTID()), Integer.parseInt(bkrwEntity.getRLKID()), Double.parseDouble(bkrwEntity.getBJFSX()), 0, sec));
         return rlbkrwMapper.addBkrw(bkrwEntity);
     }
 
-    private String loginToYT(){
+    /**
+     * 布控摄像头
+     *
+     * @param bkrwEntity
+     * @return
+     */
+    @Override
+    public int addMonitorByCamera(BkrwEntity bkrwEntity) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject = JSONObject.parseObject(ytService.login(ytUsername,ytPassword));
+        // 登录 获取sid
+        String sid = loginToYT();
+        // 获取摄像头id
+        String cameraId = bkrwEntity.getSXTID();
+        // 获取布控库id
+        String repositoryId = bkrwEntity.getRLKID();
+        // 获取报警分数线
+        String limit = bkrwEntity.getBJFSX();
+        // 生成时间字符串作为布控任务
+        String monitorName = CommUtils.dateToStr(new Date(), "yyyyMMddHHmmss");
+
+        // 创建依图布控任务
+        String bkId = JSONObject.parseObject(ytService.setMonitorByCamera(sid, monitorName, Integer.parseInt(cameraId), Integer.parseInt(repositoryId), Double.parseDouble(limit))).getString("surveillanceId");
+
+        // 设置布控id
+        bkrwEntity.setBKID(bkId);
+        // 设置布控任务编号
+        bkrwEntity.setRWBH(monitorName);
+        // 设置起始时间
+        bkrwEntity.setQSSJ(CommUtils.getCurrentDate());
+        // 设置终止时间
+        bkrwEntity.setZZSJ(CommUtils.getCurrentDate());
+        // 设置添加时间
+        bkrwEntity.setTJSJ(CommUtils.getCurrentDate());
+        // 设置修改时间
+        bkrwEntity.setXGSJ(CommUtils.getCurrentDate());
+        // 设置任务状态
+        bkrwEntity.setRWZT("30");
+
+        return rlbkrwMapper.addBkrw(bkrwEntity);
+    }
+
+    private String loginToYT() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject = JSONObject.parseObject(ytService.login(ytUsername, ytPassword));
         return jsonObject.getString("session_id");
     }
 

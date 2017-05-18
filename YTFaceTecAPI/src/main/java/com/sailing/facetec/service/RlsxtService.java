@@ -16,4 +16,11 @@ public interface RlsxtService {
     DataEntity<SxtdwEntity> listAllSXTDW();
     int addSXT(SxtEntity sxtEntity);
     int addMonitorReposity(BkrwEntity bkrwEntity) throws ParseException;
+
+    /**
+     * 布控摄像头
+     * @param bkrwEntity
+     * @return
+     */
+    int addMonitorByCamera(BkrwEntity bkrwEntity);
 }

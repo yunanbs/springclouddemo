@@ -1,16 +1,14 @@
 package com.sailing.facetec.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.remoteservice.YTApi;
 import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
-import org.apache.ibatis.executor.ReuseExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.nio.file.Files;
 
 /**
  * Created by yunan on 2017/5/17.
@@ -77,5 +75,27 @@ public class YTServiceImpl  implements YTService{
 
         String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
         return ytApi.setMonitorRepository(headerStr, jsonObject.toJSONString());
+    }
+
+
+    @Override
+    public String setMonitorByCamera(String sid,String monitorName, int cameraId, int repositoryId, double limit) {
+
+        String headerStr = String.format("session_id=%s@DEFAULT; yt_cluster_id=DEFAULT",sid);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name",monitorName);
+
+        JSONArray jsonArray = new JSONArray();
+        JSONObject monitorObject = new JSONObject();
+        monitorObject.put("camera_id",String.format("%s@DEFAULT",cameraId));
+        monitorObject.put("repository_id",String.format("%s@DEFAULT",repositoryId));
+        monitorObject.put("threshold",limit);
+        jsonArray.add(monitorObject);
+
+        jsonObject.put("requests",jsonArray);
+        String result = ytApi.setMonitorByCamera(headerStr, jsonObject.toJSONString());
+        logger.info("yt setMonitorByCamera result:{}", result);
+        return result;
     }
 }
