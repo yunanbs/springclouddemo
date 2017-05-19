@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 
 /**
  * Created by yunan on 2017/4/22.
+ * ApiGateway
  */
 @SpringCloudApplication
 @EnableZuulProxy

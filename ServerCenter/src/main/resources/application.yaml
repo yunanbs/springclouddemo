@@ -1,4 +1,4 @@
-# 设定服务端口 8000
+# 设定服务端口 8181
 server:
   port: 8181
 eureka:
@@ -14,8 +14,19 @@ eureka:
   # 建议生产情况下使用默认值
   server:
     eviction-interval-timer-in-ms: 5000
+    # 关闭自我保护
     enable-self-preservation: false
 spring:
+  # 输出高亮
   output:
     ansi:
       enabled: always
+# 设置管理权限是否需要安全验证 关闭后 可以使用 actuator 查看服务状态
+management:
+  security:
+    enabled: false
+# 允许远程关闭
+endpoints:
+  shutdown:
+    enabled: true
+    sensitive: false

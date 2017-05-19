@@ -5,6 +5,10 @@
 spring:
   application:
     name: apigateway
+  # 输出语法高亮
+  output:
+    ansi:
+      enabled: always
 # 服务端口
 server:
   port: 8183
@@ -25,6 +29,9 @@ eureka:
     # 服务中心地址
     service-url:
       defaultZone: http://localhost:8181/eureka/
+    # 开启健康监测
+    healthcheck:
+      enabled: true
   # 设定心跳时间
   instance:
     lease-expiration-duration-in-seconds: 15
@@ -36,3 +43,12 @@ hystrix:
       execution:
         timeout:
           enabled: false
+# 设置管理权限是否需要安全验证 关闭后 可以使用 actuator 查看服务状态
+management:
+  security:
+    enabled: false
+# 允许远程关闭
+endpoints:
+  shutdown:
+    enabled: true
+    sensitive: false

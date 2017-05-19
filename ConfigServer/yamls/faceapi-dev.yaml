@@ -57,12 +57,9 @@ actioncodes:
   PARAMS_ERROR_MSG: 参数错误:%s
 supplys:
     supply-map:
-        yt_rlk_rlkid: rlk.rlkid
-        yt_rl_rlkid: rl.rlkid
-        yt_rl_rlid: rl.rlid
-#        hr_rlk_rlkid: rlk.rlkid
-#        hr_rl_rlkid: rl.rlkid
-#        hr_rl_rlid: rl.rlid
+        yt_rlk_rlkid: rlk.rlkid1
+        yt_rl_rlkid: rl.rlkid1
+        yt_rl_rlid: rl.rlid1
 upload:
   image-folder: D:\
 ytface:

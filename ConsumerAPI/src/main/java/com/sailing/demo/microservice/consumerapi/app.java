@@ -12,20 +12,15 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by yunan on 2017/4/21.
+ * 测试服务
  */
 
 @SpringCloudApplication
 @EnableFeignClients
 public class app {
 
-   // @Bean
-   // @LoadBalanced
-   // RestTemplate restTemplate(){
-   //     return new RestTemplate();
-   // }
-
-    public static void main (String... args){
-        SpringApplication.run(app.class,args);
+    public static void main(String... args) {
+        SpringApplication.run(app.class, args);
     }
 
 }

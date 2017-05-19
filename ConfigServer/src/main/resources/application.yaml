@@ -1,23 +1,27 @@
+# 设置应用名称
 spring:
   application:
     name: configserver
-  # 使用本地配置文件目录
+  # 使用本地配置文件目录 默认采用github获取配置
   profiles:
     active: native
   cloud:
     config:
       server:
         native:
+          # 设定本地存储配置文件的文件夹
           search-locations: file:D:/workpath/svn/springclouddemo/ConfigServer/yamls
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: sailing
-    password: sailing
+#  消息中间件地址  用于在集群内分发刷新配置的请求
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    username: sailing
+#    password: sailing
+  # 输出语法高亮
   output:
     ansi:
       enabled: always
-# 设置服务端口 8001
+# 设置服务端口
 server:
   port: 8182
 # 设置 EurekaServer 地址 注册服务
@@ -25,11 +29,19 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8181/eureka/
+    # 开启健康监测
     healthcheck:
       enabled: true
+  # 心跳设置
   instance:
     lease-expiration-duration-in-seconds: 15
     lease-renewal-interval-in-seconds: 5
+# 设置管理权限是否需要安全验证 关闭后 可以使用 actuator 查看服务状态
 management:
   security:
     enabled: false
+# 允许远程关闭
+endpoints:
+  shutdown:
+    enabled: true
+    sensitive: false
