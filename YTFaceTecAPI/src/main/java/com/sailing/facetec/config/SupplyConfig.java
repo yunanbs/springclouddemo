@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 算法厂商配置项
  * Created by yunan on 2017/5/4.
+ * 算法厂商配置项
  */
 @Configuration
 @ConfigurationProperties(prefix = "supplys")

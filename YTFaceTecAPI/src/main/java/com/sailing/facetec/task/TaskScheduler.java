@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by yunan on 2017/5/7.
+ * 抽取实时数据任务
  */
 @Component(value = "com.sailing.facetec.task.TaskScheduler")
 public class TaskScheduler {
@@ -48,21 +49,34 @@ public class TaskScheduler {
     @Value("${redis-keys.alert-limit}")
     private double alertLimit;
 
+    /**
+     * 抽取抓拍记录
+     */
     @Scheduled(cron = "${tasks.capture}")
     public void captureScheduler() {
+        // 获取锁
         if(redisService.setValNX(captureLock, lockVal,1, TimeUnit.SECONDS)){
+            // 按配置抽取历史数据
             DataEntity result = rllrService.listRllrDetail("", "", "", 1, captureCache, "", "", "", "", "", "");
-
+            // 更新实时数据
             redisService.setVal(captureData, JSON.toJSONString(result, FastJsonUtils.nameFilter, SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteNullNumberAsZero),1,TimeUnit.DAYS);
+            // 释放锁
             redisService.delKey(captureLock);
         }
     }
 
+    /**
+     * 抽取告警记录
+     */
     @Scheduled(cron = "${tasks.alert}")
     public void alterScheduler() {
+        // 获取锁
         if(redisService.setValNX(alertLock, lockVal,1, TimeUnit.SECONDS)){
+            // 按配置抽取历史数据
             DataEntity result = rlgjService.listRlgjDetail("", "", "", 1, alertCache,alertLimit, "", "", "", "", "","","","");
+            // 更新实时数据
             redisService.setVal(alertData, JSON.toJSONString(result,FastJsonUtils.nameFilter,SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteNullNumberAsZero),1,TimeUnit.DAYS);
+            // 释放锁
             redisService.delKey(alertLock);
         }
     }

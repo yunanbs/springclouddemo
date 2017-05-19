@@ -1,13 +1,19 @@
 spring:
+  # 应用名称
   application:
     name: faceapi
   cloud:
+    # 配置中心设置
     config:
+      # 运行环境
       profile: dev
+      # 启用配置中心发现
       discovery:
         enabled: true
         service-id: configserver
+# 服务发现配置
 eureka:
   client:
+    # 服务中心地址
     service-url:
       defaultZone: http://localhost:8181/eureka/

@@ -7,8 +7,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 手动算法评价数据
  * Created by yunan on 2017/5/8.
+ * 手动算法评价数据
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

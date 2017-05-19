@@ -6,8 +6,8 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 报警信息详细数据
  * Created by yunan on 2017/4/28.
+ * 报警信息详细数据
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -6,8 +6,8 @@ import com.alibaba.fastjson.JSONArray;
 import java.io.IOException;
 
 /**
- * 文件服务接口
  * Created by yunan on 2017/5/9.
+ * 文件 Service
  */
 public interface FileService  {
     /**

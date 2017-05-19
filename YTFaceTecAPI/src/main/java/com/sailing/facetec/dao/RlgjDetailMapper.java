@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Created by yunan on 2017/4/28.
+ * 人脸告警
  */
 public interface RlgjDetailMapper {
     String baseLrgjDetailSelSql = "select * from(select  row_number() over (order by ${orderColumn}) as rn,a.*,round(a.XSD,2) as SXSD,b.RLKMC,c.SXTMC as LRKMC,d.XH as BZXH,d.BZSFXT,d.BZBZ from  b_tz_rlgj a left join b_tz_rlk b on a. rlkid = b.rlkid left join b_tz_rlsxt c on a.lrkid = c.lrkid left join b_tz_rlgj_bz d on a.rlkrlid = d.rlkrlid and a.lrkrlid = d.lrkrlid  where a.LRRKSJ>=to_date('${beginTime}','yyyy-mm-dd hh24:mi:ss') and  a.LRRKSJ<=to_date('${endTime}','yyyy-mm-dd hh24:mi:ss') and a.YLZD3='0' ${customerFilter}) a where a.rn between ${min} and ${max}";

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 /**
- * 报警标注数据
  * Created by yunan on 2017/5/2.
+ * 报警标注数据
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

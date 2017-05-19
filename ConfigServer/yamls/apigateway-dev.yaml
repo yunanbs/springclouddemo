@@ -52,3 +52,6 @@ endpoints:
   shutdown:
     enabled: true
     sensitive: false
+info:
+  com: sailing
+  product: ApiGateway

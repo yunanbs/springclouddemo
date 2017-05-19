@@ -3,8 +3,8 @@ package com.sailing.facetec.service;
 import java.util.concurrent.TimeUnit;
 
 /**
- * redis数据库访问
  * Created by yunan on 2017/5/7.
+ * redis Service
  */
 public interface RedisService {
 

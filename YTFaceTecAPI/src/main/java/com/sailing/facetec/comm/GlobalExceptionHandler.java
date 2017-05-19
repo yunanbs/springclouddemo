@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 通用异常处理
  * Created by yunan on 2017/5/3.
+ * 通用异常处理
  */
 
 @ControllerAdvice

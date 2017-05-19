@@ -34,31 +34,59 @@ public class RlServiceImpl implements RlService {
     public DataEntity listRlDetail(JSONArray detailInfo) {
         StringBuilder customerFilterBuilder = new StringBuilder();
         DataEntity result = new DataEntity();
-        if(CommUtils.isNullObject(detailInfo.getJSONObject(0).get("lrid")))
-        {
-            for(Iterator iterator = detailInfo.iterator();iterator.hasNext();){
-                JSONObject tmp = (JSONObject) iterator.next();
+        // 判断参数中是否含有lrid 来判断搜索哪个库
+        // 如果不包含lrid 则从人像库中进行检索
+        if (CommUtils.isNullObject(detailInfo.getJSONObject(0).get("lrid"))) {
+            // 如果不包含lrid 则从人像库中进行检索
+
+            // for(Iterator iterator = detailInfo.iterator();iterator.hasNext();){
+            //     JSONObject tmp = (JSONObject) iterator.next();
+            //     String supply = tmp.getString("sfdm");
+            //     customerFilterBuilder.append(" ( ");
+            //     customerFilterBuilder.append(
+            //             String.format(
+            //                     " %s='%s' and %s = '%s' ",
+            //                     supplyConfig.getSupplyMap().get(supply+"_rl_rlkid"),
+            //                     tmp.getString("rlkid"),
+            //                     supplyConfig.getSupplyMap().get(supply+"_rl_rlid"),
+            //                     tmp.getString("rlid")
+            //             )
+            //     );
+            //     customerFilterBuilder.append(" ) or ");
+            // }
+
+            // 重构
+            detailInfo.forEach(s -> {
+                JSONObject tmp = (JSONObject) s;
+                // 获取算法厂商代码
                 String supply = tmp.getString("sfdm");
                 customerFilterBuilder.append(" ( ");
                 customerFilterBuilder.append(
                         String.format(
                                 " %s='%s' and %s = '%s' ",
-                                supplyConfig.getSupplyMap().get(supply+"_rl_rlkid"),
+                                // 获取算法厂商人脸库编号存储列名
+                                supplyConfig.getSupplyMap().get(supply + "_rl_rlkid"),
+                                // 获取算法厂商人脸库id
                                 tmp.getString("rlkid"),
-                                supplyConfig.getSupplyMap().get(supply+"_rl_rlid"),
+                                // 获取算法厂商人脸id存储列名
+                                supplyConfig.getSupplyMap().get(supply + "_rl_rlid"),
+                                // 获取算法厂商人脸id
                                 tmp.getString("rlid")
                         )
                 );
                 customerFilterBuilder.append(" ) or ");
-            }
-            customerFilterBuilder.append("1=0");
-            result.setDataContent(rlDetailMapper.listRlDetail(customerFilterBuilder.toString()));
-        }else{
-            List<String> idList = new ArrayList<>();
-            detailInfo.forEach(s->{
-                idList.add(String.format("'%s'",((JSONObject)s).getString("lrid")));
             });
-            result.setDataContent(rllrDetailMapper.listRllrDetailsByRLIDs(String.join(",",idList)));
+            // 添加一个否条件
+            customerFilterBuilder.append("1=0");
+            // 获取人脸详细信息
+            result.setDataContent(rlDetailMapper.listRlDetail(customerFilterBuilder.toString()));
+        } else {
+            // 包含lrid 则从路人库中检索记录
+            List<String> idList = new ArrayList<>();
+            detailInfo.forEach(s -> {
+                idList.add(String.format("'%s'", ((JSONObject) s).getString("lrid")));
+            });
+            result.setDataContent(rllrDetailMapper.listRllrDetailsByRLIDs(String.join(",", idList)));
         }
         return result;
     }

@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Update;
 
 /**
  * Created by yunan on 2017/5/2.
+ * 告警备注
  */
 public interface RlgjbzMapper {
 

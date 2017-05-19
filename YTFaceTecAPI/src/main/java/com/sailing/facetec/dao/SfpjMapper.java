@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * Created by yunan on 2017/5/8.
+ * 算法评价
  */
 public interface SfpjMapper {
     String insertSql = "insert into ${tableName} values(${seqName}.nextval,sysdate,'${cxdm}','${sfdm}','${fz}','${bz}')";

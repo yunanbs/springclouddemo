@@ -7,7 +7,12 @@ import java.util.List;
 
 /**
  * Created by yunan on 2017/5/4.
+ * 人脸库Service
  */
 public interface RlkService {
+    /**
+     * 获取人脸库
+     * @return
+     */
     DataEntity<RlkEntity> listAllRlk();
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Created by yunan on 2017/5/4.
+ * 人脸详细信息
  */
 public interface RlDetailMapper {
     String baseSelSql = "select rl.*,rlk.rlkmc from b_tz_rl rl left join b_tz_rlk rlk on rl.rlkid = rlk.rlkid where ${customerFilter}";

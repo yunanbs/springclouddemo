@@ -2,7 +2,6 @@ package com.sailing.facetec.comm;
 
 import lombok.Data;
 
-import java.io.PipedReader;
 import java.util.List;
 
 /**
@@ -11,8 +10,8 @@ import java.util.List;
  */
 @Data
 public class DataEntity<T> {
-    // 数据实体类集合
+    // 数据对象集合
     private List<T> dataContent;
-    // 分页信息实体类
+    // 分页信息
     private PageEntity pageContent;
 }

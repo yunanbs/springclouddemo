@@ -18,20 +18,22 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by yunan on 2017/4/26.
+ * api 主controller
  */
 @RestController
+// 跨域支持
 @CrossOrigin(origins = "*", methods = {RequestMethod.POST, RequestMethod.OPTIONS, RequestMethod.GET})
+// 允许配置文件刷新
 @RefreshScope
 public class DatabaseController {
 
-
+    //region Services
     @Autowired
     private RllrService rllrService;
 
@@ -55,13 +57,16 @@ public class DatabaseController {
 
     @Autowired
     private FileService fileService;
+    //endregion
 
+    //region 实时数据库相关key
     // 获取redis数据库中抓拍数据的缓存key
     @Value("${redis-keys.capture-data}")
     private String captureData;
     // 获取redis数据库中报警数据的缓存key
     @Value("${redis-keys.alert-data}")
     private String alertData;
+    //endregion
 
     /**
      * 测试接口
@@ -74,7 +79,7 @@ public class DatabaseController {
     }
 
     /**
-     * 路人抓拍数据查询接口
+     * 路人抓拍历史数据查询接口
      *
      * @param beginTime 查询开始时间 默认为当天00:00:00
      * @param endTime   查询截至时间 默认为当点 23:59:59
@@ -122,7 +127,7 @@ public class DatabaseController {
     }
 
     /**
-     * 报警数据查询
+     * 报警历史数据查询
      *
      * @param beginTime 查询开始时间 默认为当天00:00:00
      * @param endTime   查询截止时间 默认为当天23:59:59
@@ -199,8 +204,8 @@ public class DatabaseController {
     /**
      * 添加摄像头
      *
-     * @param sxtEntity
-     * @return
+     * @param sxtEntity 摄像头相关参数
+     * @return 操作结果 1 表示添加成功
      */
     @RequestMapping(value = "/SXT", consumes = "application/json", method = {RequestMethod.POST})
     public ActionResult addSXT(@RequestBody SxtEntity sxtEntity) {
@@ -216,11 +221,7 @@ public class DatabaseController {
     @RequestMapping(value = "/LR/Rlgjbz", method = RequestMethod.POST, consumes = {"application/json"})
     public ActionResult updateRlgjBZ(@RequestBody String jsonObject) {
         JSONObject params = JSONObject.parseObject(jsonObject);
-        return new ActionResult(
-                ActionCodeConfig.SUCCEED_CODE,
-                ActionCodeConfig.SUCCEED_MSG,
-                rlgjService.updateRlgjBZ(params.getLong("xh"), params.getString("bzsfxt"), params.getString("bzbz")),
-                null
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlgjService.updateRlgjBZ(params.getLong("xh"), params.getString("bzsfxt"), params.getString("bzbz")), null
         );
     }
 
@@ -231,11 +232,7 @@ public class DatabaseController {
      */
     @RequestMapping("/RLK")
     public ActionResult listRLK() {
-        return new ActionResult(
-                ActionCodeConfig.SUCCEED_CODE,
-                ActionCodeConfig.SUCCEED_MSG,
-                rlkService.listAllRlk(),
-                null);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlkService.listAllRlk(), null);
     }
 
     /**
@@ -247,13 +244,8 @@ public class DatabaseController {
     @RequestMapping(value = "/RL", consumes = "application/json", method = {RequestMethod.POST})
     public ActionResult listRL(@RequestBody String params) {
         JSONArray jsonArray = JSONArray.parseArray(params);
-        ActionResult result = new ActionResult(
-                ActionCodeConfig.SUCCEED_CODE,
-                ActionCodeConfig.SUCCEED_MSG,
-                rlService.listRlDetail(jsonArray),
-                null
+        ActionResult result = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.listRlDetail(jsonArray), null
         );
-
         return result;
     }
 
@@ -288,12 +280,7 @@ public class DatabaseController {
      */
     @RequestMapping("/SF/SFPJ/Avg")
     public ActionResult listSfAvg(@RequestParam(value = "pjflag", defaultValue = "0") int pjflag, @RequestParam(value = "sfdm", defaultValue = "") String sfdm) {
-        return new ActionResult(
-                ActionCodeConfig.SUCCEED_CODE,
-                ActionCodeConfig.SUCCEED_MSG,
-                sfpjService.getSfAvg(pjflag, sfdm),
-                null
-        );
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, sfpjService.getSfAvg(pjflag, sfdm), null);
     }
 
     /**
@@ -314,6 +301,12 @@ public class DatabaseController {
         );
     }
 
+    /**
+     * 创建布控任务
+     * @param bkrwEntities
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/BK/BKRW", consumes = "application/json", method = RequestMethod.POST)
     public ActionResult expByArray(@RequestBody BkrwEntity[] bkrwEntities) throws IOException {
 

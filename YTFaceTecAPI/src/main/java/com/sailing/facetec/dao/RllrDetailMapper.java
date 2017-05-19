@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Created by yunan on 2017/4/28.
+ * 路人抓拍详细信息
  */
 public interface RllrDetailMapper {
 

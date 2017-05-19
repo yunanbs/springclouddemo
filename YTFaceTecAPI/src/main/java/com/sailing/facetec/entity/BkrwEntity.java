@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 /**
  * Created by yunan on 2017/5/16.
+ * 布控任务
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -78,6 +78,7 @@ public class RllrServiceImpl implements RllrService {
     public String listRllrDetailReal(String lrkids) {
         JSONObject result = JSONObject.parseObject(redisService.getVal(captureData));
         JSONArray dataArray = result.getJSONArray("dataContent");
+        // 如果传递了lrkid 则根据id进行过滤
         if(!CommUtils.isNullObject(lrkids)){
             dataArray.removeIf(s->!lrkids.contains(((JSONObject)s).getString("lrkid")));
         }

@@ -1,13 +1,19 @@
 package com.sailing.facetec.comm;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 通用返回结果
  * Created by yunan on 2017/4/27.
  */
 @Data
-public class ActionResult {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ActionResult implements Serializable{
+    private static final long serialVersionUID=1L;
+
     private String responseCode;
     private String message;
     private Object content;

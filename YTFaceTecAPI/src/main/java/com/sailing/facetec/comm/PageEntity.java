@@ -2,19 +2,20 @@ package com.sailing.facetec.comm;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
- * 分页实体类
  * Created by yunan on 2017/5/2.
+ * 分页信息
  */
 @Data
-public class PageEntity {
+public class PageEntity implements Serializable{
+    private static final long serialVersionUID = 1L;
+
     private long count;
     private int pages;
     private int index;
     private int size;
-
-    public PageEntity() {
-    }
 
     /**
      * 构造函数

@@ -1,79 +1,129 @@
 spring:
+  # 设置应用名
   application:
     name: faceapi
+  # 配置数据库信息
   datasource:
     url: jdbc:oracle:thin:@172.20.22.10:1521:orcl
     username: bsits2
     password: bsits2
     driver-class-name: oracle.jdbc.OracleDriver
+  # 输出语法高亮
   output:
     ansi:
       enabled: always
+  # 设置redis数据库
   redis:
     database: 0
     host: localhost
     port: 6379
+  # 是否输出sql语句
+  jpa:
+    show-sql: false
+# 服务器设置
 server:
+  # 设置服务端口
   port: 8191
+  # 启用压缩 压缩json
+  compression:
+    enabled: true
+    mime-types: application/json
+# 设置mybatis实体类包名
 mybatis:
   type-aliases-package: com.sailing.facetec.entiry
+# 配置日志模式
 logging:
   level:
     root: info
   file: logfile.log
+# 服务中心设置
 eureka:
   client:
+    # 服务中心地址
     service-url:
       defaultZone: http://localhost:8181/eureka/
+    # 启用健康监测
     healthcheck:
       enabled: true
+  # 设置心跳包
   instance:
     lease-expiration-duration-in-seconds: 15
     lease-renewal-interval-in-seconds: 5
+# 设置管理权限是否需要安全验证 关闭后 可以使用 actuator 查看服务状态
 management:
   security:
     enabled: false
-info:
-  com: sailing
-  product: faceapi
-tasks:
-  capture: 0/1 * * * * ?
-  alert: 0/1 * * * * ?
-redis-keys:
-  capture-lock: capture-lock
-  alert-lock: alert-lock
-  lock-val: ok
-  capture-data: capture-data
-  alert-data: alert-data
-  capture-cache: 50
-  alert-cache: 50
-  alert-limit: 0
-actioncodes:
-  SUCCEED_CODE: 1000
-  SUCCEED_MSG: 请求成功
-  SERVER_ERROR_CODE: 9999
-  SERVER_ERROR_MSG: 服务端异常:%s
-  PARAMS_ERROR_CODE: 2001
-  PARAMS_ERROR_MSG: 参数错误:%s
-supplys:
-    supply-map:
-        yt_rlk_rlkid: rlk.rlkid1
-        yt_rl_rlkid: rl.rlkid1
-        yt_rl_rlid: rl.rlid1
-upload:
-  image-folder: D:\
-ytface:
-  api-url: http://172.20.25.226:11180
-  username: admin
-  password: 21232f297a57a5a743894a0e4a801fc3
-rlapi:
-  api-url: http://localhost:8183
+# 允许远程关闭
 endpoints:
   shutdown:
     enabled: true
     sensitive: false
+info:
+  com: sailing
+  product: face-api
+# 以下为自定义配置
+
+# 定时任务设置
+tasks:
+  # 定时抽取抓拍记录任务周期
+  capture: 0/1 * * * * ?
+  # 定时抽取告警记录任务周期
+  alert: 0/1 * * * * ?
+# 分布式任务相关
+redis-keys:
+  # 抓拍任务锁
+  capture-lock: capture-lock
+  # 告警任务锁
+  alert-lock: alert-lock
+  lock-val: ok
+  # 抓拍任务数据
+  capture-data: capture-data
+  # 告警任务数据
+  alert-data: alert-data
+  # 抽取抓拍记录数
+  capture-cache: 50
+  # 抽取告警记录数
+  alert-cache: 50
+  # 告警记录相似度下限
+  alert-limit: 0
+# 自定义操作编码
+actioncodes:
+  # 操作成功编码
+  SUCCEED_CODE: 1000
+  SUCCEED_MSG: 请求成功
+  # 服务端操作失败编码
+  SERVER_ERROR_CODE: 9999
+  SERVER_ERROR_MSG: 服务端异常:%s
+  # 参数错误编码
+  PARAMS_ERROR_CODE: 2001
+  PARAMS_ERROR_MSG: 参数错误:%s
+# 算法供应商信息 用于多算法
+supplys:
+    supply-map:
+        # 依图 人脸库表 人脸库id存储列名
+        yt_rlk_rlkid: rlk.rlkid1
+        # 依图 人脸表 人脸库id存储列名
+        yt_rl_rlkid: rl.rlkid1
+        # 依图 人脸表 人脸id存储列名
+        yt_rl_rlid: rl.rlid1
+
+# 依图平台信息
+ytface:
+  # 依图平台api地址
+  api-url: http://172.20.25.226:11180
+  # 依图平台登录信息
+  username: admin
+  password: 21232f297a57a5a743894a0e4a801fc3
+# 文件导出临时目录
 exp:
   root-dir: D:\Services\exproot\
   web-path: http://www.sailing.com/
+# 文件上传根目录
+upload:
+  image-folder: D:\
+# 人脸平台服务地址
+rlapi:
+  api-url: http://localhost:8183
+
 
 

@@ -1,6 +1,5 @@
 package com.sailing.facetec.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.dao.RlbkrwMapper;
@@ -9,7 +8,6 @@ import com.sailing.facetec.entity.BkrwEntity;
 import com.sailing.facetec.entity.SxtDetailEntity;
 import com.sailing.facetec.entity.SxtEntity;
 import com.sailing.facetec.entity.SxtdwEntity;
-import com.sailing.facetec.remoteservice.YTApi;
 import com.sailing.facetec.service.RlsxtService;
 import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
@@ -20,12 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
 /**
  * Created by yunan on 2017/4/28.
+ * 摄像头相关服务
  */
 @Service
 @Transactional
@@ -55,25 +53,45 @@ public class RlsxtServiceImpl implements RlsxtService {
 
     @Override
     public DataEntity<SxtdwEntity> listAllSXTDW() {
+        // 获取摄像头单位信息
         DataEntity<SxtdwEntity> result = new DataEntity<>();
         result.setDataContent(rlsxtMapper.listAllSXTDW());
-        for (Iterator iterator = result.getDataContent().iterator(); iterator.hasNext(); ) {
-            SxtdwEntity sxtdwEntity = (SxtdwEntity) iterator.next();
-            String[] dwIDs = sxtdwEntity.getDWNBBM().split("\\.");
-            sxtdwEntity.setLevel(dwIDs.length);
+
+        // 重构 计算每个单位的级别并设定父节点编号
+        result.getDataContent().forEach(s->{
+            // 分级获取各级单位的编号
+            String[] dwIDs = s.getDWBH().split("\\.");
+            // 设定级别
+            s.setLevel(dwIDs.length);
+            // 设定父节点编号
             int parentIDIndex = dwIDs.length - 2;
             if (parentIDIndex >= 0) {
-                sxtdwEntity.setParentID(dwIDs[dwIDs.length - 2]);
+                s.setParentID(dwIDs[dwIDs.length - 2]);
             }
+        });
 
-        }
+
+        // // 计算每个单位的级别并设定父节点编号
+        // for (Iterator iterator = result.getDataContent().iterator(); iterator.hasNext(); ) {
+        //     SxtdwEntity sxtdwEntity = (SxtdwEntity) iterator.next();
+        //     // 分级获取各级单位的编号
+        //     String[] dwIDs = sxtdwEntity.getDWNBBM().split("\\.");
+        //     // 设定级别
+        //     sxtdwEntity.setLevel(dwIDs.length);
+        //     // 设定父节点编号
+        //     int parentIDIndex = dwIDs.length - 2;
+        //     if (parentIDIndex >= 0) {
+        //         sxtdwEntity.setParentID(dwIDs[dwIDs.length - 2]);
+        //     }
+        // }
         return result;
     }
 
     @Override
     public int addSXT(SxtEntity sxtEntity) {
-        JSONObject jsonObject = new JSONObject();
-        // 获取sid
+        JSONObject jsonObject;
+
+        // 登录 获取sid
         String sid = loginToYT();
 
         String cameraId;
@@ -81,21 +99,24 @@ public class RlsxtServiceImpl implements RlsxtService {
 
         // 添加摄像头
         jsonObject = JSONObject.parseObject(ytService.addCamera(sid, sxtEntity.getSXTMC(), sxtEntity.getSPDZ(), 0));
+        // 获取摄像头Id
         cameraId = jsonObject.getString("id");
+        // 获取路人库Id
         repositoryId = jsonObject.getString("history_repository_id");
 
-        // 更新摄像头状态
+        // 更新摄像头状态 启用摄像头
         jsonObject = JSONObject.parseObject(ytService.updateCamera(sid, Integer.parseInt(cameraId), "", "", 1));
 
         sxtEntity.setSXTID(cameraId);
         sxtEntity.setLRKID(repositoryId);
 
+        // 添加摄像头记录
         return rlsxtMapper.addSXT(sxtEntity);
     }
 
     @Override
     public int addMonitorReposity(BkrwEntity bkrwEntity) throws ParseException {
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject;
         // 登录 获取sid
         String sid = loginToYT();
 
@@ -110,12 +131,6 @@ public class RlsxtServiceImpl implements RlsxtService {
         return rlbkrwMapper.addBkrw(bkrwEntity);
     }
 
-    /**
-     * 布控摄像头
-     *
-     * @param bkrwEntity
-     * @return
-     */
     @Override
     public int addMonitorByCamera(BkrwEntity bkrwEntity) {
         JSONObject jsonObject = new JSONObject();
@@ -151,8 +166,12 @@ public class RlsxtServiceImpl implements RlsxtService {
         return rlbkrwMapper.addBkrw(bkrwEntity);
     }
 
+    /**
+     * 登录依图平台
+     * @return
+     */
     private String loginToYT() {
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject;
         jsonObject = JSONObject.parseObject(ytService.login(ytUsername, ytPassword));
         return jsonObject.getString("session_id");
     }
