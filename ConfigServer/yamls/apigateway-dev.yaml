@@ -1,20 +1,35 @@
+# apigateway 配置
+# 2017-05-19
+
+# 应用名称
 spring:
   application:
     name: apigateway
+# 服务端口
 server:
   port: 8183
+# 路由设置
 zuul:
   routes:
+    # faceapi 路由
     - faceapi:
         path: /faceapi/**
         serviceId: faceapi
+    # 测试服务 demoapi 路由
     - demoapi:
         path: /demoapi/**
         serviceId: demoapi
+# erueka 服务中心设置
 eureka:
   client:
+    # 服务中心地址
     service-url:
       defaultZone: http://localhost:8181/eureka/
+  # 设定心跳时间
+  instance:
+    lease-expiration-duration-in-seconds: 15
+    lease-renewal-interval-in-seconds: 5
+# 关闭默认转发超时
 hystrix:
   command:
     default:

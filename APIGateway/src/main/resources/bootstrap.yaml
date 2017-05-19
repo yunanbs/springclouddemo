@@ -1,13 +1,20 @@
 spring:
+  # 应用名称
   application:
     name: apigateway
+  # 启用SpringCloud
   cloud:
+    # 设置配置中心
     config:
+      # 配置文件环境名
       profile: dev
+      # 开启服务发现 指定配置中心服务名
       discovery:
         enabled: true
         service-id: configserver
+# erueka 服务中心设置
 eureka:
   client:
+    # 服务站中心地址
     service-url:
       defaultZone: http://localhost:8181/eureka/

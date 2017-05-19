@@ -16,6 +16,10 @@ public class app {
         SpringApplication.run(app.class,args);
     }
 
+    /**
+     * 创建jwt过滤器
+     * @return
+     */
     @Bean
     public JWTFilter jwtFilter(){
         return new JWTFilter();
