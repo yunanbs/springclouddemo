@@ -2,12 +2,12 @@ package com.sailing.facetec.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import jdk.internal.util.xml.impl.ReaderUTF8;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.tomcat.util.codec.binary.Base64;
+import sun.misc.BASE64Encoder;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -325,6 +325,26 @@ public class FileUtils {
             bufferedOutputStream.close();
         }
         return result;
+    }
+
+    /**
+     * 文件转Base64
+     * @param filename
+     * @return
+     * @throws IOException
+     */
+    public static String fileToBase64(String filename) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(filename);
+        byte[] result;
+        try {
+            result = new byte[fileInputStream.available()];
+            fileInputStream.read(result);
+        } finally {
+            fileInputStream.close();
+        }
+
+        BASE64Encoder base64Encoder = new BASE64Encoder();
+        return base64Encoder.encode(result);
     }
 
     public static boolean streamToFile(InputStream inputStream, String desFile) throws IOException {

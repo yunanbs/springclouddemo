@@ -104,8 +104,6 @@ public class FileServiceImpl implements FileService {
         return result;
     }
 
-
-
     /**
      * 获取原始数据中的关联文件，更新原始数据中的对应字段，将字段值设置为新的文件名
      * @param dataObject 原始数据记录
