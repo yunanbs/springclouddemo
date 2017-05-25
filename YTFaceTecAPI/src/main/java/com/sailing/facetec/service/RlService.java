@@ -3,6 +3,9 @@ package com.sailing.facetec.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.sailing.facetec.comm.DataEntity;
+import com.sailing.facetec.entity.RlEntity;
+
+import java.io.IOException;
 
 /**
  * Created by yunan on 2017/5/4.
@@ -16,4 +19,17 @@ public interface RlService {
      * @return
      */
     DataEntity listRlDetail(JSONArray detailInfo);
+
+    /**
+     * 添加人像记录
+     * @param rlEntity
+     * @return
+     */
+    int addRlData(RlEntity rlEntity) throws Exception;
+
+    /**
+     * 批量导入人像记录
+     * @return
+     */
+    int impRlDatas(String repositoryID,String zipFile) throws IOException;
 }

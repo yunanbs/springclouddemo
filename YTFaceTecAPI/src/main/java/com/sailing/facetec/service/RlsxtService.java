@@ -46,4 +46,11 @@ public interface RlsxtService {
      * @return
      */
     int addMonitorByCamera(BkrwEntity bkrwEntity);
+
+    /**
+     * 删除摄像头
+     * @param cameraID
+     * @return
+     */
+    int removeCamera(String cameraID);
 }

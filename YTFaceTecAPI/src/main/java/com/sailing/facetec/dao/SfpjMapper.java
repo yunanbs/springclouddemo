@@ -12,7 +12,7 @@ import java.util.List;
  * 算法评价
  */
 public interface SfpjMapper {
-    String insertSql = "insert into ${tableName} values(${seqName}.nextval,sysdate,'${cxdm}','${sfdm}','${fz}','${bz}')";
+    String insertSql = "insert into ${tableName} values(SEQ_TZ_ZJRL.nextval,sysdate,'${cxdm}','${sfdm}','${fz}','${bz}')";
 
     String avgSql = "select SFDM,round(avg(fz),2) as FZ from ${tableName} ${customerFilter} group by SFDM";
 

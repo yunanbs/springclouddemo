@@ -6,6 +6,7 @@ import com.sailing.facetec.entity.SxtdwEntity;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -38,4 +39,7 @@ public interface RlsxtMapper {
      */
     @Insert("insert into b_tz_rlsxt values(SEQ_TZ_ZJRL.nextval,'${SBBH}','${SXTID}','${SXTMC}','${SXTLX}','${SPDZ}','${LRKID}','${YLZD1}','${YLZD2}','${YLZD3}','${YLZD4}','${YLZD4}')")
     int addSXT(SxtEntity sxtEntity);
+
+    @Update("update b_tz_rlsxt set ylzd1='${YLZD1}' where SXTID = '${SXTID}'")
+    int delSXT(SxtEntity sxtEntity);
 }

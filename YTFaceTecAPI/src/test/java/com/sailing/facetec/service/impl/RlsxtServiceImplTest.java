@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = com.sailing.facetec.app.class)
 public class RlsxtServiceImplTest {
 
+
     @Autowired
     private RlsxtService rlsxtService;
 
@@ -29,6 +30,11 @@ public class RlsxtServiceImplTest {
         bkrwEntity.setBJFSX("85");
 
         System.out.println(rlsxtService.addMonitorByCamera(bkrwEntity));
+    }
+
+    @Test
+    public void removeCamera() throws Exception {
+        rlsxtService.removeCamera("164");
     }
 
 }

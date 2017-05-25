@@ -5,21 +5,40 @@ import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.SupplyConfig;
 import com.sailing.facetec.dao.RlDetailMapper;
+import com.sailing.facetec.dao.RlMapper;
 import com.sailing.facetec.dao.RllrDetailMapper;
+import com.sailing.facetec.entity.RlEntity;
+import com.sailing.facetec.remoteservice.YTApi;
 import com.sailing.facetec.service.RlService;
+import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
+import com.sailing.facetec.util.FileUtils;
+import com.sailing.facetec.util.ImageUtils;
+import jdk.nashorn.internal.ir.ContinueNode;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sun.reflect.ReflectionFactory;
 
+import javax.swing.text.html.HTMLDocument;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by yunan on 2017/5/4.
  */
 @Service
 public class RlServiceImpl implements RlService {
+    private static final Logger logger = LoggerFactory.getLogger(RlServiceImpl.class);
 
     @Autowired
     private RlDetailMapper rlDetailMapper;
@@ -28,7 +47,29 @@ public class RlServiceImpl implements RlService {
     private RllrDetailMapper rllrDetailMapper;
 
     @Autowired
+    private RlMapper rlMapper;
+
+    @Autowired
     private SupplyConfig supplyConfig;
+
+    @Autowired
+    private YTService ytService;
+
+    @Value("${ytface.username}")
+    private String ytUsername;
+
+    @Value("${ytface.password}")
+    private String ytPassword;
+
+
+    @Value("${facepic.web-path}")
+    private String webPath;
+
+    @Value("${facepic.face-dir}")
+    private String faceDir;
+
+    @Value("${exp.root-dir}")
+    private String expDir;
 
     @Override
     public DataEntity listRlDetail(JSONArray detailInfo) {
@@ -90,4 +131,121 @@ public class RlServiceImpl implements RlService {
         }
         return result;
     }
+
+    /**
+     * 添加人像记录
+     *
+     * @param rlEntity
+     * @return
+     */
+    @Override
+    @Transactional
+    public int addRlData(RlEntity rlEntity) throws Exception {
+        int result = 0;
+        List<Integer> results = new ArrayList();
+        String sid = loginToYT();
+        JSONObject jsonObject = JSONObject.parseObject(ytService.uploadPicToReopsitory(sid, rlEntity));
+        String rtn = jsonObject.getString("rtn");
+        if (!"0".equals(rtn)) {
+            // 接口失败抛出异常进行统一处理
+            throw new Exception(String.format("上传人像图片记录失败：%s", jsonObject.getString("message")));
+        }
+        // 图片uri
+        String ytPictureUri = jsonObject.getString("picture_uri");
+        JSONArray ytResults = jsonObject.getJSONArray("results");
+
+        ytResults.forEach(s->{
+            // 获取人脸结果对象
+            JSONObject faceObject = (JSONObject)s;
+            // 人脸id
+            String ytFaceID = faceObject.getString("face_image_id");
+            // 人脸uri
+            String ytFaceUri = faceObject.getString("face_image_uri");
+            // 获取图片本地路径及发布路径
+            String[] picPaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), ytFaceID + "-pic");
+            // 获取人脸照片物理路径及发布路径
+            String[] facePaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), ytFaceID + "-face");
+
+            try {
+                // 生成本地大图及小图地址
+                if (FileUtils.base64ToFile(rlEntity.getBase64Pic(), picPaths[0])
+                        && ytService.downLoadPic(ytFaceUri,facePaths[0])) {
+                    // 保存依图uri地址
+                    rlEntity.setDTDZ(ytPictureUri);
+                    rlEntity.setRLDZ(ytFaceUri);
+                    // 保存原图本地地址及发布地址
+                    rlEntity.setXZDTDZ(picPaths[1]);
+                    rlEntity.setXZGXDTDZ(picPaths[0]);
+                    // 保存人脸本地地址及发布地址
+                    rlEntity.setXZRLDZ(facePaths[1]);
+                    rlEntity.setXZGXRLDZ(facePaths[0]);
+                    // 保存人脸id
+                    rlEntity.setRLID(ytFaceID);
+
+                    rlEntity.setRKSJ(CommUtils.getCurrentDate());
+                    rlEntity.setTJSJ(CommUtils.getCurrentDate());
+                    rlEntity.setXGSJ(CommUtils.getCurrentDate());
+
+                    results.add(rlMapper.insertRl(rlEntity));
+                }
+            } catch (IOException e) {
+                logger.error("faile to create repository pic, faceid:{}  error:{}",ytFaceID,e.getMessage());
+            }
+        });
+
+        for(Iterator iterator = results.iterator();iterator.hasNext();){
+            result = result+ (int )iterator.next();
+        }
+        return result;
+    }
+
+    /**
+     * 批量导入人像记录
+     *
+     * @param repositoryID
+     * @param zipFile
+     * @return
+     */
+    @Override
+    @Transactional
+    public int impRlDatas(String repositoryID, String zipFile) throws IOException {
+        // 解压缩文件
+        FileUtils.upZipFile(zipFile,String.format("%s%s\\",expDir, UUID.randomUUID().toString()));
+
+        return 0;
+    }
+
+    private RlEntity[] getRlEntityByXls(String excelPath) throws FileNotFoundException {
+        //
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(excelPath));
+    }
+
+    /**
+     * 使用身份证来获取文件路径
+     *
+     * @param personID
+     * @param faceid
+     * @return
+     */
+    private String[] getPathByPersonID(String repositoryID, String personID, String faceid) {
+        String path = (CommUtils.isNullObject(personID) || personID.length() < 10) ? String.format("%s\\%s\\", repositoryID, "000000") : String.format("%s\\%s\\%s\\", repositoryID, personID.substring(0, 6),personID.substring(6,10));
+        List<String> results = new ArrayList<>();
+        results.add(String.format("%s%s%s.jpg", faceDir, path, faceid));
+        results.add(String.format("%s%s%s.jpg", webPath, path, faceid));
+        String[] result = new String[results.size()];
+        results.toArray(result);
+        return result;
+    }
+
+    /**
+     * 登录依图平台
+     *
+     * @return
+     */
+    private String loginToYT() {
+        JSONObject jsonObject;
+        jsonObject = JSONObject.parseObject(ytService.login(ytUsername, ytPassword));
+        return jsonObject.getString("session_id");
+    }
+
 }

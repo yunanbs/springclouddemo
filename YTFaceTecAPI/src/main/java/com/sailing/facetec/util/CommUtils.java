@@ -1,14 +1,12 @@
 package com.sailing.facetec.util;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -84,6 +82,17 @@ public class CommUtils {
     public static String[] getJsonKeys(JSONObject jsonObject){
         String[] result = new String[jsonObject.keySet().size()];
         jsonObject.keySet().toArray(result);
+        return  result;
+    }
+
+    /**
+     * list转数组
+     * @param source
+     * @return
+     */
+    public static <T> T[] listToArray(List<T> source){
+        T[] result = (T[]) new Object[source.size()];
+        result = source.toArray(result);
         return  result;
     }
 }

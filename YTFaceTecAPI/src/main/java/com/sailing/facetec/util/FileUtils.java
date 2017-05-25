@@ -2,15 +2,21 @@ package com.sailing.facetec.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import jdk.internal.util.xml.impl.ReaderUTF8;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.tomcat.util.codec.binary.Base64;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -154,6 +160,7 @@ public class FileUtils {
 
     /**
      * 创建zip文件
+     *
      * @param fileName 需要打包的目录名
      * @return
      * @throws IOException
@@ -178,8 +185,9 @@ public class FileUtils {
 
     /**
      * 压缩文件
+     *
      * @param currentFilename 当前文件
-     * @param rootPath 当前文件上级目录
+     * @param rootPath        当前文件上级目录
      * @param zipOutputStream zip流
      * @throws IOException
      */
@@ -211,5 +219,137 @@ public class FileUtils {
             }
             bufferedInputStream.close();
         }
+    }
+
+    /**
+     * 解压缩zip
+     *
+     * @param zipFileName
+     * @param desPath
+     * @return
+     */
+    public static int upZipFile(String zipFileName, String desPath) throws IOException {
+        int result = 0;
+        // 生成zip输入流
+        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFileName));
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(zipInputStream);
+
+        // 输出文件流
+        FileOutputStream fileOutputStream = null;
+        BufferedOutputStream bufferedOutputStream = null;
+        File des;
+
+        // zip组件
+        ZipEntry zipEntry = zipInputStream.getNextEntry();
+
+        try {
+            // 获取zip组件单元
+            while (null != zipEntry) {
+
+                // 生成目标文件
+                des = new File(desPath, zipEntry.getName());
+                if (zipEntry.isDirectory()) {
+                    // 生成目录
+                    des.mkdirs();
+                    zipEntry = zipInputStream.getNextEntry();
+                    continue;
+                }
+                // 生成文件输出流
+                fileOutputStream = new FileOutputStream(des);
+                bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+                // 写文件
+                byte[] buffer = new byte[8196];
+                while (bufferedInputStream.read(buffer) > 0) {
+                    bufferedOutputStream.write(buffer);
+                }
+                // 关闭文件输出流
+                bufferedOutputStream.close();
+                fileOutputStream.close();
+                // 添加文件计数
+                result++;
+                zipEntry = zipInputStream.getNextEntry();
+            }
+        } finally {
+            // 关闭所有文件流
+            if (null != bufferedOutputStream) {
+                bufferedOutputStream.close();
+            }
+
+            if (null != fileOutputStream) {
+                fileOutputStream.close();
+            }
+
+            bufferedInputStream.close();
+            zipInputStream.close();
+        }
+        return result;
+    }
+
+    /**
+     * 文件复制
+     *
+     * @param sourceFile
+     * @param desFile
+     * @return
+     * @throws IOException
+     */
+    public static boolean copyFile(String sourceFile, String desFile) throws IOException {
+        boolean result;
+        Path copyResult = Files.copy(Paths.get(sourceFile), Paths.get(desFile));
+        result = desFile.equals(copyResult.toString());
+        return result;
+    }
+
+    /**
+     * base64转文件
+     *
+     * @param base64
+     * @param desFile
+     * @return
+     */
+    public static boolean base64ToFile(String base64, String desFile) throws IOException {
+        boolean result = false;
+        byte[] bytes = Base64.decodeBase64(base64);
+        // 获取文件
+        File file = new File(desFile);
+        // 创建目录
+        File path = new File(file.getParent());
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file));
+        try {
+            bufferedOutputStream.write(bytes);
+            result = true;
+        } finally {
+            bufferedOutputStream.close();
+        }
+        return result;
+    }
+
+    public static boolean streamToFile(InputStream inputStream, String desFile) throws IOException {
+        boolean result = false;
+        // 获取文件
+        File file = new File(desFile);
+        // 创建目录
+        File path = new File(file.getParent());
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(desFile));
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+        try {
+
+            byte[] buffer = new byte[8196];
+            while (bufferedInputStream.read(buffer) != -1) {
+                bufferedOutputStream.write(buffer);
+            }
+            result = true;
+        } finally {
+            inputStream.close();
+            bufferedOutputStream.close();
+        }
+        return result;
     }
 }

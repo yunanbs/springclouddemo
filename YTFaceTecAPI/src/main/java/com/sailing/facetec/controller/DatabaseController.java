@@ -7,10 +7,7 @@ import com.alibaba.fastjson.parser.Feature;
 import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
-import com.sailing.facetec.entity.BkrwEntity;
-import com.sailing.facetec.entity.RlgjDetailEntity;
-import com.sailing.facetec.entity.SxtDetailEntity;
-import com.sailing.facetec.entity.SxtEntity;
+import com.sailing.facetec.entity.*;
 import com.sailing.facetec.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +25,7 @@ import java.util.List;
  */
 @RestController
 // 跨域支持
-@CrossOrigin(origins = "*", methods = {RequestMethod.POST, RequestMethod.OPTIONS, RequestMethod.GET})
+@CrossOrigin(origins = "*", methods = {RequestMethod.POST, RequestMethod.OPTIONS, RequestMethod.GET, RequestMethod.DELETE})
 // 允许配置文件刷新
 @RefreshScope
 public class DatabaseController {
@@ -212,6 +209,11 @@ public class DatabaseController {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtService.addSXT(sxtEntity), null);
     }
 
+    @RequestMapping(value = "/SXT", method = RequestMethod.DELETE)
+    public ActionResult delSXT(@RequestParam("sxtid") String sxtid) {
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtService.removeCamera(sxtid), null);
+    }
+
     /**
      * 报警标注
      *
@@ -248,6 +250,25 @@ public class DatabaseController {
         );
         return result;
     }
+
+    /**
+     * 单条人像数据添加
+     * @param rlEntity
+     * @return
+     */
+    @RequestMapping(value = "/RL/face", consumes = "application/json", method = RequestMethod.POST)
+    public ActionResult addRL(@RequestBody RlEntity rlEntity) {
+        int result = 0;
+        try {
+            result = rlService.addRlData(rlEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ActionResult(ActionCodeConfig.SERVER_ERROR_CODE, ActionCodeConfig.SERVER_ERROR_MSG, result, null);
+        }
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result, null);
+    }
+
+
 
     /**
      * 算法评分
@@ -303,12 +324,13 @@ public class DatabaseController {
 
     /**
      * 创建布控任务
+     *
      * @param bkrwEntities
      * @return
      * @throws IOException
      */
     @RequestMapping(value = "/BK/BKRW", consumes = "application/json", method = RequestMethod.POST)
-    public ActionResult expByArray(@RequestBody BkrwEntity[] bkrwEntities) throws IOException {
+    public ActionResult createMonitorTask(@RequestBody BkrwEntity[] bkrwEntities) throws IOException {
 
         int count = 0;
         List<BkrwEntity> bkrwEntityList = Arrays.asList(bkrwEntities);

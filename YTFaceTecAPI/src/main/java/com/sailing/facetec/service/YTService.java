@@ -1,5 +1,9 @@
 package com.sailing.facetec.service;
 
+import com.sailing.facetec.entity.RlEntity;
+
+import java.io.IOException;
+
 /**
  * Created by yunan on 2017/5/17.
  */
@@ -54,4 +58,29 @@ public interface YTService {
      * @return
      */
     String setMonitorByCamera(String sid,String monitorName,int cameraId,int repositoryId,double limit);
+
+    /**
+     * 删除摄像头
+     * @param sid
+     * @param cameraID
+     * @return
+     */
+    String delCamera(String sid,String cameraID);
+
+    /**
+     * 添加人像库记录
+     * @param sid
+     * @param rlEntity
+     * @return
+     */
+    String uploadPicToReopsitory(String sid, RlEntity rlEntity);
+
+    /**
+     * 下载图片
+     * @param picUris
+     * @param localFile
+     * @return
+     * @throws IOException
+     */
+    boolean downLoadPic(String picUris,String localFile) throws IOException;
 }

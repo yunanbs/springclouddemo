@@ -1,10 +1,7 @@
 package com.sailing.facetec.remoteservice;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by yunan on 2017/5/16.
@@ -59,4 +56,31 @@ public interface YTApi {
      */
     @RequestMapping(value = "/v2/surveillance", consumes = "application/json", method = {RequestMethod.POST})
     String setMonitorByCamera(@RequestHeader("Cookie") String cookie, @RequestBody String params);
+
+    /**
+     * 删除摄像头
+     * @param cookie
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/face/v1/framework/face_video/camera",method = {RequestMethod.DELETE})
+    String delCamera(@RequestHeader("Cookie") String cookie,@RequestParam("id")String id);
+
+    /**
+     * 人脸库上传人脸
+     * @param cookie
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "/face/v1/framework/face_image/repository/picture/synchronized",method = RequestMethod.POST)
+    String uploadPic(@RequestHeader("Cookie") String cookie, @RequestBody String params);
+
+    /**
+     * 图片下载
+     * @param uri_base64
+     * @return
+     */
+    @RequestMapping(value = "/storage/v1/image",method = {RequestMethod.GET})
+    String downLoadPic(@RequestParam("uri_base64") String uri_base64,@RequestParam("sid")String sid);
+
 }

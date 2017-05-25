@@ -167,6 +167,28 @@ public class RlsxtServiceImpl implements RlsxtService {
     }
 
     /**
+     * 删除摄像头
+     *
+     * @param cameraID
+     * @return
+     */
+    @Override
+    public int removeCamera(String cameraID) {
+        int result =0;
+        JSONObject jsonObject = new JSONObject();
+        // 登录 获取sid
+        String sid = loginToYT();
+        jsonObject = JSONObject.parseObject(ytService.delCamera(sid,cameraID));
+        if("0".equals(jsonObject.getString("rtn"))){
+            SxtEntity sxtEntity = new SxtEntity();
+            sxtEntity.setSXTID(cameraID);
+            sxtEntity.setYLZD1("0");
+            result = rlsxtMapper.delSXT(sxtEntity);
+        }
+        return result;
+    }
+
+    /**
      * 登录依图平台
      * @return
      */

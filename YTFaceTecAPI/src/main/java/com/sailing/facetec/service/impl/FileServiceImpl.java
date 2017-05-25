@@ -104,20 +104,7 @@ public class FileServiceImpl implements FileService {
         return result;
     }
 
-    /**
-     * 文件复制
-     *
-     * @param sourceFile
-     * @param desFile
-     * @return
-     * @throws IOException
-     */
-    private boolean copyFile(String sourceFile, String desFile) throws IOException {
-        boolean result;
-        Path copyResult =Files.copy(Paths.get(sourceFile),Paths.get(desFile));
-        result = desFile.equals(copyResult.toString());
-        return result;
-    }
+
 
     /**
      * 获取原始数据中的关联文件，更新原始数据中的对应字段，将字段值设置为新的文件名
@@ -142,7 +129,7 @@ public class FileServiceImpl implements FileService {
 
         try {
             // 复制文件
-            copyFile(sourceFilename, desFileName.toString());
+            FileUtils.copyFile(sourceFilename, desFileName.toString());
         } catch (IOException e) {
             // 文件复制失败进行记录
             logger.error(e.getMessage());

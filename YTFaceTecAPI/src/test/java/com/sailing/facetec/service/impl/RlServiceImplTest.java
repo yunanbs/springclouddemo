@@ -3,7 +3,10 @@ package com.sailing.facetec.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
+import com.sailing.facetec.entity.RlEntity;
 import com.sailing.facetec.service.RlService;
+import com.sailing.facetec.util.CommUtils;
+import com.sailing.facetec.util.ImageUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = com.sailing.facetec.app.class)
 public class RlServiceImplTest {
+
 
     @Autowired
     private RlService rlService;
@@ -56,6 +60,24 @@ public class RlServiceImplTest {
 
         result = rlService.listRlDetail(jsonArray);
         Assert.assertEquals(2,result.getDataContent().size());
+    }
+
+    @Test
+    public void addRlData() throws Exception {
+        String base64Str = ImageUtils.picToBase64("D:\\3.jpg").replaceAll("\r|\n", "");
+        RlEntity rlEntity = new RlEntity();
+        rlEntity.setBase64Pic(base64Str);
+
+        rlEntity.setCSNF("1984-04-26");
+        rlEntity.setXM("俞楠");
+        rlEntity.setXB(1);
+        rlEntity.setRLKID("2");
+        rlEntity.setRLSF("上海");
+        rlEntity.setRLCS("上海");
+        rlEntity.setRLGJ("中国");
+        rlEntity.setSFZH("310113198404260095");
+
+        rlService.addRlData(rlEntity);
     }
 
 }
