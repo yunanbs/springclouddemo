@@ -31,5 +31,5 @@ public interface RlService {
      * 批量导入人像记录
      * @return
      */
-    int impRlDatas(String repositoryID,String zipFile) throws IOException;
+    int impRlDatas(String repositoryID,String zipFile) throws IOException, InterruptedException;
 }

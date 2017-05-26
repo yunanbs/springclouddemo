@@ -16,8 +16,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
 
 /**
  * Created by yunan on 2017/5/9.
@@ -344,7 +346,7 @@ public class FileUtils {
         }
 
         BASE64Encoder base64Encoder = new BASE64Encoder();
-        return base64Encoder.encode(result);
+        return base64Encoder.encode(result).replaceAll("\r|\n","");
     }
 
     public static boolean streamToFile(InputStream inputStream, String desFile) throws IOException {

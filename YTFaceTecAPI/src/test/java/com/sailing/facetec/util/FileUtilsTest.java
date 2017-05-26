@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class FileUtilsTest {
     @Test
     public void upZipFile() throws Exception {
-        FileUtils.upZipFile("d:\\redis.zip","d:\\testzip\\");
+        FileUtils.upZipFile("d:\\test.zip","d:\\testzip\\");
     }
 
 }

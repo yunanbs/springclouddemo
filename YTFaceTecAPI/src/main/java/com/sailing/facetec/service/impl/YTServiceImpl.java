@@ -217,6 +217,7 @@ public class YTServiceImpl  implements YTService{
             InputStream inputStream = httpResponse.getEntity().getContent();
             // result = FileUtils.streamToFile(inputStream,localFile);
             Files.copy(httpResponse.getEntity().getContent(), Paths.get(localFile));
+            result = true;
         }
         expend = System.currentTimeMillis()-expend;
         logger.info("yt download pic expend:{} ms", expend);

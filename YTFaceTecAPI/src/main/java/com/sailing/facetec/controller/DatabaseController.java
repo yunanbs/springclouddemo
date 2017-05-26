@@ -9,6 +9,8 @@ import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.entity.*;
 import com.sailing.facetec.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -105,7 +107,6 @@ public class DatabaseController {
             @RequestParam(name = "fringe", defaultValue = "") String fringe,
             @RequestParam(name = "uygur", defaultValue = "") String uygur
     ) {
-
         DataEntity result = rllrService.listRllrDetail(beginTime, endTime, orderBy, page, size, lrkids, sex, age, glass, fringe, uygur);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result, null);
     }
