@@ -93,27 +93,32 @@ public class RlServiceImplTest {
     public void impRlDatas() throws Exception {
         rlService.impRlDatas("2","D:\\test.zip");
 
-        try {
-            String xlsFile = DataQueue.takeFromQueue();
-            // LOGGER.info("获取人像文件 {}",xlsFile);
-            RlEntity[] rlEntities = getRlEntityByXls(xlsFile);
-            // LOGGER.info("获取人像列表 {} ",rlEntities.length);
-            Arrays.asList(rlEntities).forEach(rlEntity -> {
-                String picPath = rlEntity.getBase64Pic();
-                try {
-                    rlEntity.setBase64Pic(FileUtils.fileToBase64(picPath));
-                    rlEntity.setRLKID("2");
-                    rlService.addRlData(rlEntity);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    // LOGGER.info("人像 {} 导入失败 {}",rlEntity.getXM(),e.getMessage());
-                }
-            });
-            // LOGGER.info("人像导入完成");
-        } catch (Exception e) {
-            // LOGGER.info("人像导入失败 {}",e.getMessage());
-            e.printStackTrace();
-        }
+
+        Thread.sleep(1000*60*60);
+
+        //
+        //
+        // try {
+        //     String xlsFile = DataQueue.takeFromQueue();
+        //     // LOGGER.info("获取人像文件 {}",xlsFile);
+        //     RlEntity[] rlEntities = getRlEntityByXls(xlsFile);
+        //     // LOGGER.info("获取人像列表 {} ",rlEntities.length);
+        //     Arrays.asList(rlEntities).forEach(rlEntity -> {
+        //         String picPath = rlEntity.getBase64Pic();
+        //         try {
+        //             rlEntity.setBase64Pic(FileUtils.fileToBase64(picPath));
+        //             rlEntity.setRLKID("2");
+        //             rlService.addRlData(rlEntity);
+        //         } catch (Exception e) {
+        //             e.printStackTrace();
+        //             // LOGGER.info("人像 {} 导入失败 {}",rlEntity.getXM(),e.getMessage());
+        //         }
+        //     });
+        //     // LOGGER.info("人像导入完成");
+        // } catch (Exception e) {
+        //     // LOGGER.info("人像导入失败 {}",e.getMessage());
+        //     e.printStackTrace();
+        // }
     }
 
     /**

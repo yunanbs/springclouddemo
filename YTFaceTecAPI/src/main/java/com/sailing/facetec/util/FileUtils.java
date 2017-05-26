@@ -10,6 +10,7 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import sun.misc.BASE64Encoder;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -232,8 +233,9 @@ public class FileUtils {
      */
     public static int upZipFile(String zipFileName, String desPath) throws IOException {
         int result = 0;
+        Charset charset = Charset.forName("gbk");
         // 生成zip输入流
-        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFileName));
+        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFileName),charset);
         BufferedInputStream bufferedInputStream = new BufferedInputStream(zipInputStream);
 
         // 输出文件流
