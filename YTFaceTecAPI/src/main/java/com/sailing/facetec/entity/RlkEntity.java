@@ -21,8 +21,8 @@ public class RlkEntity implements Serializable {
     private String RLKMC;
     private int RLKLX;
     private int CCLX;
-    private Date TJSJ;
-    private Date XGSJ;
+    private String TJSJ;
+    private String XGSJ;
     private String TJRBH;
     private String TJR;
     private String XGRBH;

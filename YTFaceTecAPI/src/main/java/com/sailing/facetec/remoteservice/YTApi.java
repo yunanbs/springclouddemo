@@ -49,6 +49,24 @@ public interface YTApi {
     String setMonitorRepository(@RequestHeader("Cookie") String cookie, @RequestBody String params);
 
     /**
+     * 新增人脸库
+     * @param cookie
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "/face/v1/framework/face_image/repository", consumes = "application/json", method = {RequestMethod.POST})
+    String addFaceLib(@RequestHeader("Cookie") String cookie, @RequestBody String params);
+
+    /**
+     * 删除人脸库
+     * @param cookie
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/face/v1/framework/face_image/repository",method = {RequestMethod.DELETE})
+    String delFaceLib(@RequestHeader("Cookie") String cookie,@RequestParam("id")String id);
+
+    /**
      * 布控路人库
      * @param cookie
      * @param params
@@ -67,6 +85,27 @@ public interface YTApi {
     String delCamera(@RequestHeader("Cookie") String cookie,@RequestParam("id")String id);
 
     /**
+     * 修改人员信息
+     * @param cookie
+     * @param params 需要传入的json对象：rlid,xm,qybh,csnf,xb,mz,sfzh
+     * @return
+     */
+    @RequestMapping(value = "/face/v1/framework/face/update",method = {RequestMethod.POST})
+    String altPersonalInfo(@RequestHeader("Cookie") String cookie, @RequestBody String params);
+
+
+    /**
+     * 删除人员
+     * @param cookie
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/face/v1/framework/face/delete",method = {RequestMethod.POST})
+    String delPersonal(@RequestHeader("Cookie") String cookie, @RequestBody String params);
+
+
+
+    /**
      * 人脸库上传人脸
      * @param cookie
      * @param params
@@ -82,5 +121,6 @@ public interface YTApi {
      */
     @RequestMapping(value = "/storage/v1/image",method = {RequestMethod.GET})
     String downLoadPic(@RequestParam("uri_base64") String uri_base64,@RequestParam("sid")String sid);
+
 
 }

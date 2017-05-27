@@ -40,6 +40,11 @@ public interface RlsxtMapper {
     @Insert("insert into b_tz_rlsxt values(SEQ_TZ_ZJRL.nextval,'${SBBH}','${SXTID}','${SXTMC}','${SXTLX}','${SPDZ}','${LRKID}','${YLZD1}','${YLZD2}','${YLZD3}','${YLZD4}','${YLZD4}')")
     int addSXT(SxtEntity sxtEntity);
 
+    /**
+     * 删除摄像头
+     * @param sxtEntity YLZD1是标志位，1代表正常，0代表被删除
+     * @return
+     */
     @Update("update b_tz_rlsxt set ylzd1='${YLZD1}' where SXTID = '${SXTID}'")
     int delSXT(SxtEntity sxtEntity);
 }

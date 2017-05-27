@@ -2,6 +2,7 @@ package com.sailing.facetec.service;
 
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.entity.RlEntity;
 
@@ -32,4 +33,18 @@ public interface RlService {
      * @return
      */
     int impRlDatas(String repositoryID,String zipFile) throws IOException, InterruptedException;
+
+    /**
+     * 修改人员信息
+     * @param
+     * @return
+     */
+    int altPersonalInfo(JSONObject jsonObject);
+
+    /**
+     * 删除人员
+     * @param rlid
+     * @return
+     */
+    int delPersonal(String rlid);
 }

@@ -168,6 +168,81 @@ public class YTServiceImpl  implements YTService{
         return result;
     }
 
+    /**
+     * 新增人脸库
+     * @param sid
+     * @param facelibName
+     * @param comment
+     * @return
+     */
+    @Override
+    public String addFaceLib(String sid, String facelibName, String comment) {
+        long expend = System.currentTimeMillis();
+
+        logger.info("yt addFaceLib params:{}", facelibName);
+        logger.info("yt addFaceLib params:{}", comment);
+
+        String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
+        logger.info("yt addFaceLib headers:{}", headerStr);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name",facelibName);
+        jsonObject.put("comment",comment);
+        String result = ytApi.addFaceLib(headerStr, jsonObject.toJSONString());
+        logger.info("yt addFaceLib result:{}", result);
+
+        expend = System.currentTimeMillis()-expend;
+        logger.info("yt addFaceLib expend:{} ms", expend);
+        return result;
+    }
+
+
+    /**
+     * 删除人脸库
+     * @param sid
+     * @param rlkID
+     * @return
+     */
+    @Override
+    public String delFaceLib(String sid, String rlkID) {
+        long expend = System.currentTimeMillis();
+
+
+        logger.info("yt delfacelib params:{}", rlkID);
+
+        String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
+        logger.info("yt delfacelib headers:{}", headerStr);
+
+        String result = ytApi.delFaceLib(headerStr, rlkID);
+        logger.info("yt delfacelib result:{}", result);
+
+        expend = System.currentTimeMillis()-expend;
+        logger.info("yt delfacelib expend:{} ms", expend);
+        return result;
+    }
+
+    /**
+     * 删除人员
+     * @param sid
+     * @param rlid
+     * @return
+     */
+    @Override
+    public String delPersonal(String sid, String rlid) {
+        String result;
+        long expend = System.currentTimeMillis();
+        JSONObject jsonObject=new JSONObject();
+        Long face_image_id=Long.parseLong(rlid);
+        jsonObject.put("face_image_id",face_image_id);
+        logger.info("yt delPersonal face_image_id:{}", rlid);
+        String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
+        logger.info("yt delPersonal headers:{}", headerStr);
+        result = ytApi.delPersonal(headerStr, jsonObject.toJSONString());
+        logger.info("yt delPersonal result:{}", result);
+        return result;
+    }
+
+
     @Override
     public String uploadPicToReopsitory(String sid, RlEntity rlEntity) {
         long expend = System.currentTimeMillis();

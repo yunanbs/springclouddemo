@@ -15,4 +15,18 @@ public interface RlkService {
      * @return
      */
     DataEntity<RlkEntity> listAllRlk();
+
+    /**
+     * 新增人脸库
+     * @param rlkEntity
+     * @return
+     */
+    int addFaceLib(RlkEntity rlkEntity);
+
+    /**
+     * 删除人脸库
+     * @param rlkID
+     * @return
+     */
+    int delFaceLib(String rlkID);
 }

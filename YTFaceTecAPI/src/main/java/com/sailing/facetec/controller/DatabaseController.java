@@ -9,6 +9,8 @@ import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.entity.*;
 import com.sailing.facetec.service.*;
+import com.sailing.facetec.util.PersonIDUntils;
+import org.apache.coyote.ActionCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.bind.ValidationEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -210,6 +214,10 @@ public class DatabaseController {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtService.addSXT(sxtEntity), null);
     }
 
+    /**
+     * @param sxtid 需删除的摄像头id
+     * @return 操作结果不为 0 表示操作成功
+     */
     @RequestMapping(value = "/SXT", method = RequestMethod.DELETE)
     public ActionResult delSXT(@RequestParam("sxtid") String sxtid) {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtService.removeCamera(sxtid), null);
@@ -239,6 +247,34 @@ public class DatabaseController {
     }
 
     /**
+     * 新增人脸库
+     *
+     * @param jsonObject {rlkmc:人脸库名称,bz:备注信息}
+     * @return 返回值不为 0 操作成功
+     */
+    @RequestMapping(value = "/RLK", method = RequestMethod.POST, consumes = {"application/json"})
+    public ActionResult addRLK(@RequestBody String jsonObject) {
+        JSONObject params = JSONObject.parseObject(jsonObject);
+        RlkEntity rlkEntity = new RlkEntity();
+        rlkEntity.setRLKMC(params.getString("rlkmc"));
+        if (params.containsKey("bz")) {
+            rlkEntity.setBZ(params.getString("bz"));
+        }
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlkService.addFaceLib(rlkEntity), null);
+    }
+
+    /**
+     * 删除人脸库
+     *
+     * @param rlkid 需删除的人脸库id
+     * @return 返回值不为 0 成功
+     */
+    @RequestMapping(value = "/RLK", method = RequestMethod.DELETE)
+    public ActionResult delRLK(@RequestParam("rlkid") String rlkid) {
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlkService.delFaceLib(rlkid), null);
+    }
+
+    /**
      * 查询人脸信息
      *
      * @param params
@@ -252,8 +288,10 @@ public class DatabaseController {
         return result;
     }
 
+
     /**
      * 单条人像数据添加
+     *
      * @param rlEntity
      * @return
      */
@@ -269,6 +307,39 @@ public class DatabaseController {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result, null);
     }
 
+    /**
+     * 修改人脸信息
+     *
+     * @param params 参数中rlid存在且是long型
+     * @return
+     */
+    @RequestMapping(value = "/RL", consumes = "application/json", method = {RequestMethod.PUT})
+    public ActionResult altPersonalInfo(@RequestBody String params) {
+        JSONObject jsonObject = JSONObject.parseObject(params);
+        ActionResult result;
+        if (jsonObject.containsKey("rlid") && jsonObject.getLong("rlid") != null) {
+            result = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.altPersonalInfo(jsonObject), null
+            );
+        } else {
+            result = new ActionResult(ActionCodeConfig.PARAMS_ERROR_CODE, ActionCodeConfig.PARAMS_ERROR_MSG, "", "rlid错误"
+            );
+        }
+        return result;
+    }
+
+
+    /**
+     * 删除人员
+     *
+     * @param rlid
+     * @return
+     */
+    @RequestMapping(value = "/RL", method = {RequestMethod.DELETE})
+    public ActionResult delPersonal(@RequestParam("rlid") String rlid) {
+        ActionResult result = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.delPersonal(rlid), null
+        );
+        return result;
+    }
 
 
     /**
@@ -344,6 +415,19 @@ public class DatabaseController {
             }
         }
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, count, null);
+    }
+
+    @RequestMapping(value="/comm/personinfo",consumes = "application/json",method = RequestMethod.POST)
+    public ActionResult getPersonInfo(@RequestBody String params){
+        JSONObject jsonObject = JSONObject.parseObject(params);
+        String fileName  = jsonObject.getString("filename");
+        String[] personInfo = dealPicFileName(fileName);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG, PersonIDUntils.getPersonInfo(personInfo[0],personInfo[1]),null);
+    }
+
+    private String[] dealPicFileName(String fileName){
+        String[] result = fileName.substring(0,fileName.lastIndexOf(".")).split("-");
+        return  result;
     }
 
 

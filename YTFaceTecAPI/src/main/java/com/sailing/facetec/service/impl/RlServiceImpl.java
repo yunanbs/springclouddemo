@@ -7,6 +7,7 @@ import com.sailing.facetec.config.SupplyConfig;
 import com.sailing.facetec.dao.RlDetailMapper;
 import com.sailing.facetec.dao.RlMapper;
 import com.sailing.facetec.dao.RllrDetailMapper;
+import com.sailing.facetec.entity.RlDetailEntity;
 import com.sailing.facetec.entity.RlEntity;
 import com.sailing.facetec.queue.DataQueue;
 import com.sailing.facetec.remoteservice.YTApi;
@@ -264,6 +265,71 @@ public class RlServiceImpl implements RlService {
             }
         }
         return  result;
+    }
+
+    /**
+     * 修改人员信息
+     * @param jsonObject
+     * @return 返回不为 0 成功
+     */
+    @Override
+    public int altPersonalInfo(JSONObject jsonObject) {
+        int result =0;
+
+        // 登录 获取sid
+        String sid = loginToYT();
+        RlDetailEntity rlDetailEntity = new RlDetailEntity();
+
+        rlDetailEntity.setRLID(jsonObject.getLong("rlid").toString());
+        if(jsonObject.containsKey("xm")) {
+            rlDetailEntity.setXM(jsonObject.getString("xm"));
+        }
+        if(jsonObject.containsKey("qybh"))
+        {
+            rlDetailEntity.setYLZD2(jsonObject.getInteger("qybh")+"");
+        }
+        if(jsonObject.containsKey("csnf"))
+        {
+            rlDetailEntity.setCSNF(jsonObject.getString("csnf"));
+        }
+        if(jsonObject.containsKey("xb"))
+        {
+            rlDetailEntity.setXB(jsonObject.getInteger("xb"));
+        }
+        if(jsonObject.containsKey("mz"))
+        {
+            rlDetailEntity.setYLZD3(jsonObject.getInteger("mz")+"");
+        }
+        if(jsonObject.containsKey("sfzh"))
+        {
+            rlDetailEntity.setSFZH(jsonObject.getString("sfzh"));
+        }
+
+        // jsonObject = JSONObject.parseObject(ytService.altPersonalInfo(sid,jsonObject));
+        // if("0".equals(jsonObject.getString("rtn"))){
+        //
+        //     result =rlDetailMapper.altPersonalInfo(rlDetailEntity);
+        // }
+        return result;
+    }
+
+
+    @Override
+    public int delPersonal(String rlid) {
+        int result =0;
+
+        // 登录 获取sid
+        String sid = loginToYT();
+        RlDetailEntity rlDetailEntity = new RlDetailEntity();
+
+        rlDetailEntity.setRLID(rlid);
+        rlDetailEntity.setYLZD1("0");
+        JSONObject jsonObject = JSONObject.parseObject(ytService.delPersonal(sid,rlid));
+        if("0".equals(jsonObject.getString("rtn"))){
+
+            result =rlDetailMapper.delProsonal(rlDetailEntity);
+        }
+        return result;
     }
 
     /**

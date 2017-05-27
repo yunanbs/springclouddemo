@@ -68,6 +68,30 @@ public interface YTService {
     String delCamera(String sid,String cameraID);
 
     /**
+     * 新增人脸库
+     * @param sid
+     * @param facelibName
+     * @param comment
+     * @return
+     */
+    String addFaceLib(String sid,String facelibName,String comment);
+
+    /**
+     * 删除人脸库
+     * @param sid
+     * @param rlkID
+     * @return
+     */
+    String delFaceLib(String sid, String rlkID);
+
+    /**
+     * 删除人员
+     * @param sid
+     * @param rlid
+     * @return
+     */
+    String delPersonal(String sid, String rlid);
+    /**
      * 添加人像库记录
      * @param sid
      * @param rlEntity
