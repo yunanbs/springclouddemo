@@ -429,6 +429,4 @@ public class DatabaseController {
         String[] result = fileName.substring(0,fileName.lastIndexOf(".")).split("-");
         return  result;
     }
-
-
 }

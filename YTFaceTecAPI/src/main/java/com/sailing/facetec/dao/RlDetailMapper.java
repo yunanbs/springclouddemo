@@ -26,12 +26,11 @@ public interface RlDetailMapper {
 
     /**
      * 修改人员信息
-     *
-     * @param rlDetailEntity
+     * @param customerFilter
      * @return
      */
-    @Update("update b_tz_rl set xm='${XM}', csnf='${CSNF}',xb='${XB}',zjhm='${ZJHM}',ylzd2='${YLZD2}',ylzd3='${YLZD3}' where rlid='${RLID}'")
-    int altPersonalInfo(RlDetailEntity rlDetailEntity);
+    @Update("update b_tz_rl set ${customerFilter}")
+    int altPersonalInfo(@Param("customerFilter") String customerFilter);
 
 
     /**

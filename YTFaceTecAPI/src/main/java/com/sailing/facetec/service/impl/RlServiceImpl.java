@@ -281,38 +281,36 @@ public class RlServiceImpl implements RlService {
         RlDetailEntity rlDetailEntity = new RlDetailEntity();
 
         rlDetailEntity.setRLID(jsonObject.getLong("rlid").toString());
-        if(jsonObject.containsKey("xm")) {
-            rlDetailEntity.setXM(jsonObject.getString("xm"));
-        }
-        if(jsonObject.containsKey("qybh"))
+        String rlid=jsonObject.getString("rlid");
+        String xm=jsonObject.getString("xm");
+        String qybh=jsonObject.getString("qybh");
+        String csnf=jsonObject.getString("csnf");
+        String xb=jsonObject.getString("xb");
+        String mz=jsonObject.getString("mz");
+        String sfzh=jsonObject.getString("sfzh");
+
+
+        StringBuilder customerFilterBuilder = new StringBuilder();
+        customerFilterBuilder.append(null==xm?"":String.format(" xm='%s',", xm));
+        customerFilterBuilder.append(null==qybh?"":String.format(" ylzd2='%s',", qybh));
+        customerFilterBuilder.append(null==csnf?"":String.format(" csnf='%s',", csnf));
+        customerFilterBuilder.append(null==xb?"":String.format(" xb=%s,", xb));
+        customerFilterBuilder.append(null==mz?"":String.format(" ylzd3=%s,", mz));
+        customerFilterBuilder.append(null==sfzh?"":String.format(" sfzh='%s',", sfzh));
+
+        if(customerFilterBuilder.length()>0)
         {
-            rlDetailEntity.setYLZD2(jsonObject.getInteger("qybh")+"");
-        }
-        if(jsonObject.containsKey("csnf"))
-        {
-            rlDetailEntity.setCSNF(jsonObject.getString("csnf"));
-        }
-        if(jsonObject.containsKey("xb"))
-        {
-            rlDetailEntity.setXB(jsonObject.getInteger("xb"));
-        }
-        if(jsonObject.containsKey("mz"))
-        {
-            rlDetailEntity.setYLZD3(jsonObject.getInteger("mz")+"");
-        }
-        if(jsonObject.containsKey("sfzh"))
-        {
-            rlDetailEntity.setSFZH(jsonObject.getString("sfzh"));
+            customerFilterBuilder.deleteCharAt(customerFilterBuilder.length()-1);
+            customerFilterBuilder.append(String.format(" where rlid='%s'",rlid));
         }
 
-        // jsonObject = JSONObject.parseObject(ytService.altPersonalInfo(sid,jsonObject));
-        // if("0".equals(jsonObject.getString("rtn"))){
-        //
-        //     result =rlDetailMapper.altPersonalInfo(rlDetailEntity);
-        // }
+        jsonObject = JSONObject.parseObject(ytService.altPersonalInfo(sid,rlid, xm,qybh,csnf,xb,mz,sfzh));
+        if("0".equals(jsonObject.getString("rtn"))){
+
+            result =rlDetailMapper.altPersonalInfo(customerFilterBuilder.toString());
+        }
         return result;
     }
-
 
     @Override
     public int delPersonal(String rlid) {

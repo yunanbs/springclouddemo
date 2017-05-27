@@ -85,6 +85,20 @@ public interface YTService {
     String delFaceLib(String sid, String rlkID);
 
     /**
+     * 修改人员信息
+     * @param sid
+     * @param rlid 人脸id
+     * @param xm 性别
+     * @param qybh 区域编号
+     * @param csnf 出生年份
+     * @param xb 性别
+     * @param mz 名族
+     * @param sfzh 身份证号
+     * @return
+     */
+    String altPersonalInfo(String sid, String rlid, String xm, String qybh, String csnf, String xb, String mz, String sfzh);
+
+    /**
      * 删除人员
      * @param sid
      * @param rlid

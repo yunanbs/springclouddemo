@@ -222,6 +222,70 @@ public class YTServiceImpl  implements YTService{
     }
 
     /**
+     * 修改人员信息
+     * @param sid
+     * @param rlid
+     * @param xm
+     * @param qybh
+     * @param csnf
+     * @param xb
+     * @param mz
+     * @param sfzh
+     * @return
+     */
+    @Override
+    public String altPersonalInfo(String sid, String rlid, String xm, String qybh, String csnf, String xb, String mz, String sfzh) {
+
+        long expend = System.currentTimeMillis();
+
+        JSONObject jsonObject=new JSONObject();
+        JSONObject jsonSet=new JSONObject();
+        JSONObject jsonUpdate=new JSONObject();
+
+        jsonObject.put("face_image_id",Long.parseLong(rlid));
+
+        if(xm!=null)
+        {
+            jsonSet.put("name",xm);
+        }
+        if(qybh!=null)
+        {
+            jsonSet.put("region",Integer.parseInt(qybh));
+        }
+        if(csnf!=null)
+        {
+            jsonSet.put("birthday",csnf);
+        }
+        if(xb!=null)
+        {
+            jsonSet.put("gender",Integer.parseInt(xb));
+        }
+        if(mz!=null)
+        {
+            jsonSet.put("nation",Integer.parseInt(mz));
+        }
+        if(sfzh!=null)
+        {
+            jsonSet.put("person_id",sfzh);
+        }
+        jsonUpdate.put("$set",jsonSet);
+
+        jsonObject.put("update",jsonUpdate);
+
+        logger.info("yt altPersonalInfo params:{}", jsonObject.toJSONString());
+
+        String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
+        logger.info("yt altPersonalInfo headers:{}", headerStr);
+
+        String result = ytApi.altPersonalInfo(headerStr, jsonObject.toJSONString());
+        logger.info("yt altPersonalInfo result:{}", result);
+
+        expend = System.currentTimeMillis()-expend;
+        logger.info("yt altPersonalInfo expend:{} ms", expend);
+        return result;
+    }
+
+    /**
      * 删除人员
      * @param sid
      * @param rlid
@@ -291,7 +355,7 @@ public class YTServiceImpl  implements YTService{
         if(200==httpResponse.getStatusLine().getStatusCode()){
             InputStream inputStream = httpResponse.getEntity().getContent();
             // result = FileUtils.streamToFile(inputStream,localFile);
-            Files.copy(httpResponse.getEntity().getContent(), Paths.get(localFile));
+            Files.copy(inputStream, Paths.get(localFile));
             result = true;
         }
         expend = System.currentTimeMillis()-expend;
