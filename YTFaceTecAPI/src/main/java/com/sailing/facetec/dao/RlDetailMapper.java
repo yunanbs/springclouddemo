@@ -14,6 +14,10 @@ import java.util.List;
 public interface RlDetailMapper {
     String baseSelSql = "select rl.*,rlk.rlkmc from b_tz_rl rl left join b_tz_rlk rlk on rl.rlkid = rlk.rlkid where ${customerFilter}";
 
+    String pageSql = "select * from(select  row_number() over (order by ${orderColumn}) as rn,rl.*,rlk.rlkmc from b_tz_rl rl left join b_tz_rlk rlk on rl.rlkid = rlk.rlkid where ${customerFilter}) a where a.rn between ${min} and ${max}";
+
+    String countSql = "select count(*) from rl.*,rlk.rlkmc from b_tz_rl rl left join b_tz_rlk rlk on rl.rlkid = rlk.rlkid where ${customerFilter}";
+
     /**
      * 获取人脸详细信息
      *
@@ -22,6 +26,8 @@ public interface RlDetailMapper {
      */
     @Select(baseSelSql)
     List<RlDetailEntity> listRlDetail(@Param("customerFilter") String customerFilter);
+
+
 
 
     /**

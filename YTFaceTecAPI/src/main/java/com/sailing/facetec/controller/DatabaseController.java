@@ -9,18 +9,17 @@ import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.entity.*;
 import com.sailing.facetec.service.*;
+import com.sailing.facetec.util.FileUtils;
 import com.sailing.facetec.util.PersonIDUntils;
-import org.apache.coyote.ActionCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
+import sun.rmi.runtime.Log;
 
-import javax.xml.bind.ValidationEvent;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +34,8 @@ import java.util.List;
 // 允许配置文件刷新
 @RefreshScope
 public class DatabaseController {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(DatabaseController.class);
 
     //region Services
     @Autowired
@@ -283,28 +284,9 @@ public class DatabaseController {
     @RequestMapping(value = "/RL", consumes = "application/json", method = {RequestMethod.POST})
     public ActionResult listRL(@RequestBody String params) {
         JSONArray jsonArray = JSONArray.parseArray(params);
-        ActionResult result = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.listRlDetail(jsonArray), null
+        ActionResult result = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.listRlDetailByRlidAndSupply(jsonArray), null
         );
         return result;
-    }
-
-
-    /**
-     * 单条人像数据添加
-     *
-     * @param rlEntity
-     * @return
-     */
-    @RequestMapping(value = "/RL/face", consumes = "application/json", method = RequestMethod.POST)
-    public ActionResult addRL(@RequestBody RlEntity rlEntity) {
-        int result = 0;
-        try {
-            result = rlService.addRlData(rlEntity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ActionResult(ActionCodeConfig.SERVER_ERROR_CODE, ActionCodeConfig.SERVER_ERROR_MSG, result, null);
-        }
-        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result, null);
     }
 
     /**
@@ -327,7 +309,6 @@ public class DatabaseController {
         return result;
     }
 
-
     /**
      * 删除人员
      *
@@ -340,6 +321,30 @@ public class DatabaseController {
         );
         return result;
     }
+
+    /**
+     * 单条人像数据添加
+     *
+     * @param rlEntity
+     * @return
+     */
+    @RequestMapping(value = "/RL/face", consumes = "application/json", method = RequestMethod.POST)
+    public ActionResult addRL(@RequestBody RlEntity rlEntity) throws Exception {
+        int result = 0;
+        String filename = rlEntity.getXM();
+        String[] filenameStruct = FileUtils.dealPicFileName(filename);
+        PersonIDEntity personIDEntity = PersonIDUntils.getPersonInfo(filenameStruct[0], filenameStruct[1]);
+        rlEntity.setSFZH(personIDEntity.getId());
+        rlEntity.setXM(personIDEntity.getName());
+        rlEntity.setXB("男".equals(personIDEntity.getGender()) ? 1 : 2);
+        rlEntity.setCSNF(personIDEntity.getBirthDay());
+        rlEntity.setRLSF(personIDEntity.getProvince());
+        rlEntity.setRLCS(personIDEntity.getCity());
+        result = rlService.addRlData(rlEntity);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result, null);
+    }
+
+
 
 
     /**
@@ -417,16 +422,19 @@ public class DatabaseController {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, count, null);
     }
 
-    @RequestMapping(value="/comm/personinfo",consumes = "application/json",method = RequestMethod.POST)
-    public ActionResult getPersonInfo(@RequestBody String params){
+    /**
+     * 解析身份证信息
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "/comm/personinfo", consumes = "application/json", method = RequestMethod.POST)
+    public ActionResult getPersonInfo(@RequestBody String params) {
         JSONObject jsonObject = JSONObject.parseObject(params);
-        String fileName  = jsonObject.getString("filename");
-        String[] personInfo = dealPicFileName(fileName);
-        return new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG, PersonIDUntils.getPersonInfo(personInfo[0],personInfo[1]),null);
+        String fileName = jsonObject.getString("filename");
+        String[] personInfo = FileUtils.dealPicFileName(fileName);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, PersonIDUntils.getPersonInfo(personInfo[0], personInfo[1]), null);
     }
 
-    private String[] dealPicFileName(String fileName){
-        String[] result = fileName.substring(0,fileName.lastIndexOf(".")).split("-");
-        return  result;
-    }
+
 }

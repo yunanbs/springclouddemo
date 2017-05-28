@@ -4,10 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.entity.RlEntity;
-import com.sailing.facetec.queue.DataQueue;
 import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.util.CommUtils;
-import com.sailing.facetec.util.FileUtils;
 import com.sailing.facetec.util.ImageUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Assert;
@@ -21,7 +19,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -51,7 +48,7 @@ public class RlServiceImplTest {
         jsonObject.put("rlid","20266198323167233");
         jsonArray.add(jsonObject);
 
-        result = rlService.listRlDetail(jsonArray);
+        result = rlService.listRlDetailByRlidAndSupply(jsonArray);
         Assert.assertEquals(2,result.getDataContent().size());
 
         jsonArray.clear();
@@ -67,7 +64,7 @@ public class RlServiceImplTest {
         jsonObject.put("lrid","18577348462903960");
         jsonArray.add(jsonObject);
 
-        result = rlService.listRlDetail(jsonArray);
+        result = rlService.listRlDetailByRlidAndSupply(jsonArray);
         Assert.assertEquals(2,result.getDataContent().size());
     }
 

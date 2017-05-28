@@ -3538,7 +3538,7 @@ public class PersonIDUntils {
         // 生日
         String birthday = id.substring(6,14);
         // 性别
-        String gender = id.substring(16,17);
+        String gender = "0".equals(id.substring(16,17))?"女":"男";
 
         // 判断是否是直辖市
         if("0".equals(areaCode.substring(2,3))){
@@ -3556,11 +3556,11 @@ public class PersonIDUntils {
         result.setCity(regionMap.get(Integer.parseInt(city)));
         result.setDistrict(regionMap.get(Integer.parseInt(district)));
         result.setBirthDay(String.format("%s-%s-%s",birthday.substring(0,4),birthday.substring(4,6),birthday.substring(6)));
-        result.setGender(Integer.parseInt(gender)%2+"");
+        result.setGender(gender);
         // 计算年龄
         result.setAge(
                 Integer.parseInt(CommUtils.getCurrentDate().substring(0,4))
-                -Integer.parseInt(birthday.substring(0,4))
+                        -Integer.parseInt(birthday.substring(0,4))
         );
         return result;
     }

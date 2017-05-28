@@ -10,27 +10,18 @@ import com.sailing.facetec.dao.RllrDetailMapper;
 import com.sailing.facetec.entity.RlDetailEntity;
 import com.sailing.facetec.entity.RlEntity;
 import com.sailing.facetec.queue.DataQueue;
-import com.sailing.facetec.remoteservice.YTApi;
 import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FileUtils;
-import com.sailing.facetec.util.ImageUtils;
-import jdk.nashorn.internal.ir.ContinueNode;
-import org.apache.ibatis.annotations.Results;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.reflect.ReflectionFactory;
 
-import javax.swing.text.html.HTMLDocument;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -73,7 +64,7 @@ public class RlServiceImpl implements RlService {
     private String expDir;
 
     @Override
-    public DataEntity listRlDetail(JSONArray detailInfo) {
+    public DataEntity listRlDetailByRlidAndSupply(JSONArray detailInfo) {
         StringBuilder customerFilterBuilder = new StringBuilder();
         DataEntity result = new DataEntity();
         // 判断参数中是否含有lrid 来判断搜索哪个库
@@ -230,7 +221,7 @@ public class RlServiceImpl implements RlService {
         int result = 0;
         String parent = String.format("%s\\zip\\%s\\",expDir, UUID.randomUUID().toString());
         // 解压缩文件
-        FileUtils.upZipFile(zipFile,parent);
+        FileUtils.unZipFile(zipFile,parent,true);
         String xlsFile = findExcel(parent);
         if(CommUtils.isNullObject(xlsFile)){
             logger.info("添加批量导入任务失败，未获取xls文件");
@@ -328,6 +319,21 @@ public class RlServiceImpl implements RlService {
             result =rlDetailMapper.delProsonal(rlDetailEntity);
         }
         return result;
+    }
+
+    /**
+     * 人脸库人脸记录模糊查询
+     *
+     * @param rlkid 人脸库编号
+     * @param key   查询关键字
+     * @param page  页码
+     * @param size  分页大小
+     * @return
+     */
+    @Override
+    public RlDetailEntity listRlDetail(String rlkid, String key, int page, int size) {
+
+        return null;
     }
 
     /**

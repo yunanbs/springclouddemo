@@ -4,6 +4,7 @@ package com.sailing.facetec.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
+import com.sailing.facetec.entity.RlDetailEntity;
 import com.sailing.facetec.entity.RlEntity;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public interface RlService {
      * @param detailInfo
      * @return
      */
-    DataEntity listRlDetail(JSONArray detailInfo);
+    DataEntity listRlDetailByRlidAndSupply(JSONArray detailInfo);
 
     /**
      * 添加人像记录
@@ -47,4 +48,15 @@ public interface RlService {
      * @return
      */
     int delPersonal(String rlid);
+
+    /**
+     * 人脸库人脸记录模糊查询
+     * @param rlkid 人脸库编号
+     * @param key 查询关键字
+     * @param page 页码
+     * @param size 分页大小
+     * @return
+     */
+    RlDetailEntity listRlDetail(String rlkid,String key,int page,int size);
+
 }

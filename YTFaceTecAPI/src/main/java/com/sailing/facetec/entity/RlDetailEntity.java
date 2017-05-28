@@ -18,7 +18,7 @@ public class RlDetailEntity implements Serializable{
     private long XH;
     private String RLID;
     private String RLKID;
-    private Date RKSJ;
+    private String RKSJ;
     private String SFZH;
     private int XB;
     private String CSNF;
@@ -29,8 +29,8 @@ public class RlDetailEntity implements Serializable{
     private String TJR;
     private String XGRBH;
     private String XGR;
-    private Date TJSJ;
-    private Date XGSJ;
+    private String TJSJ;
+    private String XGSJ;
     private String LGLX;
     private String LGYX;
     private int SFTB;

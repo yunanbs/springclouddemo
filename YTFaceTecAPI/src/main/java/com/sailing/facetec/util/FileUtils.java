@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
@@ -231,17 +232,14 @@ public class FileUtils {
      * @param desPath
      * @return
      */
-    public static int upZipFile(String zipFileName, String desPath) throws IOException {
+    public static int unZipFile(String zipFileName, String desPath, boolean keepStruct) throws IOException {
         int result = 0;
         Charset charset = Charset.forName("gbk");
         // 生成zip输入流
         ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFileName),charset);
         BufferedInputStream bufferedInputStream = new BufferedInputStream(zipInputStream);
 
-        // 输出文件流
-        FileOutputStream fileOutputStream = null;
-        BufferedOutputStream bufferedOutputStream = null;
-        File des;
+        makePath(desPath);
 
         // zip组件
         ZipEntry zipEntry = zipInputStream.getNextEntry();
@@ -250,43 +248,35 @@ public class FileUtils {
             // 获取zip组件单元
             while (null != zipEntry) {
 
-                // 生成目标文件
-                des = new File(desPath, zipEntry.getName());
                 if (zipEntry.isDirectory()) {
-                    // 生成目录
-                    des.mkdirs();
                     zipEntry = zipInputStream.getNextEntry();
                     continue;
                 }
-                // 生成文件输出流
-                fileOutputStream = new FileOutputStream(des);
-                bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-                // 写文件
-                byte[] buffer = new byte[8196];
-                while (bufferedInputStream.read(buffer) > 0) {
-                    bufferedOutputStream.write(buffer);
+
+                Path desFilePath = Paths.get(desPath,zipEntry.getName());
+                if(keepStruct){
+                    makePath(desFilePath.getParent().toString());
+                    Files.copy(bufferedInputStream,desFilePath);
+                }else{
+                    Files.copy(bufferedInputStream,Paths.get(desPath,desFilePath.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
                 }
-                // 关闭文件输出流
-                bufferedOutputStream.close();
-                fileOutputStream.close();
+
                 // 添加文件计数
                 result++;
                 zipEntry = zipInputStream.getNextEntry();
             }
         } finally {
-            // 关闭所有文件流
-            if (null != bufferedOutputStream) {
-                bufferedOutputStream.close();
-            }
-
-            if (null != fileOutputStream) {
-                fileOutputStream.close();
-            }
-
             bufferedInputStream.close();
             zipInputStream.close();
         }
         return result;
+    }
+
+    public static void makePath(String path){
+        File filePath = new File(path);
+        if(!filePath.exists()){
+            filePath.mkdirs();
+        }
     }
 
     /**
@@ -351,29 +341,13 @@ public class FileUtils {
         return base64Encoder.encode(result).replaceAll("\r|\n","");
     }
 
-    public static boolean streamToFile(InputStream inputStream, String desFile) throws IOException {
-        boolean result = false;
-        // 获取文件
-        File file = new File(desFile);
-        // 创建目录
-        File path = new File(file.getParent());
-        if (!path.exists()) {
-            path.mkdirs();
-        }
-
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(desFile));
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-        try {
-
-            byte[] buffer = new byte[8196];
-            while (bufferedInputStream.read(buffer) != -1) {
-                bufferedOutputStream.write(buffer);
-            }
-            result = true;
-        } finally {
-            inputStream.close();
-            bufferedOutputStream.close();
-        }
-        return result;
+    /**
+     * 分解图片名称
+     * @param fileName
+     * @return
+     */
+    public static String[] dealPicFileName(String fileName){
+        String[] result = fileName.substring(0,fileName.lastIndexOf(".")).split("-");
+        return  result;
     }
 }

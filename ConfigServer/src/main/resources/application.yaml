@@ -10,7 +10,7 @@ spring:
       server:
         native:
           # 设定本地存储配置文件的文件夹
-          search-locations: file:D:/workpath/svn/springclouddemo-dev/ConfigServer/yamls/
+          search-locations: file:D:/workpath/svn/springclouddemo-dev/ConfigServer/yamls
 #  消息中间件地址  用于在集群内分发刷新配置的请求
 #  rabbitmq:
 #    host: localhost
