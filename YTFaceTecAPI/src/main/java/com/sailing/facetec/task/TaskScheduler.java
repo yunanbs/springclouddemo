@@ -97,7 +97,7 @@ public class TaskScheduler {
     /**
      * 抽取告警记录
      */
-    //@Scheduled(cron = "${tasks.alert}")
+    @Scheduled(cron = "${tasks.alert}")
     public void alterScheduler() {
         // 获取锁
         if (redisService.setValNX(alertLock, lockVal, 1, TimeUnit.SECONDS)) {
@@ -116,7 +116,7 @@ public class TaskScheduler {
     /**
      * 人像批量导入任务
      */
-    //@Scheduled(fixedDelay = 500L)
+    @Scheduled(fixedDelay = 500L)
     @Transactional
     public void impRepositoryScheduler() {
         if (DataQueue.isEmpty()) {
@@ -210,7 +210,8 @@ public class TaskScheduler {
                 for (File face : faces) {
                     try {
                         RlEntity tmp = getRlEntityByFile(face);
-                        if (!CommUtils.isNullObject(tmp)) {
+                        tmp.setRLKID(face.getParentFile().getName());
+                        if (!CommUtils.isNullObject(tmp)&&rlService.addRlData(tmp)>0) {
                             result.add(tmp);
                             dealFile(face.getPath(),true,false);
                             if (0 != faceScanLimit && faceScanLimit == result.size()) {
@@ -234,10 +235,10 @@ public class TaskScheduler {
         try {
             if (succeed) {
                 if(keep) {
-                    LOGGER.error("文件处理成功: {} 将被移动到 {}", Filepath, Paths.get(faceRepository, "#succeed"));
+                    LOGGER.info("文件处理成功: {} 将被移动到 {}", Filepath, Paths.get(faceRepository, "#succeed"));
                     Files.move(Paths.get(Filepath), Paths.get(faceRepository, "#succeed", Paths.get(Filepath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
                 }else{
-                    LOGGER.error("文件处理成功: {} 将被删除", Filepath);
+                    LOGGER.info("文件处理成功: {} 将被删除", Filepath);
                 }
             } else {
                 LOGGER.error("文件处理失败: {} 将被移动到 {}", Filepath, Paths.get(faceRepository, "#fail"));
@@ -252,8 +253,6 @@ public class TaskScheduler {
                 LOGGER.error(e.getMessage());
             }
         }
-
-
     }
 
     private RlEntity getRlEntityByFile(File faceFile) throws IOException {

@@ -9,6 +9,7 @@ import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.entity.*;
 import com.sailing.facetec.service.*;
+import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FileUtils;
 import com.sailing.facetec.util.PersonIDUntils;
 import org.slf4j.Logger;
@@ -17,9 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import sun.rmi.runtime.Log;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -71,6 +75,9 @@ public class DatabaseController {
     @Value("${redis-keys.alert-data}")
     private String alertData;
     //endregion
+
+    @Value("${facepic.repository}")
+    private String repositoryRoot;
 
     /**
      * 测试接口
@@ -329,7 +336,7 @@ public class DatabaseController {
      * @return
      */
     @RequestMapping(value = "/RL/face", consumes = "application/json", method = RequestMethod.POST)
-    public ActionResult addRL(@RequestBody RlEntity rlEntity) throws Exception {
+    public ActionResult addFace(@RequestBody RlEntity rlEntity) throws Exception {
         int result = 0;
         String filename = rlEntity.getXM();
         String[] filenameStruct = FileUtils.dealPicFileName(filename);
@@ -340,12 +347,18 @@ public class DatabaseController {
         rlEntity.setCSNF(personIDEntity.getBirthDay());
         rlEntity.setRLSF(personIDEntity.getProvince());
         rlEntity.setRLCS(personIDEntity.getCity());
+        rlEntity.setTJSJ(CommUtils.getCurrentDate());
+        rlEntity.setXGSJ(CommUtils.getCurrentDate());
+        rlEntity.setRKSJ(CommUtils.getCurrentDate());
         result = rlService.addRlData(rlEntity);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result, null);
     }
 
-
-
+    @RequestMapping(value = "/RL/faces",consumes = "multipart/form-data",method = RequestMethod.POST)
+    public ActionResult impFaces(@RequestParam("facezip")MultipartFile multipartFile,@RequestParam("repositoryid")String repositoryid) throws IOException {
+        Files.copy(multipartFile.getInputStream(), Paths.get(repositoryRoot,String.format("%s-%s.zip",repositoryid,multipartFile.getName())));
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, "1", null);
+    }
 
     /**
      * 算法评分

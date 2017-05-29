@@ -69,4 +69,8 @@ public class RlgjDetailEntity implements Serializable{
     private String BZXH;
     private String BZSFXT;
     private String BZBZ;
+
+    private String SBBH;
+    private String JD;
+    private String WD;
 }
