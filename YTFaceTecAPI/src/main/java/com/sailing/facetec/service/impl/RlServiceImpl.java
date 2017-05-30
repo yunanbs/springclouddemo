@@ -3,12 +3,15 @@ package com.sailing.facetec.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
+import com.sailing.facetec.comm.PageEntity;
 import com.sailing.facetec.config.SupplyConfig;
 import com.sailing.facetec.dao.RlDetailMapper;
 import com.sailing.facetec.dao.RlMapper;
+import com.sailing.facetec.dao.RlShowDetailMapper;
 import com.sailing.facetec.dao.RllrDetailMapper;
 import com.sailing.facetec.entity.RlDetailEntity;
 import com.sailing.facetec.entity.RlEntity;
+import com.sailing.facetec.entity.RlShowDetailEntity;
 import com.sailing.facetec.queue.DataQueue;
 import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.service.YTService;
@@ -34,6 +37,9 @@ public class RlServiceImpl implements RlService {
 
     @Autowired
     private RlDetailMapper rlDetailMapper;
+
+    @Autowired
+    private RlShowDetailMapper rlShowDetailMapper;
 
     @Autowired
     private RllrDetailMapper rllrDetailMapper;
@@ -269,9 +275,7 @@ public class RlServiceImpl implements RlService {
 
         // 登录 获取sid
         String sid = loginToYT();
-        RlDetailEntity rlDetailEntity = new RlDetailEntity();
 
-        rlDetailEntity.setRLID(jsonObject.getLong("rlid").toString());
         String rlid=jsonObject.getString("rlid");
         String xm=jsonObject.getString("xm");
         String qybh=jsonObject.getString("qybh");
@@ -279,7 +283,6 @@ public class RlServiceImpl implements RlService {
         String xb=jsonObject.getString("xb");
         String mz=jsonObject.getString("mz");
         String sfzh=jsonObject.getString("sfzh");
-
 
         StringBuilder customerFilterBuilder = new StringBuilder();
         customerFilterBuilder.append(null==xm?"":String.format(" xm='%s',", xm));
@@ -295,7 +298,7 @@ public class RlServiceImpl implements RlService {
             customerFilterBuilder.append(String.format(" where rlid='%s'",rlid));
         }
 
-        jsonObject = JSONObject.parseObject(ytService.altPersonalInfo(sid,rlid, xm,qybh,csnf,xb,mz,sfzh));
+        jsonObject = JSONObject.parseObject(ytService.altPersonalInfo(sid,rlid,xm,qybh,csnf,xb,mz,sfzh));
         if("0".equals(jsonObject.getString("rtn"))){
 
             result =rlDetailMapper.altPersonalInfo(customerFilterBuilder.toString());
@@ -322,18 +325,44 @@ public class RlServiceImpl implements RlService {
     }
 
     /**
+    /**
      * 人脸库人脸记录模糊查询
      *
      * @param rlkid 人脸库编号
+     * @param status 人脸库标志位
      * @param key   查询关键字
      * @param page  页码
      * @param size  分页大小
      * @return
      */
     @Override
-    public RlDetailEntity listRlDetail(String rlkid, String key, int page, int size) {
+    public DataEntity<RlShowDetailEntity> listRlShowDetail(String rlkid, String status, String key, int page, int size) {
 
-        return null;
+        StringBuilder customerFilterBuilder = new StringBuilder();
+        StringBuilder customerFilterCountBuilder = new StringBuilder();
+        DataEntity<RlShowDetailEntity> result=new DataEntity<RlShowDetailEntity>();
+        int min=(page-1)*size;
+        int max=page*size-1;
+        if(key.equals(""))
+        {
+            customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s'", rlkid,status));
+//            customerFilterCountBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s'", rlkid,status));
+        }
+        else
+        {
+            customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.xb like '%%%s%%' or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid,status,key,key,key,key,key,key));
+//            customerFilterCountBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.xb like '%%%s%%' or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid,status,key,key,key,key,key,key));
+        }
+        if(customerFilterBuilder.toString()!="")
+        {
+            List<RlShowDetailEntity> listRlShowDetail = rlShowDetailMapper.listRlShowDetail(customerFilterBuilder.toString(),min,max);
+            int counts = rlShowDetailMapper.RlShowDetailCount(customerFilterBuilder.toString());
+            result.setDataContent(listRlShowDetail);
+            PageEntity pageEntity = new PageEntity(counts,page,size);
+            result.setPageContent(pageEntity);
+
+        }
+        return result;
     }
 
     /**

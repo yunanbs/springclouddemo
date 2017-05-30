@@ -17,7 +17,7 @@ public interface RlsxtService {
      * 获取摄像头信息
      * @return
      */
-    DataEntity<SxtDetailEntity> listAllXST();
+    DataEntity<SxtDetailEntity> listAllXST(String name);
 
     /**
      * 获取摄像头相关单位信息

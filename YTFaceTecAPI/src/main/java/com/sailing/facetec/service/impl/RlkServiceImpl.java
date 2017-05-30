@@ -73,7 +73,8 @@ public class RlkServiceImpl implements RlkService {
         if("0".equals(jsonObject.getString("rtn"))){
             RlkEntity rlkEntity = new RlkEntity();
             rlkEntity.setRLKID(rlkID);
-            rlkEntity.setYLZD1("0");
+            rlkEntity.setXGSJ(CommUtils.getCurrentDate());
+            rlkEntity.setYLZD2("0");
             result = rlkMapper.delFaceLib(rlkEntity);
         }
         return result;

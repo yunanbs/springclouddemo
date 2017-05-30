@@ -26,7 +26,7 @@ public interface RlkMapper {
      * @param rlkEntity YLZD2表示标志位，1代表正常，0代表被删除
      * @return
      */
-    @Update("update b_tz_rlk set ylzd2='${YLZD2}' where rlkid='${RLKID}'")
+    @Update("update b_tz_rlk set ylzd2='${YLZD2}', xgsj=to_date('${XGSJ}','yyyy-mm-dd hh24:mi:ss') where rlkid='${RLKID}'")
     int delFaceLib(RlkEntity rlkEntity);
 
     /**

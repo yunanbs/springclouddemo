@@ -45,9 +45,9 @@ public class RlsxtServiceImpl implements RlsxtService {
     private YTService ytService;
 
     @Override
-    public DataEntity<SxtDetailEntity> listAllXST() {
+    public DataEntity<SxtDetailEntity> listAllXST(String name) {
         DataEntity<SxtDetailEntity> result = new DataEntity<>();
-        result.setDataContent(rlsxtMapper.listAllSXT());
+        result.setDataContent(rlsxtMapper.listAllSXT(name));
         return result;
     }
 
@@ -70,20 +70,6 @@ public class RlsxtServiceImpl implements RlsxtService {
             }
         });
 
-
-        // // 计算每个单位的级别并设定父节点编号
-        // for (Iterator iterator = result.getDataContent().iterator(); iterator.hasNext(); ) {
-        //     SxtdwEntity sxtdwEntity = (SxtdwEntity) iterator.next();
-        //     // 分级获取各级单位的编号
-        //     String[] dwIDs = sxtdwEntity.getDWNBBM().split("\\.");
-        //     // 设定级别
-        //     sxtdwEntity.setLevel(dwIDs.length);
-        //     // 设定父节点编号
-        //     int parentIDIndex = dwIDs.length - 2;
-        //     if (parentIDIndex >= 0) {
-        //         sxtdwEntity.setParentID(dwIDs[dwIDs.length - 2]);
-        //     }
-        // }
         return result;
     }
 
@@ -128,6 +114,12 @@ public class RlsxtServiceImpl implements RlsxtService {
 
         // 设置布控
         jsonObject = JSONObject.parseObject(ytService.setMonitorRepository(sid, Integer.parseInt(bkrwEntity.getSXTID()), Integer.parseInt(bkrwEntity.getRLKID()), Double.parseDouble(bkrwEntity.getBJFSX()), 0, sec));
+
+        if(!"0".equals(jsonObject.getString("rtn"))){
+            return 0;
+        }
+
+        bkrwEntity.setBKID(jsonObject.getString("id"));
         return rlbkrwMapper.addBkrw(bkrwEntity);
     }
 

@@ -78,20 +78,26 @@ public class TaskScheduler {
     /**
      * 抽取抓拍记录
      */
-    //@Scheduled(cron = "${tasks.capture}")
+    @Scheduled(cron = "${tasks.capture}")
     public void captureScheduler() {
         // 获取锁
-        if (redisService.setValNX(captureLock, lockVal, 1, TimeUnit.SECONDS)) {
+        if (!redisService.setValNX(captureLock, lockVal, 1, TimeUnit.SECONDS)) {
+            return;
+        }
+        try {
             long use = System.currentTimeMillis();
             // 按配置抽取历史数据
             DataEntity result = rllrService.listRllrDetail("", "", "", 1, captureCache, "", "", "", "", "", "");
             // 更新实时数据
             redisService.setVal(captureData, JSON.toJSONString(result, FastJsonUtils.nameFilter, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero), 1, TimeUnit.DAYS);
+
+            use = use - System.currentTimeMillis();
+            LOGGER.info("capture logs {} used {} ms", result.getDataContent().size(), use);
+        } finally {
             // 释放锁
             redisService.delKey(captureLock);
-            use = use - System.currentTimeMillis();
-            LOGGER.info("抽取抓拍数据 {} 用时 {} ms", result.getDataContent().size(), use);
         }
+
     }
 
     /**
@@ -109,61 +115,36 @@ public class TaskScheduler {
             // 释放锁
             redisService.delKey(alertLock);
             use = use - System.currentTimeMillis();
-            LOGGER.info("抽取报警数据 {} 用时 {} ms", result.getDataContent().size(), use);
+            LOGGER.info("alert logs {} used {} ms", result.getDataContent().size(), use);
         }
     }
 
-    /**
-     * 人像批量导入任务
-     */
-    @Scheduled(fixedDelay = 500L)
-    @Transactional
-    public void impRepositoryScheduler() {
-        if (DataQueue.isEmpty()) {
-            LOGGER.info("没有人像导入任务");
-            return;
-        }
-
-        try {
-            String xlsFile = DataQueue.takeFromQueue();
-            LOGGER.info("获取人像文件 {}", xlsFile);
-            RlEntity[] rlEntities = getRlEntityByXls(xlsFile);
-            LOGGER.info("获取人像列表 {} ", rlEntities.length);
-            Arrays.asList(rlEntities).forEach(rlEntity -> {
-                String picPath = rlEntity.getBase64Pic();
-                try {
-                    rlEntity.setBase64Pic(FileUtils.fileToBase64(picPath));
-                    rlEntity.setRLKID("2");
-                    rlService.addRlData(rlEntity);
-                } catch (Exception e) {
-                    LOGGER.info("人像 {} 导入失败 {}", rlEntity.getXM(), e.getMessage());
-                }
-            });
-            LOGGER.info("人像导入完成");
-        } catch (Exception e) {
-            LOGGER.info("人像导入失败 {}", e.getMessage());
-        }
-    }
 
     @Scheduled(cron = "${tasks.scan-face-repository}")
     public void scanRepositoryScheduler() {
-        if (!redisService.setValNX(repositoryLock, lockVal, 2, TimeUnit.HOURS)) {
+        // 获取锁
+        if (!redisService.setValNX(repositoryLock, lockVal, 1, TimeUnit.MINUTES)) {
             return;
         }
 
-        long use = System.currentTimeMillis();
-        LOGGER.info("启动人像扫描任务 扫描根文件夹 {}", faceRepository);
 
-        LOGGER.info("启动解压缩任务");
-        unZipFiles();
-        LOGGER.info("解压缩任务耗时 {} ms", System.currentTimeMillis() - use);
+        try {
+            long use = System.currentTimeMillis();
+            LOGGER.info("Start scan path {}", faceRepository);
 
-        use = System.currentTimeMillis();
-        LOGGER.info("启动读取人脸信息任务");
-        RlEntity[] rlEntities = getRlEntitys();
-        LOGGER.info("读取人脸任务耗时 {} ms 共读取 {} 张人脸", System.currentTimeMillis() - use, rlEntities.length);
+            LOGGER.info("start unzip");
+            unZipFiles();
+            LOGGER.info("unzip used {} ms", System.currentTimeMillis() - use);
 
-        redisService.delKey(repositoryLock);
+            use = System.currentTimeMillis();
+            LOGGER.info("start deal face files");
+            RlEntity[] rlEntities = getRlEntitys();
+            LOGGER.info("deal face files uesc {} ms get {} faces", System.currentTimeMillis() - use, rlEntities.length);
+        } finally {
+            // 释放锁
+            redisService.delKey(repositoryLock);
+        }
+
 
     }
 
@@ -176,7 +157,7 @@ public class TaskScheduler {
         // 获取根路径下的文件
         File[] zips = root.listFiles();
         if (0 == zips.length) {
-            LOGGER.info("没有需要处理的zip文件");
+            LOGGER.info("no zip file to deal");
         }
         for (File zip : zips) {
             // 文件夹不需要处理
@@ -188,9 +169,9 @@ public class TaskScheduler {
             try {
                 // 解压缩文件
                 FileUtils.unZipFile(zip.getPath(), Paths.get(faceRepository, repositoryID).toString(), false);
-                dealFile(zip.getPath(),true,true);
+                dealFile(zip.getPath(), true, true);
             } catch (IOException e) {
-                dealFile(zip.getPath(),false,true);
+                dealFile(zip.getPath(), false, true);
             }
         }
     }
@@ -211,17 +192,17 @@ public class TaskScheduler {
                     try {
                         RlEntity tmp = getRlEntityByFile(face);
                         tmp.setRLKID(face.getParentFile().getName());
-                        if (!CommUtils.isNullObject(tmp)&&rlService.addRlData(tmp)>0) {
+                        if (!CommUtils.isNullObject(tmp) && rlService.addRlData(tmp) > 0) {
                             result.add(tmp);
-                            dealFile(face.getPath(),true,false);
+                            dealFile(face.getPath(), true, false);
                             if (0 != faceScanLimit && faceScanLimit == result.size()) {
                                 break;
                             }
                         } else {
-                            dealFile(face.getPath(),false,true);
+                            dealFile(face.getPath(), false, true);
                         }
                     } catch (Exception e) {
-                        dealFile(face.getPath(),false,true);
+                        dealFile(face.getPath(), false, true);
                     }
                 }
             }
@@ -234,19 +215,19 @@ public class TaskScheduler {
     private void dealFile(String Filepath, boolean succeed, boolean keep) {
         try {
             if (succeed) {
-                if(keep) {
-                    LOGGER.info("文件处理成功: {} 将被移动到 {}", Filepath, Paths.get(faceRepository, "#succeed"));
+                if (keep) {
+                    LOGGER.info("succeed file: {} will be move to {}", Filepath, Paths.get(faceRepository, "#succeed"));
                     Files.move(Paths.get(Filepath), Paths.get(faceRepository, "#succeed", Paths.get(Filepath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
-                }else{
-                    LOGGER.info("文件处理成功: {} 将被删除", Filepath);
+                } else {
+                    LOGGER.info("succeed file: {} will be delete", Filepath);
                 }
             } else {
-                LOGGER.error("文件处理失败: {} 将被移动到 {}", Filepath, Paths.get(faceRepository, "#fail"));
-                Files.move(Paths.get(Filepath), Paths.get(faceRepository, "#fail",Paths.get(Filepath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+                LOGGER.error("fail file: {} will bu move to  {}", Filepath, Paths.get(faceRepository, "#fail"));
+                Files.move(Paths.get(Filepath), Paths.get(faceRepository, "#fail", Paths.get(Filepath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
-        }finally {
+        } finally {
             try {
                 Files.delete(Paths.get(Filepath));
             } catch (IOException e) {
@@ -285,45 +266,79 @@ public class TaskScheduler {
         return result;
     }
 
-    /**
-     * 获取人像库数据
-     *
-     * @param excelPath
-     * @return
-     * @throws IOException
-     */
-    private RlEntity[] getRlEntityByXls(String excelPath) throws IOException {
-        File excelFile = new File(excelPath);
-        // 返回结果集
-        List<RlEntity> rlEntities = new ArrayList();
-        // 打开工作簿
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(excelFile));
-        hssfWorkbook.getSheetAt(0).forEach(r -> {
-            if (0 != r.getRowNum()) {
-                RlEntity rlEntity = new RlEntity();
-                rlEntity.setXM(r.getCell(1).getStringCellValue());
-                rlEntity.setSFZH(r.getCell(2).getStringCellValue());
-                rlEntity.setCSNF(r.getCell(3).getStringCellValue());
-                switch (r.getCell(4).getStringCellValue()) {
-                    case "男":
-                        rlEntity.setXB(1);
-                        break;
-                    case "女":
-                        rlEntity.setXB(2);
-                        break;
-                    default:
-                        rlEntity.setXB(0);
-                        break;
-                }
-                rlEntity.setRLSF(r.getCell(5).getStringCellValue());
-                rlEntity.setRLCS(r.getCell(6).getStringCellValue());
-                rlEntity.setBase64Pic(String.format("%s\\%s.jpg", excelFile.getParent(), r.getCell(7).getStringCellValue()));
-                rlEntity.setXGSJ(CommUtils.getCurrentDate());
-                rlEntity.setTJSJ(CommUtils.getCurrentDate());
-                rlEntities.add(rlEntity);
-            }
-        });
-        RlEntity[] results = new RlEntity[rlEntities.size()];
-        return rlEntities.toArray(results);
-    }
+    //region 从 excel 获取人像库数据 （废弃）
+    // /**
+    //  * 人像批量导入任务
+    //  */
+    // @Scheduled(fixedDelay = 500L)
+    // @Transactional
+    // public void impRepositoryScheduler() {
+    //     if (DataQueue.isEmpty()) {
+    //         LOGGER.info("没有人像导入任务");
+    //         return;
+    //     }
+    //
+    //     try {
+    //         String xlsFile = DataQueue.takeFromQueue();
+    //         LOGGER.info("获取人像文件 {}", xlsFile);
+    //         RlEntity[] rlEntities = getRlEntityByXls(xlsFile);
+    //         LOGGER.info("获取人像列表 {} ", rlEntities.length);
+    //         Arrays.asList(rlEntities).forEach(rlEntity -> {
+    //             String picPath = rlEntity.getBase64Pic();
+    //             try {
+    //                 rlEntity.setBase64Pic(FileUtils.fileToBase64(picPath));
+    //                 rlEntity.setRLKID("2");
+    //                 rlService.addRlData(rlEntity);
+    //             } catch (Exception e) {
+    //                 LOGGER.info("人像 {} 导入失败 {}", rlEntity.getXM(), e.getMessage());
+    //             }
+    //         });
+    //         LOGGER.info("人像导入完成");
+    //     } catch (Exception e) {
+    //         LOGGER.info("人像导入失败 {}", e.getMessage());
+    //     }
+    // }
+
+    // /**
+    //  * 从 excel 获取人像库数据 （废弃）
+    //  *
+    //  * @param excelPath
+    //  * @return
+    //  * @throws IOException
+    //  */
+    // private RlEntity[] getRlEntityByXls(String excelPath) throws IOException {
+    //     File excelFile = new File(excelPath);
+    //     // 返回结果集
+    //     List<RlEntity> rlEntities = new ArrayList();
+    //     // 打开工作簿
+    //     HSSFWorkbook hssfWorkbook = new HSSFWorkbook(new FileInputStream(excelFile));
+    //     hssfWorkbook.getSheetAt(0).forEach(r -> {
+    //         if (0 != r.getRowNum()) {
+    //             RlEntity rlEntity = new RlEntity();
+    //             rlEntity.setXM(r.getCell(1).getStringCellValue());
+    //             rlEntity.setSFZH(r.getCell(2).getStringCellValue());
+    //             rlEntity.setCSNF(r.getCell(3).getStringCellValue());
+    //             switch (r.getCell(4).getStringCellValue()) {
+    //                 case "男":
+    //                     rlEntity.setXB(1);
+    //                     break;
+    //                 case "女":
+    //                     rlEntity.setXB(2);
+    //                     break;
+    //                 default:
+    //                     rlEntity.setXB(0);
+    //                     break;
+    //             }
+    //             rlEntity.setRLSF(r.getCell(5).getStringCellValue());
+    //             rlEntity.setRLCS(r.getCell(6).getStringCellValue());
+    //             rlEntity.setBase64Pic(String.format("%s\\%s.jpg", excelFile.getParent(), r.getCell(7).getStringCellValue()));
+    //             rlEntity.setXGSJ(CommUtils.getCurrentDate());
+    //             rlEntity.setTJSJ(CommUtils.getCurrentDate());
+    //             rlEntities.add(rlEntity);
+    //         }
+    //     });
+    //     RlEntity[] results = new RlEntity[rlEntities.size()];
+    //     return rlEntities.toArray(results);
+    // }
+    //endregion
 }

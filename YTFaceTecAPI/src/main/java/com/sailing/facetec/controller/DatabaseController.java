@@ -24,6 +24,7 @@ import sun.rmi.runtime.Log;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -34,7 +35,7 @@ import java.util.List;
  */
 @RestController
 // 跨域支持
-@CrossOrigin(origins = "*", methods = {RequestMethod.POST, RequestMethod.OPTIONS, RequestMethod.GET, RequestMethod.DELETE})
+@CrossOrigin(origins = "*", methods = {RequestMethod.POST, RequestMethod.OPTIONS, RequestMethod.GET, RequestMethod.DELETE,RequestMethod.PUT})
 // 允许配置文件刷新
 @RefreshScope
 public class DatabaseController {
@@ -194,8 +195,8 @@ public class DatabaseController {
      * @return
      */
     @RequestMapping("/SXT")
-    public ActionResult listSXT() {
-        DataEntity<SxtDetailEntity> rlsxtEntityDataEntity = rlsxtService.listAllXST();
+    public ActionResult listSXT(@RequestParam(value = "name",defaultValue = "")String name) {
+        DataEntity<SxtDetailEntity> rlsxtEntityDataEntity = rlsxtService.listAllXST(name);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtEntityDataEntity, null);
     }
 
@@ -207,7 +208,7 @@ public class DatabaseController {
     @RequestMapping("/SXT/DW")
     public ActionResult listSXTDW() {
         DataEntity rlsxtdwEntityDataEntity = rlsxtService.listAllSXTDW();
-        DataEntity rlsxtDataEntity = rlsxtService.listAllXST();
+        DataEntity rlsxtDataEntity = rlsxtService.listAllXST("");
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtdwEntityDataEntity, rlsxtDataEntity);
     }
 
@@ -299,14 +300,14 @@ public class DatabaseController {
     /**
      * 修改人脸信息
      *
-     * @param params 参数中rlid存在且是long型
+     * @param params 参数中rlid存在
      * @return
      */
     @RequestMapping(value = "/RL", consumes = "application/json", method = {RequestMethod.PUT})
     public ActionResult altPersonalInfo(@RequestBody String params) {
         JSONObject jsonObject = JSONObject.parseObject(params);
         ActionResult result;
-        if (jsonObject.containsKey("rlid") && jsonObject.getLong("rlid") != null) {
+        if (jsonObject.containsKey("rlid")) {
             result = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.altPersonalInfo(jsonObject), null
             );
         } else {
@@ -354,9 +355,28 @@ public class DatabaseController {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result, null);
     }
 
+    @RequestMapping(value = "/RL/faces", consumes = "application/json", method = RequestMethod.GET)
+    public ActionResult listRlDetail(
+            @RequestParam(name = "beginTime", defaultValue = "") String beginTime,
+                                      @RequestParam(name = "rlkid") String rlkid,
+                                      @RequestParam(name = "status", defaultValue = "1") String status,
+                                      @RequestParam(name = "key", defaultValue = "") String key,
+                                      @RequestParam(name = "page", defaultValue = "1") int page,
+                                      @RequestParam(name = "size", defaultValue = "10") int size) {
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.listRlShowDetail(rlkid,status,key,page,size), null);
+
+    }
+
+    /**
+     * 人像记录批量导入 zip格式
+     * @param multipartFile
+     * @param repositoryid
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/RL/faces",consumes = "multipart/form-data",method = RequestMethod.POST)
     public ActionResult impFaces(@RequestParam("facezip")MultipartFile multipartFile,@RequestParam("repositoryid")String repositoryid) throws IOException {
-        Files.copy(multipartFile.getInputStream(), Paths.get(repositoryRoot,String.format("%s-%s.zip",repositoryid,multipartFile.getName())));
+        Files.copy(multipartFile.getInputStream(), Paths.get(repositoryRoot,String.format("%s-%s",repositoryid,multipartFile.getOriginalFilename())), StandardCopyOption.REPLACE_EXISTING);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, "1", null);
     }
 

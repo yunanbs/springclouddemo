@@ -21,8 +21,8 @@ public interface RlsxtMapper {
      *
      * @return
      */
-    @Select("select a.*,b.yhz from B_TZ_RLSXT a left join b_sssb_sbxx b on a.sbbh = b.sbbh")
-    List<SxtDetailEntity> listAllSXT();
+    @Select("select a.*,b.yhz from B_TZ_RLSXT a left join b_sssb_sbxx b on a.sbbh = b.sbbh where a.sxtmc like '%${name}%'")
+    List<SxtDetailEntity> listAllSXT(@Param("name") String name);
 
     /**
      * 获取包含摄像头的单位信息

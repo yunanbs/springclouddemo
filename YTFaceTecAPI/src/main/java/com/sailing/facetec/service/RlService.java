@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.entity.RlDetailEntity;
 import com.sailing.facetec.entity.RlEntity;
+import com.sailing.facetec.entity.RlShowDetailEntity;
 
 import java.io.IOException;
 
@@ -49,14 +50,8 @@ public interface RlService {
      */
     int delPersonal(String rlid);
 
-    /**
-     * 人脸库人脸记录模糊查询
-     * @param rlkid 人脸库编号
-     * @param key 查询关键字
-     * @param page 页码
-     * @param size 分页大小
-     * @return
-     */
-    RlDetailEntity listRlDetail(String rlkid,String key,int page,int size);
+
+   DataEntity<RlShowDetailEntity> listRlShowDetail(String rlkid, String status, String key, int page, int size);
+
 
 }

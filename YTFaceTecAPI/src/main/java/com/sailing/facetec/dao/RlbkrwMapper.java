@@ -1,7 +1,9 @@
 package com.sailing.facetec.dao;
 
 import com.sailing.facetec.entity.BkrwEntity;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * Created by yunan on 2017/5/16.
