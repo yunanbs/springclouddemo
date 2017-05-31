@@ -6,28 +6,21 @@ import com.sailing.facetec.entity.RlEntity;
 import com.sailing.facetec.remoteservice.YTApi;
 import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
-import com.sailing.facetec.util.FileUtils;
-import org.apache.http.HttpEntity;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.stereotype.Service;
-import sun.misc.BASE64Encoder;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by yunan on 2017/5/17.
@@ -344,8 +337,9 @@ public class YTServiceImpl  implements YTService{
         long expend = System.currentTimeMillis();
         boolean result = false;
         // 获取base64图片地址
-        BASE64Encoder base64Encoder = new BASE64Encoder();
-        String baseUri = base64Encoder.encode(picUri.getBytes()).replaceAll("\r|\n", "");
+        // BASE64Encoder base64Encoder = new BASE64Encoder();
+        // String baseUri = base64Encoder.encode(picUri.getBytes()).replaceAll("\r|\n", "");
+        String baseUri = Base64.encodeBase64String(picUri.getBytes()).replaceAll("\r|\n", "");
         logger.info("yt download pic params: {}", baseUri);
 
         String requestUrl = String.format("%s/storage/v1/image?uri_base64=%s",ytServer,baseUri);
@@ -362,6 +356,4 @@ public class YTServiceImpl  implements YTService{
         logger.info("yt download pic expend:{} ms", expend);
         return result;
     }
-
-
 }

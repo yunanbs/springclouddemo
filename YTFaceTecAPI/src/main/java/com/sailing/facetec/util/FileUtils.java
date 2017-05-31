@@ -7,7 +7,7 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.tomcat.util.codec.binary.Base64;
-import sun.misc.BASE64Encoder;
+
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -18,7 +18,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -337,8 +336,10 @@ public class FileUtils {
             fileInputStream.close();
         }
 
-        BASE64Encoder base64Encoder = new BASE64Encoder();
-        return base64Encoder.encode(result).replaceAll("\r|\n","");
+
+        // BASE64Encoder base64Encoder = new BASE64Encoder();
+        // return base64Encoder.encode(result).replaceAll("\r|\n","");
+        return Base64.encodeBase64String(result).replaceAll("\r|\n","");
     }
 
     /**

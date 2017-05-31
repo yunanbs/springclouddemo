@@ -1,6 +1,6 @@
 package com.sailing.facetec.util;
 
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,8 +30,9 @@ public class ImageUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //对字节数组Base64编码
-        BASE64Encoder encoder = new BASE64Encoder();
-        return encoder.encode(data);//返回Base64编码过的字节数组字符串
+        // //对字节数组Base64编码
+        // BASE64Encoder encoder = new BASE64Encoder();
+        // return encoder.encode(data);//返回Base64编码过的字节数组字符串
+        return Base64.encodeBase64String(data);
     }
 }

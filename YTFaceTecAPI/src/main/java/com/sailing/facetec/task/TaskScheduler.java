@@ -127,7 +127,6 @@ public class TaskScheduler {
             return;
         }
 
-
         try {
             long use = System.currentTimeMillis();
             LOGGER.info("Start scan path {}", faceRepository);
@@ -144,8 +143,6 @@ public class TaskScheduler {
             // 释放锁
             redisService.delKey(repositoryLock);
         }
-
-
     }
 
     /**
