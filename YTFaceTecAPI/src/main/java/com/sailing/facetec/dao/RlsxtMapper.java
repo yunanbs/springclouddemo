@@ -35,6 +35,7 @@ public interface RlsxtMapper {
     /**
      * 添加摄像头
      * @param sxtEntity
+     * YLZD2表示摄像头启停标志位 1表示启动 0表示停止
      * @return
      */
     @Insert("insert into b_tz_rlsxt values(SEQ_TZ_ZJRL.nextval,'${SBBH}','${SXTID}','${SXTMC}','${SXTLX}','${SPDZ}','${LRKID}','${YLZD1}','${YLZD2}','${YLZD3}','${YLZD4}','${YLZD4}')")
@@ -47,4 +48,7 @@ public interface RlsxtMapper {
      */
     @Update("update b_tz_rlsxt set ylzd1='${YLZD1}' where SXTID = '${SXTID}'")
     int delSXT(SxtEntity sxtEntity);
+
+    @Update("update b_tz_rlsxt set ylzd2='${enable}' where sxtid = '${sxtid}'")
+    int enableSXT(@Param("sxtid") String sxtid, @Param("enable") String enable);
 }

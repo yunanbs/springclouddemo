@@ -12,7 +12,7 @@ import java.util.List;
  * 人脸库
  */
 public interface RlkMapper {
-    String baseSelSql = "select * from B_TZ_RLK";
+    String baseSelSql = "select * from B_TZ_RLK where ylzd2='1'";
 
     /**
      * 获取人脸库数据库信息

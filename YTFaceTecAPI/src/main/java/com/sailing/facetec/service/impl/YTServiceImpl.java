@@ -101,6 +101,16 @@ public class YTServiceImpl  implements YTService{
         return result;
     }
 
+    /**
+     * 新增人脸布控任务
+     * @param sid
+     * @param cameraId
+     * @param repositoryId
+     * @param limit
+     * @param stSec
+     * @param endSec
+     * @return
+     */
     @Override
     public String setMonitorRepository(String sid,int cameraId, int repositoryId, double limit, long stSec, long endSec) {
         long expend = System.currentTimeMillis();
@@ -119,6 +129,24 @@ public class YTServiceImpl  implements YTService{
         return ytApi.setMonitorRepository(headerStr, jsonObject.toJSONString());
     }
 
+    /**
+     * 删除布控任务
+     *
+     * @param id 布控任务id
+     * @return
+     */
+    @Override
+    public String delMonitorReposity(String sid,Long id) {
+        long expend = System.currentTimeMillis();
+
+        String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
+        logger.info("yt delMonitorTask headerStr:{}", headerStr);
+        expend = System.currentTimeMillis()-expend;
+        logger.info("yt delMonitorTask result:{}", expend);
+        String result =ytApi.delMonitorRepository(headerStr, id);
+        logger.info("yt delMonitorTask result:{}", result);
+        return result;
+    }
 
     @Override
     public String setMonitorByCamera(String sid,String monitorName, int cameraId, int repositoryId, double limit) {
@@ -145,6 +173,12 @@ public class YTServiceImpl  implements YTService{
         return result;
     }
 
+    /**
+     * 删除摄像头
+     * @param sid
+     * @param cameraID
+     * @return
+     */
     @Override
     public String delCamera(String sid, String cameraID) {
         long expend = System.currentTimeMillis();
@@ -356,4 +390,5 @@ public class YTServiceImpl  implements YTService{
         logger.info("yt download pic expend:{} ms", expend);
         return result;
     }
+
 }

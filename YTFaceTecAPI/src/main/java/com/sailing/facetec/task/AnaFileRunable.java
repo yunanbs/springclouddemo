@@ -2,12 +2,14 @@ package com.sailing.facetec.task;
 
 import com.sailing.facetec.entity.PersonIDEntity;
 import com.sailing.facetec.entity.RlEntity;
+import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FileUtils;
 import com.sailing.facetec.util.PersonIDUntils;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +25,7 @@ import java.util.List;
 @Data
 public class AnaFileRunable implements Runnable {
 
+    // TODO: 2017/5/31  需要测试 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnaFileRunable.class);
 
     /**
@@ -41,7 +44,11 @@ public class AnaFileRunable implements Runnable {
     private String scanPath;
     // 线程文件处理限制
     private int faceScanLimit;
-
+    // 人脸服务
+    private RlService rlService;
+    // 人脸库根目录
+    @Value("${facepic.repository}")
+    private String faceRepository;
     @Override
     public void run() {
 

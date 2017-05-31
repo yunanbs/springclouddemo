@@ -42,8 +42,8 @@ public class RlkServiceImpl implements RlkService {
      * @return
      */
     @Override
-    public int addFaceLib(RlkEntity rlkEntity) {
-        int result=0;
+    public String addFaceLib(RlkEntity rlkEntity) {
+        String result="";
         JSONObject jsonObject=new JSONObject();
         String sid=loginToYT();
         jsonObject=JSONObject.parseObject(ytService.addFaceLib(sid, rlkEntity.getRLKMC(),rlkEntity.getBZ()));
@@ -53,7 +53,7 @@ public class RlkServiceImpl implements RlkService {
             rlkEntity.setRLKLX(1);
             rlkEntity.setYLZD2("1");
             rlkEntity.setTJSJ(CommUtils.getCurrentDate());
-            result=rlkMapper.addRLK(rlkEntity);
+            result = rlkMapper.addRLK(rlkEntity)==1?rlkEntity.getRLKID():"";
         }
         return result;
     }

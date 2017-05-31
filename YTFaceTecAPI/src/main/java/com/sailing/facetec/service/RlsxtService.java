@@ -32,13 +32,6 @@ public interface RlsxtService {
      */
     int addSXT(SxtEntity sxtEntity);
 
-    /**
-     * 摄像头布控人脸库
-     * @param bkrwEntity
-     * @return
-     * @throws ParseException
-     */
-    int addMonitorReposity(BkrwEntity bkrwEntity) throws ParseException;
 
     /**
      * 摄像头布控路人库
@@ -53,4 +46,12 @@ public interface RlsxtService {
      * @return
      */
     int removeCamera(String cameraID);
+
+
+    /**
+     * 启停摄像头
+     * @param cameraID
+     * @return
+     */
+    int enableCamera(String cameraID, String enable);
 }

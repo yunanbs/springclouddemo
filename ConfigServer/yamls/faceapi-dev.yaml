@@ -20,6 +20,11 @@ spring:
   # 是否输出sql语句
   jpa:
     show-sql: false
+  http:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
 # 服务器设置
 server:
   # 设置服务端口
@@ -65,10 +70,20 @@ info:
 
 # 定时任务设置
 tasks:
+  # 抽取抓拍记录数
+  capture-cache: 50
+  # 抽取告警记录数
+  alert-cache: 50
+  # 告警记录相似度下限
+  alert-limit: 0
   # 定时抽取抓拍记录任务周期
   capture: 0/1 * * * * ?
   # 定时抽取告警记录任务周期
   alert: 0/1 * * * * ?
+  # 人像目录扫描周期
+  scan-face-repository: 0 */1 * * * ?
+  # 人像处理限制
+  sacn-limit: 0
 # 分布式任务相关
 redis-keys:
   # 抓拍任务锁
@@ -80,12 +95,9 @@ redis-keys:
   capture-data: capture-data
   # 告警任务数据
   alert-data: alert-data
-  # 抽取抓拍记录数
-  capture-cache: 50
-  # 抽取告警记录数
-  alert-cache: 50
-  # 告警记录相似度下限
-  alert-limit: 0
+  # 人像扫描锁
+  repository-lock: repository-lock
+
 # 自定义操作编码
 actioncodes:
   # 操作成功编码
@@ -118,9 +130,15 @@ ytface:
 exp:
   root-dir: D:\Services\exproot\
   web-path: http://www.sailing.com/
+# 人像照片记录
+facepic:
+  face-dir: D:\Services\faces\
+  web-path: http://www.sailing.com/
+  repository: D:\Services\repository\
 # 文件上传根目录
 upload:
-  image-folder: D:\
+  image-folder: D:\Service\tmpimage\
+  image-url: http://localhost/tmpimage/
 # 人脸平台服务地址
 rlapi:
   api-url: http://localhost:8183

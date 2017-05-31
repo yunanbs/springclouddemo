@@ -50,6 +50,13 @@ public interface YTService {
     String setMonitorRepository(String sid,int cameraId,int repositoryId,double limit,long stSec,long endSec);
 
     /**
+     * 删除布控任务
+     * @param id 布控任务id
+     * @return
+     */
+    String delMonitorReposity(String sid,Long id);
+
+    /**
      * 布控摄像头
      * @param sid
      * @param cameraId

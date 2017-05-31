@@ -5,7 +5,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.entity.PersonIDEntity;
 import com.sailing.facetec.entity.RlEntity;
-import com.sailing.facetec.queue.DataQueue;
 import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.service.RlgjService;
@@ -14,19 +13,16 @@ import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FastJsonUtils;
 import com.sailing.facetec.util.FileUtils;
 import com.sailing.facetec.util.PersonIDUntils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -74,6 +70,24 @@ public class TaskScheduler {
     private String faceRepository;
     @Value("${tasks.sacn-limit}")
     private int faceScanLimit;
+
+    @Value("${gc.exp}")
+    private int gcExpLimit;
+    @Value("${gc.repo}")
+    private int gcRepoLimit;
+    @Value("${gc.tmpimage}")
+    private int gcTmpImageLimit;
+    @Value("${gc.capture}")
+    private int gcCaptureLimit;
+
+    @Value("${exp.root-dir}")
+    private String gcExpPath;
+    @Value("${facepic.repository}")
+    private String gcRepoPath;
+    @Value("${upload.image-folder}")
+    private String gcTmpImagepPath;
+    @Value("${facepic.capture}")
+    private String gcCaturePath;
 
     /**
      * 抽取抓拍记录
@@ -154,7 +168,7 @@ public class TaskScheduler {
         // 获取根路径下的文件
         File[] zips = root.listFiles();
         if (0 == zips.length) {
-            LOGGER.info("no zip file to deal");
+            LOGGER.info("no file to deal");
         }
         for (File zip : zips) {
             // 文件夹不需要处理
@@ -260,6 +274,54 @@ public class TaskScheduler {
         result.setBase64Pic(FileUtils.fileToBase64(faceFile.getPath()));
         result.setXGSJ(CommUtils.getCurrentDate());
         result.setTJSJ(CommUtils.getCurrentDate());
+        return result;
+    }
+
+    @Scheduled(cron = "*/30 * * * * ?")
+    public void GCScheduler() {
+        // 删除exp文件
+        long used = System.currentTimeMillis();
+        LOGGER.info("start gc");
+
+        LOGGER.info("gc {} delete {} files", gcExpPath,gc(gcExpPath, gcExpLimit, null));
+
+        LOGGER.info("gc {} delete {} files", gcTmpImagepPath,gc(gcTmpImagepPath, gcTmpImageLimit, null));
+
+        LOGGER.info("gc {} delete {} files", gcCaturePath,gc(gcCaturePath, gcCaptureLimit, null));
+
+        List<String> exclude = new ArrayList<>();
+        exclude.add("#succeed");
+        exclude.add("#fail");
+        LOGGER.info("gc {} delete {} files", gcRepoPath,gc(gcRepoPath, gcRepoLimit,exclude));
+
+        LOGGER.info("end gc used {} ms",used);
+    }
+
+    /**
+     * 文件清理
+     * @param path
+     * @param limitTime
+     * @param exclude
+     * @return
+     */
+    private long gc(String path, long limitTime, List<String> exclude) {
+        long result=0L;
+        long gclimit = System.currentTimeMillis();
+        gclimit = gclimit - limitTime * 24 * 60 * 60 * 1000;
+        File rootFile = new File(path);
+        File[] files = rootFile.listFiles();
+        if(null==files){
+            return  result;
+        }
+        for (File sub : files) {
+            if (sub.lastModified() < gclimit) {
+                if (null != exclude && exclude.contains(sub.getName())) {
+                    continue;
+                }
+                sub.delete();
+                result++;
+            }
+        }
         return result;
     }
 

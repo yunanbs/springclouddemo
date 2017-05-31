@@ -50,8 +50,28 @@ public interface RlService {
      */
     int delPersonal(String rlid);
 
-
+    /**
+     * 模糊查询获取人脸
+     * @param rlkid 人脸库id
+     * @param status 人脸库标志位
+     * @param key 筛选条件
+     * @param page 查询页码
+     * @param size 每页包含的人脸数
+     * @return
+     */
    DataEntity<RlShowDetailEntity> listRlShowDetail(String rlkid, String status, String key, int page, int size);
+
+
+    /**
+     * 获取人像库人脸
+     * @param rlkid
+     * @param status
+     * @param page
+     * @param size
+     * @return
+     */
+    DataEntity<RlShowDetailEntity> listQueryRlShowDetail(String rlkid, String status, int page, int size);
+
 
 
 }

@@ -129,3 +129,8 @@ upload:
 # 人脸平台服务地址
 rlapi:
   api-url: http://localhost:8183
+gc:
+  exp: 1
+  repo: 30
+  tmpimage: 1
+  capture: 90

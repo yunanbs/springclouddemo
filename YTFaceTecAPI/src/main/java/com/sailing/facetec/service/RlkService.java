@@ -21,7 +21,7 @@ public interface RlkService {
      * @param rlkEntity
      * @return
      */
-    int addFaceLib(RlkEntity rlkEntity);
+    String addFaceLib(RlkEntity rlkEntity);
 
     /**
      * 删除人脸库

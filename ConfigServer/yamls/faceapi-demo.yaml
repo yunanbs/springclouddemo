@@ -135,12 +135,24 @@ facepic:
   face-dir: D:\Services\faces\
   web-path: http://www.sailing.com/
   repository: D:\Services\repository\
+  capture: \\172.20.22.10\tomcat5.0.28\webapps\main\images\ytlr\
 # 文件上传根目录
 upload:
-  image-folder: D:\
+  image-folder: D:\Services\tmpimage\
+  image-url: http://localhost/tmpimage/
 # 人脸平台服务地址
 rlapi:
   api-url: http://localhost:8183
+# 文件清理（天）
+gc:
+  # 导出查询文件
+  exp: 1
+  # 导入人像文件
+  repo: 1
+  # 检索上传人像
+  tmpimage: 1
+  # 人脸抓拍
+  capture: 90
 
 
 

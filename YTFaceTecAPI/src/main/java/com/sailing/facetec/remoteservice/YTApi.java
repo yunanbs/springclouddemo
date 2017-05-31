@@ -40,6 +40,17 @@ public interface YTApi {
     String updateCamera(@RequestHeader("Cookie") String cookie, @RequestBody String params);
 
     /**
+     * 删除摄像头
+     * @param cookie
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/face/v1/framework/face_video/camera",method = {RequestMethod.DELETE})
+    String delCamera(@RequestHeader("Cookie") String cookie,@RequestParam("id")String id);
+
+
+
+    /**
      * 布控人像库
      * @param cookie
      * @param params
@@ -49,6 +60,15 @@ public interface YTApi {
     String setMonitorRepository(@RequestHeader("Cookie") String cookie, @RequestBody String params);
 
     /**
+     * 删除布控任务
+     * @param cookie
+     * @param bkid
+     * @return
+     */
+    @RequestMapping(value = "/face/v1/framework/face_video/surveillance", method = {RequestMethod.DELETE})
+    String delMonitorRepository(@RequestHeader("Cookie") String cookie, @RequestParam("id") Long bkid);
+
+    /**
      * 新增人脸库
      * @param cookie
      * @param params
@@ -56,6 +76,7 @@ public interface YTApi {
      */
     @RequestMapping(value = "/face/v1/framework/face_image/repository", consumes = "application/json", method = {RequestMethod.POST})
     String addFaceLib(@RequestHeader("Cookie") String cookie, @RequestBody String params);
+
 
     /**
      * 删除人脸库
@@ -74,15 +95,6 @@ public interface YTApi {
      */
     @RequestMapping(value = "/v2/surveillance", consumes = "application/json", method = {RequestMethod.POST})
     String setMonitorByCamera(@RequestHeader("Cookie") String cookie, @RequestBody String params);
-
-    /**
-     * 删除摄像头
-     * @param cookie
-     * @param id
-     * @return
-     */
-    @RequestMapping(value = "/face/v1/framework/face_video/camera",method = {RequestMethod.DELETE})
-    String delCamera(@RequestHeader("Cookie") String cookie,@RequestParam("id")String id);
 
     /**
      * 修改人员信息

@@ -1,5 +1,6 @@
 package com.sailing.facetec.service.impl;
 
+import ch.qos.logback.core.joran.conditional.ElseAction;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.comm.DataEntity;
@@ -152,9 +153,9 @@ public class RlServiceImpl implements RlService {
         String ytPictureUri = jsonObject.getString("picture_uri");
         JSONArray ytResults = jsonObject.getJSONArray("results");
 
-        ytResults.forEach(s->{
+        ytResults.forEach(s -> {
             // 获取人脸结果对象
-            JSONObject faceObject = (JSONObject)s;
+            JSONObject faceObject = (JSONObject) s;
             // 人脸id
             String ytFaceID = faceObject.getString("face_image_id");
             // 人脸uri
@@ -165,10 +166,10 @@ public class RlServiceImpl implements RlService {
             String[] facePaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), ytFaceID + "-face");
 
             try {
-                boolean createPic= FileUtils.base64ToFile(rlEntity.getBase64Pic(), picPaths[0]);
-                boolean createFace = ytService.downLoadPic(ytFaceUri,facePaths[0]);
+                boolean createPic = FileUtils.base64ToFile(rlEntity.getBase64Pic(), picPaths[0]);
+                boolean createFace = ytService.downLoadPic(ytFaceUri, facePaths[0]);
                 // 生成本地大图及小图地址
-                if (createPic&&createFace ) {
+                if (createPic && createFace) {
                     // 保存依图uri地址
                     rlEntity.setDTDZ(ytPictureUri);
                     rlEntity.setRLDZ(ytFaceUri);
@@ -188,12 +189,12 @@ public class RlServiceImpl implements RlService {
                     results.add(rlMapper.insertRl(rlEntity));
                 }
             } catch (IOException e) {
-                logger.error("faile to create repository pic, faceid:{}  error:{}",ytFaceID,e.getMessage());
+                logger.error("faile to create repository pic, faceid:{}  error:{}", ytFaceID, e.getMessage());
             }
         });
 
-        for(Iterator iterator = results.iterator();iterator.hasNext();){
-            result = result+ (int )iterator.next();
+        for (Iterator iterator = results.iterator(); iterator.hasNext(); ) {
+            result = result + (int) iterator.next();
         }
         return result;
     }
@@ -206,7 +207,7 @@ public class RlServiceImpl implements RlService {
      * @return
      */
     private String[] getPathByPersonID(String repositoryID, String personID, String faceid) {
-        String path = (CommUtils.isNullObject(personID) || personID.length() < 10) ? String.format("%s\\%s\\", repositoryID, "000000") : String.format("%s\\%s\\%s\\", repositoryID, personID.substring(0, 6),personID.substring(6,10));
+        String path = (CommUtils.isNullObject(personID) || personID.length() < 10) ? String.format("%s\\%s\\", repositoryID, "000000") : String.format("%s\\%s\\%s\\", repositoryID, personID.substring(0, 6), personID.substring(6, 10));
         List<String> results = new ArrayList<>();
         results.add(String.format("%s%s%s.jpg", faceDir, path, faceid));
         results.add(String.format("%s%s%s.jpg", webPath, path, faceid));
@@ -225,90 +226,97 @@ public class RlServiceImpl implements RlService {
     @Override
     public int impRlDatas(String repositoryID, String zipFile) throws IOException, InterruptedException {
         int result = 0;
-        String parent = String.format("%s\\zip\\%s\\",expDir, UUID.randomUUID().toString());
+        String parent = String.format("%s\\zip\\%s\\", expDir, UUID.randomUUID().toString());
         // 解压缩文件
-        FileUtils.unZipFile(zipFile,parent,true);
+        FileUtils.unZipFile(zipFile, parent, true);
         String xlsFile = findExcel(parent);
-        if(CommUtils.isNullObject(xlsFile)){
+        if (CommUtils.isNullObject(xlsFile)) {
             logger.info("添加批量导入任务失败，未获取xls文件");
-        }else{
-            logger.info("添加批量导入任务 任务文件 {}",xlsFile);
+        } else {
+            logger.info("添加批量导入任务 任务文件 {}", xlsFile);
             DataQueue.putToQueue(xlsFile);
-            result =1;
+            result = 1;
         }
         return result;
     }
 
     /**
      * 获取导入xls文件
+     *
      * @param path
      * @return
      */
-    private String findExcel(String path){
+    private String findExcel(String path) {
         String result = "";
         File parent = new File(path);
         File[] subFiles = parent.listFiles();
-        for(File subFile:subFiles){
-            if(subFile.isDirectory()){
+        for (File subFile : subFiles) {
+            if (subFile.isDirectory()) {
                 result = findExcel(subFile.getPath());
-                if(!CommUtils.isNullObject(result)){
+                if (!CommUtils.isNullObject(result)) {
                     break;
                 }
             }
 
-            if(subFile.getName().endsWith(".xls")){
+            if (subFile.getName().endsWith(".xls")) {
                 result = subFile.getPath();
                 break;
             }
         }
-        return  result;
+        return result;
     }
 
     /**
      * 修改人员信息
+     *
      * @param jsonObject
      * @return 返回不为 0 成功
      */
     @Override
     public int altPersonalInfo(JSONObject jsonObject) {
-        int result =0;
+        int result = 0;
 
         // 登录 获取sid
         String sid = loginToYT();
 
-        String rlid=jsonObject.getString("rlid");
-        String xm=jsonObject.getString("xm");
-        String qybh=jsonObject.getString("qybh");
-        String csnf=jsonObject.getString("csnf");
-        String xb=jsonObject.getString("xb");
-        String mz=jsonObject.getString("mz");
-        String sfzh=jsonObject.getString("sfzh");
+        String rlid = jsonObject.getString("rlid");
+        String xm = jsonObject.getString("xm");
+        String qybh = jsonObject.getString("qybh");
+        String csnf = jsonObject.getString("csnf");
+        String xb = jsonObject.getString("xb");
+        String mz = jsonObject.getString("mz");
+        String sfzh = jsonObject.getString("sfzh");
 
         StringBuilder customerFilterBuilder = new StringBuilder();
-        customerFilterBuilder.append(null==xm?"":String.format(" xm='%s',", xm));
-        customerFilterBuilder.append(null==qybh?"":String.format(" ylzd2='%s',", qybh));
-        customerFilterBuilder.append(null==csnf?"":String.format(" csnf='%s',", csnf));
-        customerFilterBuilder.append(null==xb?"":String.format(" xb=%s,", xb));
-        customerFilterBuilder.append(null==mz?"":String.format(" ylzd3=%s,", mz));
-        customerFilterBuilder.append(null==sfzh?"":String.format(" sfzh='%s',", sfzh));
+        customerFilterBuilder.append(null == xm ? "" : String.format(" xm='%s',", xm));
+        customerFilterBuilder.append(null == qybh ? "" : String.format(" ylzd2='%s',", qybh));
+        customerFilterBuilder.append(null == csnf ? "" : String.format(" csnf='%s',", csnf));
+        customerFilterBuilder.append(null == xb ? "" : String.format(" xb=%s,", xb));
+        customerFilterBuilder.append(null == mz ? "" : String.format(" ylzd3=%s,", mz));
+        customerFilterBuilder.append(null == sfzh ? "" : String.format(" sfzh='%s',", sfzh));
 
-        if(customerFilterBuilder.length()>0)
-        {
-            customerFilterBuilder.deleteCharAt(customerFilterBuilder.length()-1);
-            customerFilterBuilder.append(String.format(" where rlid='%s'",rlid));
+        if (customerFilterBuilder.length() > 0) {
+            customerFilterBuilder.deleteCharAt(customerFilterBuilder.length() - 1);
+            customerFilterBuilder.append(String.format(" where rlid='%s'", rlid));
         }
 
-        jsonObject = JSONObject.parseObject(ytService.altPersonalInfo(sid,rlid,xm,qybh,csnf,xb,mz,sfzh));
-        if("0".equals(jsonObject.getString("rtn"))){
+        jsonObject = JSONObject.parseObject(ytService.altPersonalInfo(sid, rlid, xm, qybh, csnf, xb, mz, sfzh));
+        if ("0".equals(jsonObject.getString("rtn"))) {
 
-            result =rlDetailMapper.altPersonalInfo(customerFilterBuilder.toString());
+            result = rlDetailMapper.altPersonalInfo(customerFilterBuilder.toString());
         }
         return result;
     }
 
+    /**
+     * 删除人员
+     *
+     * @param rlid
+     * @return
+     */
     @Override
     public int delPersonal(String rlid) {
-        int result =0;
+        int result = 0;
 
         // 登录 获取sid
         String sid = loginToYT();
@@ -316,23 +324,23 @@ public class RlServiceImpl implements RlService {
 
         rlDetailEntity.setRLID(rlid);
         rlDetailEntity.setYLZD1("0");
-        JSONObject jsonObject = JSONObject.parseObject(ytService.delPersonal(sid,rlid));
-        if("0".equals(jsonObject.getString("rtn"))){
+        JSONObject jsonObject = JSONObject.parseObject(ytService.delPersonal(sid, rlid));
+        if ("0".equals(jsonObject.getString("rtn"))) {
 
-            result =rlDetailMapper.delProsonal(rlDetailEntity);
+            result = rlDetailMapper.delProsonal(rlDetailEntity);
         }
         return result;
     }
 
     /**
-    /**
+     * /**
      * 人脸库人脸记录模糊查询
      *
-     * @param rlkid 人脸库编号
+     * @param rlkid  人脸库编号
      * @param status 人脸库标志位
-     * @param key   查询关键字
-     * @param page  页码
-     * @param size  分页大小
+     * @param key    查询关键字
+     * @param page   页码
+     * @param size   分页大小
      * @return
      */
     @Override
@@ -340,28 +348,58 @@ public class RlServiceImpl implements RlService {
 
         StringBuilder customerFilterBuilder = new StringBuilder();
         StringBuilder customerFilterCountBuilder = new StringBuilder();
-        DataEntity<RlShowDetailEntity> result=new DataEntity<RlShowDetailEntity>();
-        int min=(page-1)*size;
-        int max=page*size-1;
-        if(key.equals(""))
-        {
-            customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s'", rlkid,status));
+        DataEntity<RlShowDetailEntity> result = new DataEntity<RlShowDetailEntity>();
+
+        int min = (page - 1) * size+1;
+        int max = page * size;
+        if (key.equals("")) {
+            customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s'", rlkid, status));
 //            customerFilterCountBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s'", rlkid,status));
-        }
-        else
-        {
-            customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.xb like '%%%s%%' or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid,status,key,key,key,key,key,key));
+        } else {
+            if ("男".equals(key)) {
+                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.xb =1 or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
+            } else if ("女".equals(key)) {
+                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.xb =2 or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
+            } else {
+                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
+            }
 //            customerFilterCountBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.xb like '%%%s%%' or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid,status,key,key,key,key,key,key));
         }
-        if(customerFilterBuilder.toString()!="")
-        {
-            List<RlShowDetailEntity> listRlShowDetail = rlShowDetailMapper.listRlShowDetail(customerFilterBuilder.toString(),min,max);
+        if (customerFilterBuilder.toString() != "") {
+            List<RlShowDetailEntity> listRlShowDetail = rlShowDetailMapper.listRlShowDetail(customerFilterBuilder.toString(), min, max);
             int counts = rlShowDetailMapper.RlShowDetailCount(customerFilterBuilder.toString());
             result.setDataContent(listRlShowDetail);
-            PageEntity pageEntity = new PageEntity(counts,page,size);
+            PageEntity pageEntity = new PageEntity(counts, page, size);
             result.setPageContent(pageEntity);
 
         }
+        return result;
+    }
+
+    /**
+     * 获取人像库人脸
+     *
+     * @param rlkid
+     * @param status
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public DataEntity<RlShowDetailEntity> listQueryRlShowDetail(String rlkid, String status, int page, int size) {
+        StringBuilder customerFilterBuilder = new StringBuilder();
+        StringBuilder customerFilterCountBuilder = new StringBuilder();
+        DataEntity<RlShowDetailEntity> result = new DataEntity<RlShowDetailEntity>();
+        int min = (page - 1) * size+1;
+        int max = page * size;
+        customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s'", rlkid, status));
+
+        List<RlShowDetailEntity> listRlShowDetail = rlShowDetailMapper.listRlShowDetail(customerFilterBuilder.toString(), min, max);
+        int counts = rlShowDetailMapper.RlShowDetailCount(customerFilterBuilder.toString());
+        result.setDataContent(listRlShowDetail);
+        PageEntity pageEntity = new PageEntity(counts, page, size);
+        result.setPageContent(pageEntity);
+
         return result;
     }
 
@@ -375,5 +413,4 @@ public class RlServiceImpl implements RlService {
         jsonObject = JSONObject.parseObject(ytService.login(ytUsername, ytPassword));
         return jsonObject.getString("session_id");
     }
-
 }

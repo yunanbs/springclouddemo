@@ -65,6 +65,9 @@ public class DatabaseController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private RlbkrwService rlbkrwService;
     //endregion
 
     //region 实时数据库相关key
@@ -232,6 +235,19 @@ public class DatabaseController {
     }
 
     /**
+     * 启停摄像头
+     * @param jsonObject
+     * @return
+     */
+    @RequestMapping(value = "/SXT", consumes = "application/json", method = {RequestMethod.PUT})
+    public ActionResult enableSXT(@RequestBody JSONObject jsonObject) {
+        String sxtid=jsonObject.getString("sxtid");
+        String enable=jsonObject.getString("enable");
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtService.enableCamera(sxtid,enable), null);
+    }
+
+
+    /**
      * 报警标注
      *
      * @param jsonObject {xh:报警记录序号,bzsfxt:是否相同编码,bzbz:备注信息}
@@ -354,15 +370,42 @@ public class DatabaseController {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result, null);
     }
 
-    @RequestMapping(value = "/RL/faces", consumes = "application/json", method = RequestMethod.GET)
+    /**
+     *模糊查询人脸信息
+     * @param rlkid 人脸库id
+     * @param status 人脸库标志位
+     * @param key 模糊查询条件
+     * @param page 页码
+     * @param size 分页大小
+     * @return
+     */
+    @RequestMapping(value = "/RL/faces", method = RequestMethod.GET)
     public ActionResult listRlDetail(
-            @RequestParam(name = "beginTime", defaultValue = "") String beginTime,
-                                      @RequestParam(name = "rlkid") String rlkid,
-                                      @RequestParam(name = "status", defaultValue = "1") String status,
-                                      @RequestParam(name = "key", defaultValue = "") String key,
-                                      @RequestParam(name = "page", defaultValue = "1") int page,
-                                      @RequestParam(name = "size", defaultValue = "10") int size) {
+                 @RequestParam(name = "rlkid") String rlkid,
+                 @RequestParam(name = "status", defaultValue = "1") String status,
+                 @RequestParam(name = "key", defaultValue = "") String key,
+                 @RequestParam(name = "page", defaultValue = "1") int page,
+                 @RequestParam(name = "size", defaultValue = "10") int size) {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.listRlShowDetail(rlkid,status,key,page,size), null);
+
+    }
+
+
+    /**
+     *查询人脸库人脸
+     * @param rlkid 人脸库id
+     * @param status 人脸库标志位
+     * @param page 页码
+     * @param size 分页大小
+     * @return
+     */
+    @RequestMapping(value = "/RL/Getfaces", method = RequestMethod.GET)
+    public ActionResult listQueryRls(
+            @RequestParam(name = "rlkid") String rlkid,
+            @RequestParam(name = "status", defaultValue = "1") String status,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.listQueryRlShowDetail(rlkid,status,page,size), null);
 
     }
 
@@ -452,6 +495,29 @@ public class DatabaseController {
             }
         }
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, count, null);
+    }
+
+
+    /**
+     * 增加布控任务
+     * @param bkrwEntity
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/BK/RLBKRW", consumes = "application/json", method = RequestMethod.POST)
+    public ActionResult createRlMonitorTask(@RequestBody BkrwEntity bkrwEntity) throws IOException {
+        int result=0;
+        try {
+            result=rlbkrwService.addMonitorReposity(bkrwEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result,null);
+    }
+
+    @RequestMapping(value = "/BK/RLBKRW", consumes = "application/json", method = RequestMethod.DELETE)
+    public ActionResult delMonitorTask(@RequestParam String bkid) throws IOException {
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlbkrwService.delMonitorReposity(bkid), null);
     }
 
     /**

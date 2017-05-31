@@ -58,7 +58,7 @@ public class RlsxtServiceImpl implements RlsxtService {
         result.setDataContent(rlsxtMapper.listAllSXTDW());
 
         // 重构 计算每个单位的级别并设定父节点编号
-        result.getDataContent().forEach(s->{
+        result.getDataContent().forEach(s -> {
             // 分级获取各级单位的编号
             String[] dwIDs = s.getDWBH().split("\\.");
             // 设定级别
@@ -75,6 +75,7 @@ public class RlsxtServiceImpl implements RlsxtService {
 
     @Override
     public int addSXT(SxtEntity sxtEntity) {
+        int result = 0;
         JSONObject jsonObject;
 
         // 登录 获取sid
@@ -90,38 +91,27 @@ public class RlsxtServiceImpl implements RlsxtService {
         // 获取路人库Id
         repositoryId = jsonObject.getString("history_repository_id");
 
+        if (!"0".equals(jsonObject.getString("rtn"))) {
+            return result;
+        }
+
         // 更新摄像头状态 启用摄像头
         jsonObject = JSONObject.parseObject(ytService.updateCamera(sid, Integer.parseInt(cameraId), "", "", 1));
 
+        if (!"0".equals(jsonObject.getString("rtn"))) {
+            sxtEntity.setYLZD2("0");
+        }else{
+            sxtEntity.setYLZD2("1");
+        }
+        sxtEntity.setYLZD1("1");
         sxtEntity.setSXTID(cameraId);
         sxtEntity.setLRKID(repositoryId);
 
         // 添加摄像头记录
         return rlsxtMapper.addSXT(sxtEntity);
+
     }
 
-    @Override
-    public int addMonitorReposity(BkrwEntity bkrwEntity) throws ParseException {
-        JSONObject jsonObject;
-        // 登录 获取sid
-        String sid = loginToYT();
-
-        // 计算布控时间
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date stTime = simpleDateFormat.parse(bkrwEntity.getQSSJ());
-        Date endTime = simpleDateFormat.parse(bkrwEntity.getZZSJ());
-        long sec = (endTime.getTime() - stTime.getTime()) / 1000;
-
-        // 设置布控
-        jsonObject = JSONObject.parseObject(ytService.setMonitorRepository(sid, Integer.parseInt(bkrwEntity.getSXTID()), Integer.parseInt(bkrwEntity.getRLKID()), Double.parseDouble(bkrwEntity.getBJFSX()), 0, sec));
-
-        if(!"0".equals(jsonObject.getString("rtn"))){
-            return 0;
-        }
-
-        bkrwEntity.setBKID(jsonObject.getString("id"));
-        return rlbkrwMapper.addBkrw(bkrwEntity);
-    }
 
     @Override
     public int addMonitorByCamera(BkrwEntity bkrwEntity) {
@@ -166,12 +156,12 @@ public class RlsxtServiceImpl implements RlsxtService {
      */
     @Override
     public int removeCamera(String cameraID) {
-        int result =0;
+        int result = 0;
         JSONObject jsonObject = new JSONObject();
         // 登录 获取sid
         String sid = loginToYT();
-        jsonObject = JSONObject.parseObject(ytService.delCamera(sid,cameraID));
-        if("0".equals(jsonObject.getString("rtn"))){
+        jsonObject = JSONObject.parseObject(ytService.delCamera(sid, cameraID));
+        if ("0".equals(jsonObject.getString("rtn"))) {
             SxtEntity sxtEntity = new SxtEntity();
             sxtEntity.setSXTID(cameraID);
             sxtEntity.setYLZD1("0");
@@ -181,12 +171,34 @@ public class RlsxtServiceImpl implements RlsxtService {
     }
 
     /**
+     * 启停摄像头
+     *
+     * @param cameraID
+     * @param enable 1表示启动，0表示停止
+     * @return
+     */
+    @Override
+    public int enableCamera(String cameraID, String enable) {
+        int result=0;
+        JSONObject jsonObject = new JSONObject();
+        // 登录 获取sid
+        String sid = loginToYT();
+        jsonObject = JSONObject.parseObject(ytService.updateCamera(sid, Integer.parseInt(cameraID), "", "", Integer.parseInt(enable)));
+        if ("0".equals(jsonObject.getString("rtn"))) {
+            result = rlsxtMapper.enableSXT(cameraID,enable);
+        }
+        return result;
+    }
+
+    /**
      * 登录依图平台
+     *
      * @return
      */
     private String loginToYT() {
         JSONObject jsonObject;
         jsonObject = JSONObject.parseObject(ytService.login(ytUsername, ytPassword));
+
         return jsonObject.getString("session_id");
     }
 
