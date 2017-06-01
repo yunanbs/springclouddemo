@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.entity.RlEntity;
 import com.sailing.facetec.remoteservice.YTApi;
+import com.sailing.facetec.remoteservice.TestApi;
 import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
 import org.apache.commons.codec.binary.Base64;
@@ -37,6 +38,9 @@ public class YTServiceImpl  implements YTService{
 
     @Value("${ytface.api-url}")
     private String ytServer;
+
+    @Autowired
+    private TestApi testApi;
 
     @Override
     public String login(String userName, String passWord) {
@@ -389,6 +393,13 @@ public class YTServiceImpl  implements YTService{
         expend = System.currentTimeMillis()-expend;
         logger.info("yt download pic expend:{} ms", expend);
         return result;
+    }
+
+    @Override
+    public String getTZ(String id) {
+        byte[] b = testApi.testtzm(id);
+        String s = Base64.encodeBase64String(b);
+        return null;
     }
 
 }

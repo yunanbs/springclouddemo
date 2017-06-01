@@ -92,7 +92,7 @@ public class TaskScheduler {
     /**
      * 抽取抓拍记录
      */
-    @Scheduled(cron = "${tasks.capture}")
+    //@Scheduled(cron = "${tasks.capture}")
     public void captureScheduler() {
         // 获取锁
         if (!redisService.setValNX(captureLock, lockVal, 1, TimeUnit.SECONDS)) {
@@ -117,7 +117,7 @@ public class TaskScheduler {
     /**
      * 抽取告警记录
      */
-    @Scheduled(cron = "${tasks.alert}")
+    //@Scheduled(cron = "${tasks.alert}")
     public void alterScheduler() {
         // 获取锁
         if (redisService.setValNX(alertLock, lockVal, 1, TimeUnit.SECONDS)) {
@@ -179,10 +179,11 @@ public class TaskScheduler {
             String repositoryID = zip.getName().split("-")[0];
             try {
                 // 解压缩文件
-                FileUtils.unZipFile(zip.getPath(), Paths.get(faceRepository, repositoryID).toString(), false);
-                dealFile(zip.getPath(), true, true);
+                // FileUtils.unZipFile(zip.getPath(), Paths.get(faceRepository, repositoryID).toString(), false);
+                FileUtils.unZipFile(zip.getPath(), Paths.get(faceRepository, zip.getName().substring(0,zip.getName().indexOf("."))).toString(), false);
+                moveFile(zip.getPath(),String.format("%s\\%s\\",faceRepository,"#succeed"), true, true);
             } catch (IOException e) {
-                dealFile(zip.getPath(), false, true);
+                moveFile(zip.getPath(),String.format("%s\\%s\\",faceRepository,"#fail"), false, true);
             }
         }
     }
@@ -193,27 +194,35 @@ public class TaskScheduler {
      * @return
      */
     private RlEntity[] getRlEntitys() {
+        // 人脸结构信息
         List<RlEntity> result = new ArrayList<>();
+        // 获取根路径
         File root = new File(faceRepository);
+        // 获取根路径下的文件夹
         File[] repositorys = root.listFiles();
         for (File repository : repositorys) {
+            // 获取需要处理的文件夹
             if (repository.isDirectory() && !repository.getName().startsWith("#")) {
                 File[] faces = repository.listFiles();
                 for (File face : faces) {
                     try {
+                        // 解析文件信息
                         RlEntity tmp = getRlEntityByFile(face);
-                        tmp.setRLKID(face.getParentFile().getName());
-                        if (!CommUtils.isNullObject(tmp) && rlService.addRlData(tmp) > 0) {
+                        // 获取库信息
+                        tmp.setRLKID(face.getParentFile().getName().split("-")[0]);
+                        if (rlService.addRlData(tmp) > 0) {
                             result.add(tmp);
-                            dealFile(face.getPath(), true, false);
+                            // 处理成功 删除文件
+                            moveFile(face.getPath(), "",true, false);
+                            // 查看是否到达处理限制
                             if (0 != faceScanLimit && faceScanLimit == result.size()) {
                                 break;
                             }
                         } else {
-                            dealFile(face.getPath(), false, true);
+                            moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()), false,true);
                         }
                     } catch (Exception e) {
-                        dealFile(face.getPath(), false, true);
+                        moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()), false,true);
                     }
                 }
             }
@@ -223,24 +232,30 @@ public class TaskScheduler {
         return tmp;
     }
 
-    private void dealFile(String Filepath, boolean succeed, boolean keep) {
+    /**
+     * 移动文件
+     * @param filePath
+     * @param succeed
+     * @param keep
+     */
+    private void moveFile(String filePath, String desPath,boolean succeed, boolean keep) {
         try {
             if (succeed) {
                 if (keep) {
-                    LOGGER.info("succeed file: {} will be move to {}", Filepath, Paths.get(faceRepository, "#succeed"));
-                    Files.move(Paths.get(Filepath), Paths.get(faceRepository, "#succeed", Paths.get(Filepath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+                    LOGGER.info("succeed file: {} will be move to {}", filePath, Paths.get(faceRepository, "#succeed"));
+                    Files.move(Paths.get(filePath), Paths.get(desPath,Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
                 } else {
-                    LOGGER.info("succeed file: {} will be delete", Filepath);
+                    LOGGER.info("succeed file: {} will be delete", filePath);
                 }
             } else {
-                LOGGER.error("fail file: {} will bu move to  {}", Filepath, Paths.get(faceRepository, "#fail"));
-                Files.move(Paths.get(Filepath), Paths.get(faceRepository, "#fail", Paths.get(Filepath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+                LOGGER.error("fail file: {} will bu move to  {}", filePath, Paths.get(faceRepository, "#fail"));
+                Files.move(Paths.get(filePath), Paths.get(desPath,Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         } finally {
             try {
-                Files.delete(Paths.get(Filepath));
+                Files.delete(Paths.get(filePath));
             } catch (IOException e) {
                 LOGGER.error(e.getMessage());
             }
@@ -283,43 +298,53 @@ public class TaskScheduler {
         long used = System.currentTimeMillis();
         LOGGER.info("start gc");
 
-        LOGGER.info("gc {} delete {} files", gcExpPath,gc(gcExpPath, gcExpLimit, null));
+        LOGGER.info("gc {} delete {} files", gcExpPath, gc(gcExpPath, gcExpLimit, null));
 
-        LOGGER.info("gc {} delete {} files", gcTmpImagepPath,gc(gcTmpImagepPath, gcTmpImageLimit, null));
+        LOGGER.info("gc {} delete {} files", gcTmpImagepPath, gc(gcTmpImagepPath, gcTmpImageLimit, null));
 
-        LOGGER.info("gc {} delete {} files", gcCaturePath,gc(gcCaturePath, gcCaptureLimit, null));
+        LOGGER.info("gc {} delete {} files", gcCaturePath, gc(gcCaturePath, gcCaptureLimit, null));
 
         List<String> exclude = new ArrayList<>();
         exclude.add("#succeed");
         exclude.add("#fail");
-        LOGGER.info("gc {} delete {} files", gcRepoPath,gc(gcRepoPath, gcRepoLimit,exclude));
+        LOGGER.info("gc {} delete {} files", gcRepoPath, gc(gcRepoPath, gcRepoLimit, exclude));
 
-        LOGGER.info("end gc used {} ms",used);
+        LOGGER.info("gc {} delete {} files", String.format("%s\\%s",gcRepoPath,"#succeed"), gc(String.format("%s\\%s",gcRepoPath,"#succeed"), gcRepoLimit, exclude));
+
+        LOGGER.info("gc {} delete {} files", String.format("%s\\%s",gcRepoPath,"#fail"), gc(String.format("%s\\%s",gcRepoPath,"#fail"), gcRepoLimit, exclude));
+
+        LOGGER.info("end gc used {} ms", used);
     }
 
     /**
      * 文件清理
+     *
      * @param path
      * @param limitTime
      * @param exclude
      * @return
      */
     private long gc(String path, long limitTime, List<String> exclude) {
-        long result=0L;
+        long result = 0L;
         long gclimit = System.currentTimeMillis();
         gclimit = gclimit - limitTime * 24 * 60 * 60 * 1000;
         File rootFile = new File(path);
         File[] files = rootFile.listFiles();
-        if(null==files){
-            return  result;
+        if (null == files) {
+            return result;
         }
         for (File sub : files) {
-            if (sub.lastModified() < gclimit) {
-                if (null != exclude && exclude.contains(sub.getName())) {
-                    continue;
+            try {
+                if ( Files.getLastModifiedTime(sub.toPath()).to(TimeUnit.MILLISECONDS)< gclimit) {
+                    if (null != exclude && exclude.contains(sub.getName())) {
+                        continue;
+                    }
+                    sub.delete();
+                    result++;
                 }
-                sub.delete();
-                result++;
+            } catch (IOException e) {
+                continue;
+                //e.printStackTrace();
             }
         }
         return result;

@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -418,7 +419,7 @@ public class DatabaseController {
      */
     @RequestMapping(value = "/RL/faces",consumes = "multipart/form-data",method = RequestMethod.POST)
     public ActionResult impFaces(@RequestParam("facezip")MultipartFile multipartFile,@RequestParam("repositoryid")String repositoryid) throws IOException {
-        Files.copy(multipartFile.getInputStream(), Paths.get(repositoryRoot,String.format("%s-%s",repositoryid,multipartFile.getOriginalFilename())), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(multipartFile.getInputStream(), Paths.get(repositoryRoot,String.format("%s-%s-%s",repositoryid,CommUtils.dateToStr(new Date(),"yyyyMMddHHmmss"),multipartFile.getOriginalFilename())), StandardCopyOption.REPLACE_EXISTING);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, "1", null);
     }
 

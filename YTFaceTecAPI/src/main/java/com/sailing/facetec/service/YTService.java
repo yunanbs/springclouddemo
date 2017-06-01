@@ -128,4 +128,6 @@ public interface YTService {
      * @throws IOException
      */
     boolean downLoadPic(String picUris,String localFile) throws IOException;
+
+    String getTZ(String id);
 }

@@ -146,11 +146,11 @@ rlapi:
 # 文件清理（天）
 gc:
   # 导出查询文件
-  exp: 1
+  exp: 7
   # 导入人像文件
-  repo: 1
+  repo: 30
   # 检索上传人像
-  tmpimage: 1
+  tmpimage: 7
   # 人脸抓拍
   capture: 90
 
