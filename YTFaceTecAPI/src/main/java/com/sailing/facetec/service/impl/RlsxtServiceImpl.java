@@ -60,7 +60,7 @@ public class RlsxtServiceImpl implements RlsxtService {
         // 重构 计算每个单位的级别并设定父节点编号
         result.getDataContent().forEach(s -> {
             // 分级获取各级单位的编号
-            String[] dwIDs = s.getDWBH().split("\\.");
+            String[] dwIDs = s.getDWNBBM().split("\\.");
             // 设定级别
             s.setLevel(dwIDs.length);
             // 设定父节点编号

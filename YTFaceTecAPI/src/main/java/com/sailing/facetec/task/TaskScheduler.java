@@ -2,9 +2,13 @@ package com.sailing.facetec.task;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.comm.DataEntity;
+import com.sailing.facetec.config.ActionCodeConfig;
+import com.sailing.facetec.dao.RlgjDetailMapper;
 import com.sailing.facetec.entity.PersonIDEntity;
 import com.sailing.facetec.entity.RlEntity;
+import com.sailing.facetec.entity.RlgjDetailEntity;
 import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.service.RlgjService;
@@ -13,17 +17,25 @@ import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FastJsonUtils;
 import com.sailing.facetec.util.FileUtils;
 import com.sailing.facetec.util.PersonIDUntils;
+import com.sun.xml.internal.ws.api.ha.StickyFeature;
+import org.apache.coyote.ActionCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.*;
+import javax.xml.soap.DetailEntry;
 import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,6 +46,8 @@ import java.util.concurrent.TimeUnit;
 public class TaskScheduler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskScheduler.class);
+
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(100);
 
     @Autowired
     private RllrService rllrService;
@@ -46,6 +60,9 @@ public class TaskScheduler {
 
     @Autowired
     private RlService rlService;
+
+    @Autowired
+    private RlgjDetailMapper rlgjDetailMapper;
 
     @Value("${redis-keys.capture-lock}")
     private String captureLock;
@@ -69,7 +86,7 @@ public class TaskScheduler {
     @Value("${facepic.repository}")
     private String faceRepository;
     @Value("${tasks.sacn-limit}")
-    private int faceScanLimit;
+    private long faceScanLimit;
 
     @Value("${gc.exp}")
     private int gcExpLimit;
@@ -92,7 +109,7 @@ public class TaskScheduler {
     /**
      * 抽取抓拍记录
      */
-    //@Scheduled(cron = "${tasks.capture}")
+    @Scheduled(cron = "${tasks.capture}")
     public void captureScheduler() {
         // 获取锁
         if (!redisService.setValNX(captureLock, lockVal, 1, TimeUnit.SECONDS)) {
@@ -117,7 +134,8 @@ public class TaskScheduler {
     /**
      * 抽取告警记录
      */
-    //@Scheduled(cron = "${tasks.alert}")
+    @Scheduled(cron = "${tasks.alert}")
+    @Transactional
     public void alterScheduler() {
         // 获取锁
         if (redisService.setValNX(alertLock, lockVal, 1, TimeUnit.SECONDS)) {
@@ -133,10 +151,44 @@ public class TaskScheduler {
         }
     }
 
+    /**
+     * 推送报警
+     * @param alerts
+     */
+    private void sendAlerts(DataEntity alerts){
+        // 需要推送的报警集合
+        List<RlgjDetailEntity> toSend = new ArrayList<>();
+        // 筛选需要推送的报警记录
+        alerts.getDataContent().forEach(alert->{
+
+            RlgjDetailEntity rlgjDetailEntity = (RlgjDetailEntity) alert;
+            // 判断报警标记位是否为1 不为1 则添加报警推送
+            if("1".equals(rlgjDetailEntity.getYLZD4())){
+                toSend.add(rlgjDetailEntity);
+            }
+        });
+
+        if(0==toSend.size()){
+            return;
+        }
+
+        DataEntity<RlgjDetailEntity> dataEntity = new DataEntity<>();
+        dataEntity.setDataContent(toSend);
+        ActionResult sendObj = new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG,dataEntity,null);
+
+        // TODO: 2017/6/1 send alert
+
+        List<String> ids = new ArrayList<>();
+        toSend.forEach(s->{
+            ids.add(s.getXH().toString());
+        });
+
+        rlgjDetailMapper.setAlertSendFlag(String.join("','",ids));
+    }
 
     @Scheduled(cron = "${tasks.scan-face-repository}")
     public void scanRepositoryScheduler() {
-        // 获取锁
+        // 获取锁 最大锁1分钟
         if (!redisService.setValNX(repositoryLock, lockVal, 1, TimeUnit.MINUTES)) {
             return;
         }
@@ -149,13 +201,24 @@ public class TaskScheduler {
             unZipFiles();
             LOGGER.info("unzip used {} ms", System.currentTimeMillis() - use);
 
-            use = System.currentTimeMillis();
-            LOGGER.info("start deal face files");
-            RlEntity[] rlEntities = getRlEntitys();
-            LOGGER.info("deal face files uesc {} ms get {} faces", System.currentTimeMillis() - use, rlEntities.length);
+            anaPaths();
+
         } finally {
             // 释放锁
             redisService.delKey(repositoryLock);
+        }
+    }
+
+    /**
+     * 分析文件夹 多线程版
+     */
+    private void anaPaths(){
+        File root = new File(faceRepository);
+        File[] files= root.listFiles();
+        for(File sub : files){
+            if(sub.isDirectory()&&!sub.getName().startsWith("#")){
+                EXECUTOR_SERVICE.execute(new AnaFileRunable(sub.getPath(),faceScanLimit,faceRepository,redisService,rlService));
+            }
         }
     }
 
@@ -189,50 +252,6 @@ public class TaskScheduler {
     }
 
     /**
-     * 获取人脸信息
-     *
-     * @return
-     */
-    private RlEntity[] getRlEntitys() {
-        // 人脸结构信息
-        List<RlEntity> result = new ArrayList<>();
-        // 获取根路径
-        File root = new File(faceRepository);
-        // 获取根路径下的文件夹
-        File[] repositorys = root.listFiles();
-        for (File repository : repositorys) {
-            // 获取需要处理的文件夹
-            if (repository.isDirectory() && !repository.getName().startsWith("#")) {
-                File[] faces = repository.listFiles();
-                for (File face : faces) {
-                    try {
-                        // 解析文件信息
-                        RlEntity tmp = getRlEntityByFile(face);
-                        // 获取库信息
-                        tmp.setRLKID(face.getParentFile().getName().split("-")[0]);
-                        if (rlService.addRlData(tmp) > 0) {
-                            result.add(tmp);
-                            // 处理成功 删除文件
-                            moveFile(face.getPath(), "",true, false);
-                            // 查看是否到达处理限制
-                            if (0 != faceScanLimit && faceScanLimit == result.size()) {
-                                break;
-                            }
-                        } else {
-                            moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()), false,true);
-                        }
-                    } catch (Exception e) {
-                        moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()), false,true);
-                    }
-                }
-            }
-        }
-        RlEntity[] tmp = new RlEntity[result.size()];
-        tmp = result.toArray(tmp);
-        return tmp;
-    }
-
-    /**
      * 移动文件
      * @param filePath
      * @param succeed
@@ -262,37 +281,7 @@ public class TaskScheduler {
         }
     }
 
-    private RlEntity getRlEntityByFile(File faceFile) throws IOException {
-        RlEntity result = new RlEntity();
-        String[] faceInfo = FileUtils.dealPicFileName(faceFile.getName());
-        if (18 != faceInfo[1].length()) {
-            return null;
-        }
-
-        PersonIDEntity personIDEntity = PersonIDUntils.getPersonInfo(faceInfo[0], faceInfo[1]);
-        result.setXM(personIDEntity.getName());
-        result.setSFZH(personIDEntity.getId());
-        result.setCSNF(personIDEntity.getBirthDay());
-        switch (personIDEntity.getGender()) {
-            case "男":
-                result.setXB(1);
-                break;
-            case "女":
-                result.setXB(2);
-                break;
-            default:
-                result.setXB(0);
-                break;
-        }
-        result.setRLSF(personIDEntity.getProvince());
-        result.setRLCS(personIDEntity.getCity());
-        result.setBase64Pic(FileUtils.fileToBase64(faceFile.getPath()));
-        result.setXGSJ(CommUtils.getCurrentDate());
-        result.setTJSJ(CommUtils.getCurrentDate());
-        return result;
-    }
-
-    @Scheduled(cron = "*/30 * * * * ?")
+    @Scheduled(cron = "${tasks.gc}")
     public void GCScheduler() {
         // 删除exp文件
         long used = System.currentTimeMillis();
@@ -423,6 +412,80 @@ public class TaskScheduler {
     //     });
     //     RlEntity[] results = new RlEntity[rlEntities.size()];
     //     return rlEntities.toArray(results);
+    // }
+
+    /**
+     * 获取人脸信息
+     *
+     * @return
+     */
+    // private RlEntity[] getRlEntitys() {
+    //     // 人脸结构信息
+    //     List<RlEntity> result = new ArrayList<>();
+    //     // 获取根路径
+    //     File root = new File(faceRepository);
+    //     // 获取根路径下的文件夹
+    //     File[] repositorys = root.listFiles();
+    //     for (File repository : repositorys) {
+    //         // 获取需要处理的文件夹
+    //         if (repository.isDirectory() && !repository.getName().startsWith("#")) {
+    //             File[] faces = repository.listFiles();
+    //             for (File face : faces) {
+    //                 try {
+    //                     // 解析文件信息
+    //                     RlEntity tmp = getRlEntityByFile(face);
+    //                     // 获取库信息
+    //                     tmp.setRLKID(face.getParentFile().getName().split("-")[0]);
+    //                     if (rlService.addRlData(tmp) > 0) {
+    //                         result.add(tmp);
+    //                         // 处理成功 删除文件
+    //                         moveFile(face.getPath(), "",true, false);
+    //                         // 查看是否到达处理限制
+    //                         if (0 != faceScanLimit && faceScanLimit == result.size()) {
+    //                             break;
+    //                         }
+    //                     } else {
+    //                         moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()), false,true);
+    //                     }
+    //                 } catch (Exception e) {
+    //                     moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()), false,true);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     RlEntity[] tmp = new RlEntity[result.size()];
+    //     tmp = result.toArray(tmp);
+    //     return tmp;
+    // }
+
+    // private RlEntity getRlEntityByFile(File faceFile) throws IOException {
+    //     RlEntity result = new RlEntity();
+    //     String[] faceInfo = FileUtils.dealPicFileName(faceFile.getName());
+    //     if (18 != faceInfo[1].length()) {
+    //         return null;
+    //     }
+    //
+    //     PersonIDEntity personIDEntity = PersonIDUntils.getPersonInfo(faceInfo[0], faceInfo[1]);
+    //     result.setXM(personIDEntity.getName());
+    //     result.setSFZH(personIDEntity.getId());
+    //     result.setCSNF(personIDEntity.getBirthDay());
+    //     switch (personIDEntity.getGender()) {
+    //         case "男":
+    //             result.setXB(1);
+    //             break;
+    //         case "女":
+    //             result.setXB(2);
+    //             break;
+    //         default:
+    //             result.setXB(0);
+    //             break;
+    //     }
+    //     result.setRLSF(personIDEntity.getProvince());
+    //     result.setRLCS(personIDEntity.getCity());
+    //     result.setBase64Pic(FileUtils.fileToBase64(faceFile.getPath()));
+    //     result.setXGSJ(CommUtils.getCurrentDate());
+    //     result.setTJSJ(CommUtils.getCurrentDate());
+    //     return result;
     // }
     //endregion
 }

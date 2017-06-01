@@ -84,6 +84,8 @@ tasks:
   scan-face-repository: 0 */1 * * * ?
   # 人像处理限制
   sacn-limit: 0
+  # gc清理任务
+  gc: 0 0 0/24 0 0 ?
 # 分布式任务相关
 redis-keys:
   # 抓拍任务锁

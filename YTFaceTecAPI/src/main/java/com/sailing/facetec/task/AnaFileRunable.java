@@ -2,6 +2,7 @@ package com.sailing.facetec.task;
 
 import com.sailing.facetec.entity.PersonIDEntity;
 import com.sailing.facetec.entity.RlEntity;
+import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FileUtils;
@@ -9,6 +10,7 @@ import com.sailing.facetec.util.PersonIDUntils;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
@@ -18,6 +20,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by yunan on 2017/5/30.
@@ -43,15 +46,39 @@ public class AnaFileRunable implements Runnable {
     // 扫描目录
     private String scanPath;
     // 线程文件处理限制
-    private int faceScanLimit;
-    // 人脸服务
-    private RlService rlService;
+    private long faceScanLimit;
     // 人脸库根目录
-    @Value("${facepic.repository}")
     private String faceRepository;
+
+    private RedisService redisService;
+
+    private RlService rlService;
+
+
+
+    public AnaFileRunable(String path,long limit,String root,RedisService redis,RlService rl){
+        scanPath = path;
+        faceScanLimit = limit;
+        faceRepository = root;
+        redisService = redis;
+        rlService = rl;
+    }
+
     @Override
     public void run() {
 
+         if(!redisService.setValNX(scanPath,"ok",1, TimeUnit.MINUTES)){
+            return;
+        }
+
+        try {
+            long use = System.currentTimeMillis();
+            LOGGER.info("start deal path {}",scanPath);
+            RlEntity[] rlEntities = getRlEntitys();
+            LOGGER.info("deal path used {} ms get {} faces", System.currentTimeMillis() - use, rlEntities.length);
+        } finally {
+            redisService.delKey(scanPath);
+        }
     }
 
     /**
@@ -66,18 +93,21 @@ public class AnaFileRunable implements Runnable {
         for (File face : faces) {
             try {
                 RlEntity tmp = getRlEntityByFile(face);
-                tmp.setRLKID(face.getParentFile().getName());
+                tmp.setRLKID(face.getParentFile().getName().split("-")[0]);
                 if (!CommUtils.isNullObject(tmp) && rlService.addRlData(tmp) > 0) {
                     result.add(tmp);
-                    dealFile(face.getPath(), true, false);
+                    // moveFile(face.getPath(), true, false);
+                    moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()),true, false);
+
                     if (0 != faceScanLimit && faceScanLimit == result.size()) {
                         break;
                     }
                 } else {
-                    dealFile(face.getPath(), false, true);
+                    moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()),false, true);
                 }
             } catch (Exception e) {
-                dealFile(face.getPath(), false, true);
+                moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()),false, true);
+                // moveFile(face.getPath(), false, true);
             }
         }
         RlEntity[] tmp = new RlEntity[result.size()];
@@ -85,30 +115,43 @@ public class AnaFileRunable implements Runnable {
         return tmp;
     }
 
-    private void dealFile(String Filepath, boolean succeed, boolean keep) {
+    /**
+     * 移动文件
+     * @param filePath
+     * @param desPath
+     * @param succeed
+     * @param keep
+     */
+    private void moveFile(String filePath, String desPath,boolean succeed, boolean keep) {
         try {
             if (succeed) {
                 if (keep) {
-                    LOGGER.info("succeed file: {} will be move to {}", Filepath, Paths.get(faceRepository, "#succeed"));
-                    Files.move(Paths.get(Filepath), Paths.get(faceRepository, "#succeed", Paths.get(Filepath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+                    LOGGER.info("succeed file: {} will be move to {}", filePath, Paths.get(faceRepository, "#succeed"));
+                    Files.move(Paths.get(filePath), Paths.get(desPath,Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
                 } else {
-                    LOGGER.info("succeed file: {} will be delete", Filepath);
+                    LOGGER.info("succeed file: {} will be delete", filePath);
                 }
             } else {
-                LOGGER.error("fail file: {} will bu move to  {}", Filepath, Paths.get(faceRepository, "#fail"));
-                Files.move(Paths.get(Filepath), Paths.get(faceRepository, "#fail", Paths.get(Filepath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+                LOGGER.error("fail file: {} will bu move to  {}", filePath, Paths.get(faceRepository, "#fail"));
+                Files.move(Paths.get(filePath), Paths.get(desPath,Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         } finally {
             try {
-                Files.delete(Paths.get(Filepath));
+                Files.delete(Paths.get(filePath));
             } catch (IOException e) {
                 LOGGER.error(e.getMessage());
             }
         }
     }
 
+    /**
+     * 提取人像文件对象
+     * @param faceFile
+     * @return
+     * @throws IOException
+     */
     private RlEntity getRlEntityByFile(File faceFile) throws IOException {
         RlEntity result = new RlEntity();
         String[] faceInfo = FileUtils.dealPicFileName(faceFile.getName());
