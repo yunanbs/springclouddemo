@@ -72,6 +72,4 @@ public interface RlService {
      */
     DataEntity<RlShowDetailEntity> listQueryRlShowDetail(String rlkid, String status, int page, int size);
 
-
-
 }

@@ -69,6 +69,12 @@ public class DatabaseController {
 
     @Autowired
     private RlbkrwService rlbkrwService;
+
+    @Autowired
+    private DWService dwService;
+
+    @Autowired
+    private SBXXService sbxxService;
     //endregion
 
     //region 实时数据库相关key
@@ -393,7 +399,7 @@ public class DatabaseController {
 
 
     /**
-     *查询人脸库人脸
+     * 查询人脸库人脸
      * @param rlkid 人脸库id
      * @param status 人脸库标志位
      * @param page 页码
@@ -501,24 +507,34 @@ public class DatabaseController {
 
     /**
      * 增加布控任务
-     * @param bkrwEntity
+     * @param bkrwEntities
      * @return
      * @throws IOException
      */
     @RequestMapping(value = "/BK/RLBKRW", consumes = "application/json", method = RequestMethod.POST)
-    public ActionResult createRlMonitorTask(@RequestBody BkrwEntity bkrwEntity) throws IOException {
+    public ActionResult createRlMonitorTask(@RequestBody BkrwEntity[] bkrwEntities) throws IOException {
         int result=0;
         try {
-            result=rlbkrwService.addMonitorReposity(bkrwEntity);
+            result=rlbkrwService.addMonitorReposity(bkrwEntities);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, result,null);
     }
 
-    @RequestMapping(value = "/BK/RLBKRW", consumes = "application/json", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/BK/RLBKRW", method = RequestMethod.DELETE)
     public ActionResult delMonitorTask(@RequestParam String bkid) throws IOException {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlbkrwService.delMonitorReposity(bkid), null);
+    }
+
+    /**
+     * 获取人脸布控任务
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/BK/RLBKRW", method = RequestMethod.GET)
+    public ActionResult queryMonitorReposity(@RequestParam(name = "rlkid", defaultValue = "") String rlkid) throws IOException {
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlbkrwService.queryMonitorReposity(rlkid), null);
     }
 
     /**
@@ -535,5 +551,19 @@ public class DatabaseController {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, PersonIDUntils.getPersonInfo(personInfo[0], personInfo[1]), null);
     }
 
+    /**
+     * 获取单位
+     * @return
+     */
+    @RequestMapping(value = "/DW", method = RequestMethod.GET)
+    public ActionResult getDWInfo() {
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, dwService.listDW(), null);
+    }
 
+    @RequestMapping(value = "/SBXX", method = RequestMethod.GET)
+    public ActionResult getSBXXInfo(
+            @RequestParam(name = "yhz") String yhz,
+            @RequestParam(name = "key", defaultValue = "") String key) {
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, sbxxService.listSBXX(yhz,key), null);
+    }
 }

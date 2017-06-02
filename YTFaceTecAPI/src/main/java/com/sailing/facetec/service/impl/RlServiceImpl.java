@@ -160,10 +160,15 @@ public class RlServiceImpl implements RlService {
             String ytFaceID = faceObject.getString("face_image_id");
             // 人脸uri
             String ytFaceUri = faceObject.getString("face_image_uri");
+            // // 获取图片本地路径及发布路径
+            // String[] picPaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), ytFaceID + "-pic");
+            // // 获取人脸照片物理路径及发布路径
+            // String[] facePaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), ytFaceID + "-face");
             // 获取图片本地路径及发布路径
-            String[] picPaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), ytFaceID + "-pic");
+            String[] picPaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), rlEntity.getSFZH() + "-pic");
             // 获取人脸照片物理路径及发布路径
-            String[] facePaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), ytFaceID + "-face");
+            String[] facePaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), rlEntity.getSFZH() + "-face");
+
 
             try {
                 boolean createPic = FileUtils.base64ToFile(rlEntity.getBase64Pic(), picPaths[0]);
@@ -181,10 +186,18 @@ public class RlServiceImpl implements RlService {
                     rlEntity.setXZGXRLDZ(facePaths[0]);
                     // 保存人脸id
                     rlEntity.setRLID(ytFaceID);
+                    rlEntity.setRLID1(ytFaceID);
+                    rlEntity.setRLKID1(rlEntity.getRLKID());
+
+
+                    // 获取人脸特征码
+                    rlEntity.setYLZD4(ytService.getSpecByFaceID(ytFaceID));
 
                     rlEntity.setRKSJ(CommUtils.getCurrentDate());
                     rlEntity.setTJSJ(CommUtils.getCurrentDate());
                     rlEntity.setXGSJ(CommUtils.getCurrentDate());
+
+                    rlEntity.setYLZD1("1");
 
                     results.add(rlMapper.insertRl(rlEntity));
                 }
@@ -207,7 +220,7 @@ public class RlServiceImpl implements RlService {
      * @return
      */
     private String[] getPathByPersonID(String repositoryID, String personID, String faceid) {
-        String path = (CommUtils.isNullObject(personID) || personID.length() < 10) ? String.format("%s\\%s\\", repositoryID, "000000") : String.format("%s\\%s\\%s\\", repositoryID, personID.substring(0, 6), personID.substring(6, 10));
+        String path = (CommUtils.isNullObject(personID) || personID.length() < 18) ? String.format("%s\\%s\\", repositoryID, "000000") : String.format("%s\\%s\\%s\\", repositoryID, personID.substring(0, 6), personID.substring(6, 10));
         List<String> results = new ArrayList<>();
         results.add(String.format("%s%s%s.jpg", faceDir, path, faceid));
         results.add(String.format("%s%s%s.jpg", webPath, path, faceid));
@@ -311,23 +324,29 @@ public class RlServiceImpl implements RlService {
     /**
      * 删除人员
      *
-     * @param rlid
+     * @param rlids
      * @return
      */
     @Override
-    public int delPersonal(String rlid) {
+    @Transactional
+    public int delPersonal(String rlids) {
         int result = 0;
-
+        String[] rlidArray=null;
+        rlidArray=rlids.split(",");
         // 登录 获取sid
         String sid = loginToYT();
-        RlDetailEntity rlDetailEntity = new RlDetailEntity();
 
-        rlDetailEntity.setRLID(rlid);
-        rlDetailEntity.setYLZD1("0");
-        JSONObject jsonObject = JSONObject.parseObject(ytService.delPersonal(sid, rlid));
-        if ("0".equals(jsonObject.getString("rtn"))) {
 
-            result = rlDetailMapper.delProsonal(rlDetailEntity);
+        for(String rlid:rlidArray)
+        {
+            RlDetailEntity rlDetailEntity = new RlDetailEntity();
+            rlDetailEntity.setRLID(rlid);
+            rlDetailEntity.setYLZD1("0");
+            JSONObject jsonObject = JSONObject.parseObject(ytService.delPersonal(sid, rlid));
+            if ("0".equals(jsonObject.getString("rtn"))) {
+                rlDetailMapper.delProsonal(rlDetailEntity);
+                result++;
+            }
         }
         return result;
     }
@@ -347,23 +366,25 @@ public class RlServiceImpl implements RlService {
     public DataEntity<RlShowDetailEntity> listRlShowDetail(String rlkid, String status, String key, int page, int size) {
 
         StringBuilder customerFilterBuilder = new StringBuilder();
-        StringBuilder customerFilterCountBuilder = new StringBuilder();
         DataEntity<RlShowDetailEntity> result = new DataEntity<RlShowDetailEntity>();
 
         int min = (page - 1) * size+1;
         int max = page * size;
+
+
+
         if (key.equals("")) {
-            customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s'", rlkid, status));
+            customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and a.ylzd1='1'", rlkid, status));
 //            customerFilterCountBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s'", rlkid,status));
         } else {
             if ("男".equals(key)) {
-                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.xb =1 or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
+                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and a.ylzd1='1' and (a.xm like '%%%s%%' or a.xb =1 or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
             } else if ("女".equals(key)) {
-                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.xb =2 or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
+                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and a.ylzd1='1' and (a.xm like '%%%s%%' or a.xb =2 or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
             } else {
-                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
+                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and a.ylzd1='1' and (a.xm like '%%%s%%' or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
             }
-//            customerFilterCountBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and (a.xm like '%%%s%%' or a.xb like '%%%s%%' or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid,status,key,key,key,key,key,key));
+
         }
         if (customerFilterBuilder.toString() != "") {
             List<RlShowDetailEntity> listRlShowDetail = rlShowDetailMapper.listRlShowDetail(customerFilterBuilder.toString(), min, max);

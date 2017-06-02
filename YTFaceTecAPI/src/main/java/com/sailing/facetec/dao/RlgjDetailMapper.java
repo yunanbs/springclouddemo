@@ -42,7 +42,7 @@ public interface RlgjDetailMapper {
     @Select(countSql)
     int countRlgjDetails(@Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("customerFilter") String customerFilter);
 
-    @Update("update b_tz_rlgj set ylzd4='4' where xh in ('${ids}')")
+    @Update("update b_tz_rlgj set ylzd4='1' where xh in ('${ids}')")
     int setAlertSendFlag(@Param("ids")String ids);
 
 

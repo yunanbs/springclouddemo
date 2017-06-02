@@ -1,5 +1,6 @@
 package com.sailing.facetec.service;
 
+import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.entity.BkrwEntity;
 
 import java.text.ParseException;
@@ -10,17 +11,25 @@ import java.text.ParseException;
 public interface RlbkrwService {
     /**
      * 摄像头布控人脸库
-     * @param bkrwEntity
+     * @param bkrwEntities
      * @return
      * @throws ParseException
      */
-    int addMonitorReposity(BkrwEntity bkrwEntity) throws ParseException;
+    int addMonitorReposity(BkrwEntity[] bkrwEntities) throws ParseException;
 
     /**
      * 删除布控任务
-     * @param bkid
+     * @param bkids
      * @return
      */
-    int delMonitorReposity(String bkid);
+    int delMonitorReposity(String bkids);
+
+    /**
+     * 查询布控任务
+     * @return
+     */
+    DataEntity<BkrwEntity> queryMonitorReposity(String rlkid);
+
+
 
 }

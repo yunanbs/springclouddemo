@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 @Data
 public class AnaFileRunable implements Runnable {
 
-    // TODO: 2017/5/31  需要测试 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnaFileRunable.class);
 
     /**

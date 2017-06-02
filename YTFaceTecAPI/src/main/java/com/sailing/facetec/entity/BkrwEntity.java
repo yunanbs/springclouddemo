@@ -43,6 +43,8 @@ public class BkrwEntity implements Serializable {
     private String RWJB; //	任务级别
     private String RWWCBL; //	任务完成比例
     private String FWIP; //	服务ip
+    private String SXTMC; //	摄像头名称
+    private String RLKMC; //	人脸库名称
     private String YLZD1; //	(null)
     private String YLZD2; //	(null)
     private String YLZD3; //	(null)

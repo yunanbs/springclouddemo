@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.entity.RlEntity;
 import com.sailing.facetec.remoteservice.YTApi;
-import com.sailing.facetec.remoteservice.TestApi;
+import com.sailing.facetec.remoteservice.YTTZApi;
 import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
 import org.apache.commons.codec.binary.Base64;
@@ -36,11 +36,11 @@ public class YTServiceImpl  implements YTService{
     @Autowired
     private YTApi ytApi;
 
+    @Autowired
+    private YTTZApi yttzApi;
+
     @Value("${ytface.api-url}")
     private String ytServer;
-
-    @Autowired
-    private TestApi testApi;
 
     @Override
     public String login(String userName, String passWord) {
@@ -395,11 +395,27 @@ public class YTServiceImpl  implements YTService{
         return result;
     }
 
+    /**
+     * 获取人脸对应的特征码
+     *
+     * @param faceID
+     * @return
+     */
     @Override
-    public String getTZ(String id) {
-        byte[] b = testApi.testtzm(id);
-        String s = Base64.encodeBase64String(b);
-        return null;
+    public String getSpecByFaceID(String faceID) {
+        byte[] spec = yttzApi.getSpecByID(faceID);
+        return Base64.encodeBase64String(spec);
+    }
+
+    /**
+     * 获取人像库特征码
+     *
+     * @param repoID
+     * @return
+     */
+    @Override
+    public String getSpecByRepoID(String repoID) {
+        return yttzApi.getSpecByRepoID(repoID);
     }
 
 }

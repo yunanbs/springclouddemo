@@ -199,16 +199,34 @@ public class FaceRetrievalServiceImpl implements FaceRetrievalService {
                 FaceRetrievalDetailEntity retrievalDetailEntity = new FaceRetrievalDetailEntity();
                 if (dataContent != null) {
                     for (int i = 0; i < dataContent.size(); i++) {
+                        // if (dataContent.getJSONObject(i).get("rlid").toString().equals(ytRetrievalResultDetailEntity.getFace_image_id_str())) {
+                        //     if (type.equals("stranger")) {
+                        //         //l路人库
+                        //         retrievalDetailEntity.setImgUrl(dataContent.getJSONObject(i).get("ylzd2").toString());
+                        //         retrievalDetailEntity.setBigImgUrl(dataContent.getJSONObject(i).get("ylzd1").toString());
+                        //     }else {
+                        //         ytRetrievalResultDetailEntity.setFace_image_url(dataContent.getJSONObject(i).get("xzgxdtdz").toString());
+                        //         retrievalDetailEntity.setImgUrl(dataContent.getJSONObject(i).get("xzgxdtdz").toString());
+                        //     }
+                        // }
+
+                        // 2017-06-01 替换
                         if (dataContent.getJSONObject(i).get("rlid").toString().equals(ytRetrievalResultDetailEntity.getFace_image_id_str())) {
                             if (type.equals("stranger")) {
                                 //l路人库
                                 retrievalDetailEntity.setImgUrl(dataContent.getJSONObject(i).get("ylzd2").toString());
                                 retrievalDetailEntity.setBigImgUrl(dataContent.getJSONObject(i).get("ylzd1").toString());
+                                retrievalDetailEntity.setImgPath(dataContent.getJSONObject(i).get("ylzd6").toString());
+                                retrievalDetailEntity.setBigImgPath(dataContent.getJSONObject(i).get("ylzd5").toString());
                             }else {
                                 ytRetrievalResultDetailEntity.setFace_image_url(dataContent.getJSONObject(i).get("xzgxdtdz").toString());
-                                retrievalDetailEntity.setImgUrl(dataContent.getJSONObject(i).get("xzgxdtdz").toString());
+                                retrievalDetailEntity.setImgUrl(dataContent.getJSONObject(i).get("xzrldz").toString());
+                                retrievalDetailEntity.setBigImgUrl(dataContent.getJSONObject(i).get("xzdtdz").toString());
+                                retrievalDetailEntity.setImgPath(dataContent.getJSONObject(i).get("xzgxrldz").toString());
+                                retrievalDetailEntity.setBigImgPath(dataContent.getJSONObject(i).get("xzgxdtdz").toString());
                             }
                         }
+
                     }
                 }
                 retrievalDetailEntity.setIdCard(ytRetrievalResultDetailEntity.getPerson_id());

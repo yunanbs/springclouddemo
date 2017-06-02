@@ -1,3 +1,4 @@
+# spring 配置
 spring:
   # 设置应用名
   application:
@@ -20,6 +21,7 @@ spring:
   # 是否输出sql语句
   jpa:
     show-sql: true
+  # http文件大小限制
   http:
     multipart:
       enabled: true
@@ -63,6 +65,7 @@ endpoints:
   shutdown:
     enabled: true
     sensitive: false
+# 默认信息
 info:
   com: sailing
   product: face-api
@@ -85,7 +88,7 @@ tasks:
   # 人像处理限制
   sacn-limit: 0
   # gc清理任务
-  gc: 0 0 0/24 0 0 ?
+  gc: 0 0 0/24 * * ?
 # 分布式任务相关
 redis-keys:
   # 抓拍任务锁
@@ -125,6 +128,8 @@ supplys:
 ytface:
   # 依图平台api地址
   api-url: http://172.20.25.226:11180
+  # 依图平台特征码api地址
+  tz-api-url: http://172.20.25.226:7120
   # 依图平台登录信息
   username: admin
   password: 21232f297a57a5a743894a0e4a801fc3

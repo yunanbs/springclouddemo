@@ -6,19 +6,13 @@ import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.dao.RlgjDetailMapper;
-import com.sailing.facetec.entity.PersonIDEntity;
-import com.sailing.facetec.entity.RlEntity;
 import com.sailing.facetec.entity.RlgjDetailEntity;
 import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.service.RlgjService;
 import com.sailing.facetec.service.RllrService;
-import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FastJsonUtils;
 import com.sailing.facetec.util.FileUtils;
-import com.sailing.facetec.util.PersonIDUntils;
-import com.sun.xml.internal.ws.api.ha.StickyFeature;
-import org.apache.coyote.ActionCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +21,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.*;
-import javax.xml.soap.DetailEntry;
-import java.io.*;
-import java.nio.file.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -144,6 +138,9 @@ public class TaskScheduler {
             DataEntity result = rlgjService.listRlgjDetail("", "", "", 1, alertCache, alertLimit, "", "", "", "", "", "", "", "");
             // 更新实时数据
             redisService.setVal(alertData, JSON.toJSONString(result, FastJsonUtils.nameFilter, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero), 1, TimeUnit.DAYS);
+
+            sendAlerts(result);
+
             // 释放锁
             redisService.delKey(alertLock);
             use = use - System.currentTimeMillis();
@@ -163,21 +160,24 @@ public class TaskScheduler {
 
             RlgjDetailEntity rlgjDetailEntity = (RlgjDetailEntity) alert;
             // 判断报警标记位是否为1 不为1 则添加报警推送
-            if("1".equals(rlgjDetailEntity.getYLZD4())){
+            if(!"1".equals(rlgjDetailEntity.getYLZD4())){
                 toSend.add(rlgjDetailEntity);
             }
         });
 
+        // 没有推送的报警 直接退出
         if(0==toSend.size()){
             return;
         }
 
+        // 创建推送对象
         DataEntity<RlgjDetailEntity> dataEntity = new DataEntity<>();
         dataEntity.setDataContent(toSend);
         ActionResult sendObj = new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG,dataEntity,null);
 
         // TODO: 2017/6/1 send alert
 
+        // 更新推送标记位
         List<String> ids = new ArrayList<>();
         toSend.forEach(s->{
             ids.add(s.getXH().toString());

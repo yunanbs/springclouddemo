@@ -15,6 +15,8 @@ public class FaceRetrievalDetailEntity {
     private String date;
     private String imgUrl;
     private String bigImgUrl;
+    private String imgPath;
+    private String bigImgPath;
     private String repositoryId;
     private String repositoryName;
 

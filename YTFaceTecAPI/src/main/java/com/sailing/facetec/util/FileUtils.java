@@ -303,20 +303,21 @@ public class FileUtils {
     public static boolean base64ToFile(String base64, String desFile) throws IOException {
         boolean result = false;
         byte[] bytes = Base64.decodeBase64(base64);
-        // 获取文件
-        File file = new File(desFile);
-        // 创建目录
-        File path = new File(file.getParent());
-        if (!path.exists()) {
-            path.mkdirs();
-        }
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file));
-        try {
-            bufferedOutputStream.write(bytes);
-            result = true;
-        } finally {
-            bufferedOutputStream.close();
-        }
+        Files.copy(new ByteArrayInputStream(bytes),Paths.get(desFile),StandardCopyOption.REPLACE_EXISTING);
+        // // 获取文件
+        // File file = new File(desFile);
+        // // 创建目录
+        // File path = new File(file.getParent());
+        // if (!path.exists()) {
+        //     path.mkdirs();
+        // }
+        // BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file));
+        // try {
+        //     bufferedOutputStream.write(bytes);
+        //     result = true;
+        // } finally {
+        //     bufferedOutputStream.close();
+        // }
         return result;
     }
 

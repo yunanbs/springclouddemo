@@ -129,5 +129,18 @@ public interface YTService {
      */
     boolean downLoadPic(String picUris,String localFile) throws IOException;
 
-    String getTZ(String id);
+    /**
+     * 获取人脸对应的特征码
+     * @param faceID
+     * @return
+     */
+    String getSpecByFaceID(String faceID);
+
+    /**
+     * 获取人像库特征码
+     * @param repoID
+     * @return
+     */
+    String getSpecByRepoID(String repoID);
+
 }

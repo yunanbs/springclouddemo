@@ -1,9 +1,13 @@
 package com.sailing.facetec.dao;
 
 import com.sailing.facetec.entity.BkrwEntity;
+import com.sailing.facetec.entity.SxtEntity;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * Created by yunan on 2017/5/16.
@@ -27,4 +31,11 @@ public interface RlbkrwMapper {
      */
     @Delete("delete from b_tz_rlbkrw where bkid='${bkid}' ")
     int delBkrw(@Param("bkid") String bkid);
+
+    @Select("select a.*,b.sxtmc as sxtmc,c.rlkmc as rlkmc from b_tz_rlbkrw a left join b_tz_rlsxt b on a.sxtid =b.sxtid left join b_tz_rlk c on a.rlkid = c.rlkid where 1=1 ${customerFilter}")
+    List<BkrwEntity> queryMonitorReposity(@Param("customerFilter") String customerFilter);
+
+
+//    @Select("select b.* from b_tz_rlbkrw a left join b_tz_rlsxt b on a.sxtid =b.sxtid left join b_tz_rlk c on a.rlkid = c.rlkid where b.")
+//    List<SxtEntity> queryMonitorReposityRelations(@Param("rlkid") String rlkid);
 }
