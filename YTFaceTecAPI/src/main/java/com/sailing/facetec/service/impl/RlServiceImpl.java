@@ -371,22 +371,24 @@ public class RlServiceImpl implements RlService {
         int min = (page - 1) * size+1;
         int max = page * size;
 
-
-
-        if (key.equals("")) {
-            customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and a.ylzd1='1'", rlkid, status));
-//            customerFilterCountBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s'", rlkid,status));
-        } else {
-            if ("男".equals(key)) {
-                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and a.ylzd1='1' and (a.xm like '%%%s%%' or a.xb =1 or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
-            } else if ("女".equals(key)) {
-                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and a.ylzd1='1' and (a.xm like '%%%s%%' or a.xb =2 or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
-            } else {
-                customerFilterBuilder.append(String.format(" b.rlkid='%s' and b.ylzd2='%s' and a.ylzd1='1' and (a.xm like '%%%s%%' or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", rlkid, status, key, key, key, key, key));
+        if(!CommUtils.isNullObject(key)){
+            switch (key){
+                case "男":
+                    customerFilterBuilder.append(String.format(" and a.xb = '1' ",rlkid,status));
+                    break;
+                case "女":
+                    customerFilterBuilder.append(String.format(" and a.xb = '2' ",rlkid,status));
+                    break;
+                default:
+                    customerFilterBuilder.append(String.format(" and (a.xm like '%%%s%%' or a.csnf like '%%%s%%' or a.rlsf like '%%%s%%' or a.rlcs like '%%%s%%' or a.sfzh like '%%%s%%')", key, key, key, key, key));
             }
-
         }
-        if (customerFilterBuilder.toString() != "") {
+
+        if(!CommUtils.isNullObject(rlkid)){
+            customerFilterBuilder.append(String.format("  and b.ylzd2 = '%s' and b.rlkid = '%s' ",rlkid,status));
+        }
+
+        if ( !CommUtils.isNullObject(customerFilterBuilder.toString())) {
             List<RlShowDetailEntity> listRlShowDetail = rlShowDetailMapper.listRlShowDetail(customerFilterBuilder.toString(), min, max);
             int counts = rlShowDetailMapper.RlShowDetailCount(customerFilterBuilder.toString());
             result.setDataContent(listRlShowDetail);

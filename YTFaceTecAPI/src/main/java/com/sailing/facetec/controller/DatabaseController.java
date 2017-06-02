@@ -388,7 +388,7 @@ public class DatabaseController {
      */
     @RequestMapping(value = "/RL/faces", method = RequestMethod.GET)
     public ActionResult listRlDetail(
-                 @RequestParam(name = "rlkid") String rlkid,
+                 @RequestParam(name = "rlkid",defaultValue = "") String rlkid,
                  @RequestParam(name = "status", defaultValue = "1") String status,
                  @RequestParam(name = "key", defaultValue = "") String key,
                  @RequestParam(name = "page", defaultValue = "1") int page,
