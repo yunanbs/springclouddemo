@@ -126,13 +126,13 @@ public class AnaFileRunable implements Runnable {
             if (succeed) {
                 if (keep) {
                     LOGGER.info("succeed file: {} will be move to {}", filePath, Paths.get(faceRepository, "#succeed"));
-                    Files.move(Paths.get(filePath), Paths.get(desPath,Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(Paths.get(filePath), Paths.get(desPath,Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
                 } else {
                     LOGGER.info("succeed file: {} will be delete", filePath);
                 }
             } else {
-                LOGGER.error("fail file: {} will bu move to  {}", filePath, Paths.get(faceRepository, "#fail"));
-                Files.move(Paths.get(filePath), Paths.get(desPath,Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+                LOGGER.error("fail file: {} will be move to  {}", filePath, Paths.get(faceRepository, "#fail"));
+                Files.copy(Paths.get(filePath), Paths.get(desPath,Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());

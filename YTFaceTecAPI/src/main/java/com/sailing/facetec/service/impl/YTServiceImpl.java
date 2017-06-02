@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Created by yunan on 2017/5/17.
@@ -387,7 +388,7 @@ public class YTServiceImpl  implements YTService{
         if(200==httpResponse.getStatusLine().getStatusCode()){
             InputStream inputStream = httpResponse.getEntity().getContent();
             // result = FileUtils.streamToFile(inputStream,localFile);
-            Files.copy(inputStream, Paths.get(localFile));
+            Files.copy(inputStream, Paths.get(localFile), StandardCopyOption.REPLACE_EXISTING);
             result = true;
         }
         expend = System.currentTimeMillis()-expend;

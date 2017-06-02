@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 /**
@@ -48,7 +49,7 @@ public class ImageAnalysisController {
                 if (localFile.exists()) {
                     localFile.delete();
                 }
-                Files.copy(file.getInputStream(), Paths.get(imagePath));
+                Files.copy(file.getInputStream(), Paths.get(imagePath), StandardCopyOption.REPLACE_EXISTING);
                 url = imageUrl + fileName;
             } else {
                 url = originalUrl;

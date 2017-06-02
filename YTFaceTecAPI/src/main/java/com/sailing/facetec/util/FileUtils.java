@@ -255,7 +255,7 @@ public class FileUtils {
                 Path desFilePath = Paths.get(desPath,zipEntry.getName());
                 if(keepStruct){
                     makePath(desFilePath.getParent().toString());
-                    Files.copy(bufferedInputStream,desFilePath);
+                    Files.copy(bufferedInputStream,desFilePath,StandardCopyOption.REPLACE_EXISTING);
                 }else{
                     Files.copy(bufferedInputStream,Paths.get(desPath,desFilePath.getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
                 }
@@ -288,7 +288,7 @@ public class FileUtils {
      */
     public static boolean copyFile(String sourceFile, String desFile) throws IOException {
         boolean result;
-        Path copyResult = Files.copy(Paths.get(sourceFile), Paths.get(desFile));
+        Path copyResult = Files.copy(Paths.get(sourceFile), Paths.get(desFile),StandardCopyOption.REPLACE_EXISTING);
         result = desFile.equals(copyResult.toString());
         return result;
     }
@@ -303,7 +303,15 @@ public class FileUtils {
     public static boolean base64ToFile(String base64, String desFile) throws IOException {
         boolean result = false;
         byte[] bytes = Base64.decodeBase64(base64);
+        // 获取文件
+        File file = new File(desFile);
+        // 创建目录
+        File path = new File(file.getParent());
+        if (!path.exists()) {
+            path.mkdirs();
+        }
         Files.copy(new ByteArrayInputStream(bytes),Paths.get(desFile),StandardCopyOption.REPLACE_EXISTING);
+        result = true;
         // // 获取文件
         // File file = new File(desFile);
         // // 创建目录
