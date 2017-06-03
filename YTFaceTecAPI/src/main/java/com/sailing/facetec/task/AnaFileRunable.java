@@ -112,6 +112,11 @@ public class AnaFileRunable implements Runnable {
                 }
             }
         }
+
+        if(0==repository.listFiles().length){
+            LOGGER.info("delete empty dir {}",repository.getName());
+            repository.delete();
+        }
         RlEntity[] tmp = new RlEntity[result.size()];
         tmp = result.toArray(tmp);
         return tmp;

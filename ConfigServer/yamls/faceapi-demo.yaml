@@ -2,7 +2,7 @@
 spring:
   # 设置应用名
   application:
-    name: faceapi-demo
+    name: faceapidemo
   # 配置数据库信息
   datasource:
     url: jdbc:oracle:thin:@172.20.22.10:1521:orcl
@@ -160,6 +160,7 @@ gc:
   tmpimage: 7
   # 人脸抓拍
   capture: 90
+alert-api: http://172.20.25.226:7120
 
 
 
