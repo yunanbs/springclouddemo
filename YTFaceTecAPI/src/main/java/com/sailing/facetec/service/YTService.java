@@ -47,7 +47,7 @@ public interface YTService {
      * @param endSec
      * @return
      */
-    String setMonitorRepository(String sid,int cameraId,int repositoryId,double limit,long stSec,long endSec);
+    String setMonitorRepository(String sid,int cameraId,int repositoryId,double limit,long stSec,long endSec,String name);
 
     /**
      * 删除布控任务

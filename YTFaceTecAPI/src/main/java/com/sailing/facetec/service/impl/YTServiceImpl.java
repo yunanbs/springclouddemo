@@ -111,21 +111,28 @@ public class YTServiceImpl  implements YTService{
      * @param sid
      * @param cameraId
      * @param repositoryId
-     * @param limit
+     * @param threshold
      * @param stSec
      * @param endSec
      * @return
      */
     @Override
-    public String setMonitorRepository(String sid,int cameraId, int repositoryId, double limit, long stSec, long endSec) {
+    public String setMonitorRepository(String sid,int cameraId, int repositoryId, double threshold, long stSec, long endSec,String name) {
         long expend = System.currentTimeMillis();
+
+        JSONObject metajsonObject=new JSONObject();
+        metajsonObject.put("createdTime",System.currentTimeMillis()/ 1000);
+        metajsonObject.put("name",name);
+        metajsonObject.put("sid",System.currentTimeMillis()/ 1000);
+
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("camera_id",cameraId);
         jsonObject.put("repository_id",repositoryId);
-        jsonObject.put("threshold",limit);
+        jsonObject.put("threshold",threshold);
         jsonObject.put("max_time_span",stSec);
         jsonObject.put("min_time_span",endSec);
+        jsonObject.put("meta",metajsonObject);
 
         String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
 
@@ -325,8 +332,8 @@ public class YTServiceImpl  implements YTService{
      */
     @Override
     public String delPersonal(String sid, String rlid) {
-        String result;
         long expend = System.currentTimeMillis();
+        String result;
         JSONObject jsonObject=new JSONObject();
         Long face_image_id=Long.parseLong(rlid);
         jsonObject.put("face_image_id",face_image_id);
@@ -335,6 +342,7 @@ public class YTServiceImpl  implements YTService{
         logger.info("yt delPersonal headers:{}", headerStr);
         result = ytApi.delPersonal(headerStr, jsonObject.toJSONString());
         logger.info("yt delPersonal result:{}", result);
+        logger.info("yt delPersonal used:{}", System.currentTimeMillis()-expend);
         return result;
     }
 

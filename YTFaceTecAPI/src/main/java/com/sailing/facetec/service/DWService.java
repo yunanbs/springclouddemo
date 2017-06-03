@@ -8,5 +8,5 @@ import com.sailing.facetec.entity.DWEntity;
  * Created by GuoWang on 2017/6/1.
  */
 public interface DWService {
-    DataEntity<DWEntity> listDW();
+    DataEntity<DWEntity> listDW(String key);
 }

@@ -137,13 +137,13 @@ exp:
 # 人像照片记录
 facepic:
   face-dir: D:\Services\faces\
-  web-path: http://172.20.22.11/exproot/faces/
+  web-path: http://172.20.22.11/faces/
   repository: D:\Services\repository\
   capture: \\172.20.22.10\tomcat5.0.28\webapps\main\images\ytlr\
 # 文件上传根目录
 upload:
   image-folder: D:\Services\tmpimage\
-  image-url: http://172.20.22.11/tmpimage/
+  image-url: http://localhost/tmpimage/
 # 人脸平台服务地址
 rlapi:
   api-url: http://localhost:8183
@@ -157,6 +157,7 @@ gc:
   tmpimage: 7
   # 人脸抓拍
   capture: 90
+alert-api: ip:port/app/
 
 
 

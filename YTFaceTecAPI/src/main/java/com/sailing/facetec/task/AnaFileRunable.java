@@ -89,24 +89,27 @@ public class AnaFileRunable implements Runnable {
         List<RlEntity> result = new ArrayList<>();
         File repository = new File(scanPath);
         File[] faces = repository.listFiles();
-        for (File face : faces) {
-            try {
-                RlEntity tmp = getRlEntityByFile(face);
-                tmp.setRLKID(face.getParentFile().getName().split("-")[0]);
-                if (!CommUtils.isNullObject(tmp) && rlService.addRlData(tmp) > 0) {
-                    result.add(tmp);
-                    // moveFile(face.getPath(), true, false);
-                    moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()),true, false);
+        if(!CommUtils.isNullObject(faces))
+        {
+            for (File face : faces) {
+                try {
+                    RlEntity tmp = getRlEntityByFile(face);
+                    tmp.setRLKID(face.getParentFile().getName().split("-")[0]);
+                    if (!CommUtils.isNullObject(tmp) && rlService.addRlData(tmp) > 0) {
+                        result.add(tmp);
+                        // moveFile(face.getPath(), true, false);
+                        moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()),true, false);
 
-                    if (0 != faceScanLimit && faceScanLimit == result.size()) {
-                        break;
+                        if (0 != faceScanLimit && faceScanLimit == result.size()) {
+                            break;
+                        }
+                    } else {
+                        moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()),false, true);
                     }
-                } else {
+                } catch (Exception e) {
                     moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()),false, true);
+                    // moveFile(face.getPath(), false, true);
                 }
-            } catch (Exception e) {
-                moveFile(face.getPath(), String.format("%s\\#fail\\%s",faceRepository,face.getParentFile().getName()),false, true);
-                // moveFile(face.getPath(), false, true);
             }
         }
         RlEntity[] tmp = new RlEntity[result.size()];

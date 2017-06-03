@@ -10,6 +10,6 @@ import java.util.List;
  * Created by GuoWang on 2017/6/1.
  */
 public interface DWMapper {
-    @Select("select * from b_rs_dw")
-    List<DWEntity> listDW();
+    @Select("select * from b_rs_dw where 1=1 ${customerFilter}")
+    List<DWEntity> listDW(@Param("customerFilter") String customerFilter);
 }

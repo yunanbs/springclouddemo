@@ -58,6 +58,8 @@ public class RlbkrwServiceImpl implements RlbkrwService {
         // 计算布控时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for(BkrwEntity bkrwEntity :bkrwEntities) {
+            bkrwEntity.setRWBH(UUID.randomUUID().toString().replace("-", ""));
+            bkrwEntity.setBKRWMC(bkrwEntity.getRWBH());
             Date stTime = simpleDateFormat.parse(bkrwEntity.getQSSJ());
             Date endTime = simpleDateFormat.parse(bkrwEntity.getZZSJ());
             long stSec = (stTime.getTime() - System.currentTimeMillis()) < 0 ? 0 : (stTime.getTime() - System.currentTimeMillis());
@@ -65,14 +67,14 @@ public class RlbkrwServiceImpl implements RlbkrwService {
             long edSec = (endTime.getTime() - System.currentTimeMillis()) / 1000;
 
             // 设置布控
-            jsonObject = JSONObject.parseObject(ytService.setMonitorRepository(sid, Integer.parseInt(bkrwEntity.getSXTID()), Integer.parseInt(bkrwEntity.getRLKID()), Double.parseDouble(bkrwEntity.getBJFSX()), stSec, edSec));
+            jsonObject = JSONObject.parseObject(ytService.setMonitorRepository(sid, Integer.parseInt(bkrwEntity.getSXTID()), Integer.parseInt(bkrwEntity.getRLKID()), Double.parseDouble(bkrwEntity.getBJFSX()), stSec, edSec,bkrwEntity.getBKRWMC()));
 
             if (!"0".equals(jsonObject.getString("rtn"))) {
                 continue;
             }
 
             bkrwEntity.setBKID(jsonObject.getString("id"));
-            bkrwEntity.setRWBH(UUID.randomUUID().toString().replace("-", ""));
+
             bkrwEntity.setTJSJ(CommUtils.getCurrentDate());
             bkrwEntity.setXGSJ(CommUtils.getCurrentDate());
             bkrwEntity.setRWZT("30");
@@ -98,8 +100,10 @@ public class RlbkrwServiceImpl implements RlbkrwService {
         String[] bkidArray=null;
         bkidArray=bkids.split(",");
         for(String bkid : bkidArray) {
-            JSONObject jsonObject = new JSONObject();
+
+            JSONObject jsonObject;
             jsonObject = JSONObject.parseObject(ytService.delMonitorReposity(sid, Long.parseLong(bkid)));
+
             if ("0".equals(jsonObject.getString("rtn"))) {
                 rlbkrwMapper.delBkrw(bkid);
                 result++;
@@ -116,8 +120,6 @@ public class RlbkrwServiceImpl implements RlbkrwService {
     @Override
     public DataEntity<BkrwEntity> queryMonitorReposity(String rlkid) {
         StringBuilder customerFilterBuilder = new StringBuilder();
-        StringBuilder customerFilterCountBuilder = new StringBuilder();
-
         DataEntity<BkrwEntity> result = new DataEntity<BkrwEntity>();
         if("".equals(rlkid))
         {

@@ -50,5 +50,6 @@ public class BkrwEntity implements Serializable {
     private String YLZD3; //	(null)
     private String YLZD4; //	(null)
     private String YLZD5; //	(null)
+    private String BKRWMC; //	(null)
 
 }

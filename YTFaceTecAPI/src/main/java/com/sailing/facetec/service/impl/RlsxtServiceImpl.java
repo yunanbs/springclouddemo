@@ -115,7 +115,6 @@ public class RlsxtServiceImpl implements RlsxtService {
 
     @Override
     public int addMonitorByCamera(BkrwEntity bkrwEntity) {
-        JSONObject jsonObject = new JSONObject();
         // 登录 获取sid
         String sid = loginToYT();
         // 获取摄像头id
@@ -157,10 +156,9 @@ public class RlsxtServiceImpl implements RlsxtService {
     @Override
     public int removeCamera(String cameraID) {
         int result = 0;
-        JSONObject jsonObject = new JSONObject();
         // 登录 获取sid
         String sid = loginToYT();
-        jsonObject = JSONObject.parseObject(ytService.delCamera(sid, cameraID));
+        JSONObject jsonObject = JSONObject.parseObject(ytService.delCamera(sid, cameraID));
         if ("0".equals(jsonObject.getString("rtn"))) {
             SxtEntity sxtEntity = new SxtEntity();
             sxtEntity.setSXTID(cameraID);

@@ -7,10 +7,12 @@ import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.dao.RlgjDetailMapper;
 import com.sailing.facetec.entity.RlgjDetailEntity;
+import com.sailing.facetec.remoteservice.AlertApi;
 import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.service.RlgjService;
 import com.sailing.facetec.service.RllrService;
+import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FastJsonUtils;
 import com.sailing.facetec.util.FileUtils;
 import org.slf4j.Logger;
@@ -57,6 +59,9 @@ public class TaskScheduler {
 
     @Autowired
     private RlgjDetailMapper rlgjDetailMapper;
+
+    @Autowired
+    private AlertApi alertApi;
 
     @Value("${redis-keys.capture-lock}")
     private String captureLock;
@@ -116,7 +121,7 @@ public class TaskScheduler {
             // 更新实时数据
             redisService.setVal(captureData, JSON.toJSONString(result, FastJsonUtils.nameFilter, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero), 1, TimeUnit.DAYS);
 
-            use = use - System.currentTimeMillis();
+            use = System.currentTimeMillis() - use;
             LOGGER.info("capture logs {} used {} ms", result.getDataContent().size(), use);
         } finally {
             // 释放锁
@@ -143,47 +148,52 @@ public class TaskScheduler {
 
             // 释放锁
             redisService.delKey(alertLock);
-            use = use - System.currentTimeMillis();
+            use = System.currentTimeMillis() - use;
             LOGGER.info("alert logs {} used {} ms", result.getDataContent().size(), use);
         }
     }
 
     /**
      * 推送报警
+     *
      * @param alerts
      */
-    private void sendAlerts(DataEntity alerts){
+    private void sendAlerts(DataEntity alerts) {
         // 需要推送的报警集合
         List<RlgjDetailEntity> toSend = new ArrayList<>();
         // 筛选需要推送的报警记录
-        alerts.getDataContent().forEach(alert->{
+        alerts.getDataContent().forEach(alert -> {
 
             RlgjDetailEntity rlgjDetailEntity = (RlgjDetailEntity) alert;
             // 判断报警标记位是否为1 不为1 则添加报警推送
-            if(!"1".equals(rlgjDetailEntity.getYLZD4())){
+            if (!"1".equals(rlgjDetailEntity.getYLZD4())) {
                 toSend.add(rlgjDetailEntity);
             }
         });
 
         // 没有推送的报警 直接退出
-        if(0==toSend.size()){
+        if (0 == toSend.size()) {
             return;
         }
 
         // 创建推送对象
         DataEntity<RlgjDetailEntity> dataEntity = new DataEntity<>();
         dataEntity.setDataContent(toSend);
-        ActionResult sendObj = new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG,dataEntity,null);
+        ActionResult sendObj = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, dataEntity, null);
 
-        // TODO: 2017/6/1 send alert
+        // TODO: 2017/6/1 send alert 需要测试
+        String alertResult = alertApi.sendAlert(JSON.toJSONString(sendObj));
+        if("false".equals((alertResult))){
+            return;
+        }
 
         // 更新推送标记位
         List<String> ids = new ArrayList<>();
-        toSend.forEach(s->{
+        toSend.forEach(s -> {
             ids.add(s.getXH().toString());
         });
 
-        rlgjDetailMapper.setAlertSendFlag(String.join("','",ids));
+        rlgjDetailMapper.setAlertSendFlag(String.join("','", ids));
     }
 
     @Scheduled(cron = "${tasks.scan-face-repository}")
@@ -212,12 +222,15 @@ public class TaskScheduler {
     /**
      * 分析文件夹 多线程版
      */
-    private void anaPaths(){
+    private void anaPaths() {
         File root = new File(faceRepository);
-        File[] files= root.listFiles();
-        for(File sub : files){
-            if(sub.isDirectory()&&!sub.getName().startsWith("#")){
-                EXECUTOR_SERVICE.execute(new AnaFileRunable(sub.getPath(),faceScanLimit,faceRepository,redisService,rlService));
+        File[] files = root.listFiles();
+        if (CommUtils.isNullObject(files)) {
+            return;
+        }
+        for (File sub : files) {
+            if (sub.isDirectory() && !sub.getName().startsWith("#")) {
+                EXECUTOR_SERVICE.execute(new AnaFileRunable(sub.getPath(), faceScanLimit, faceRepository, redisService, rlService));
             }
         }
     }
@@ -230,7 +243,7 @@ public class TaskScheduler {
         File root = new File(faceRepository);
         // 获取根路径下的文件
         File[] zips = root.listFiles();
-        if (0 == zips.length) {
+        if (CommUtils.isNullObject(zips)) {
             LOGGER.info("no file to deal");
         }
         for (File zip : zips) {
@@ -243,32 +256,33 @@ public class TaskScheduler {
             try {
                 // 解压缩文件
                 // FileUtils.unZipFile(zip.getPath(), Paths.get(faceRepository, repositoryID).toString(), false);
-                FileUtils.unZipFile(zip.getPath(), Paths.get(faceRepository, zip.getName().substring(0,zip.getName().indexOf("."))).toString(), false);
-                moveFile(zip.getPath(),String.format("%s\\%s\\",faceRepository,"#succeed"), true, true);
+                FileUtils.unZipFile(zip.getPath(), Paths.get(faceRepository, zip.getName().substring(0, zip.getName().indexOf("."))).toString(), false);
+                moveFile(zip.getPath(), String.format("%s\\%s\\", faceRepository, "#succeed"), true, true);
             } catch (IOException e) {
-                moveFile(zip.getPath(),String.format("%s\\%s\\",faceRepository,"#fail"), false, true);
+                moveFile(zip.getPath(), String.format("%s\\%s\\", faceRepository, "#fail"), false, true);
             }
         }
     }
 
     /**
      * 移动文件
+     *
      * @param filePath
      * @param succeed
      * @param keep
      */
-    private void moveFile(String filePath, String desPath,boolean succeed, boolean keep) {
+    private void moveFile(String filePath, String desPath, boolean succeed, boolean keep) {
         try {
             if (succeed) {
                 if (keep) {
                     LOGGER.info("succeed file: {} will be move to {}", filePath, Paths.get(faceRepository, "#succeed"));
-                    Files.copy(Paths.get(filePath), Paths.get(desPath,Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(Paths.get(filePath), Paths.get(desPath, Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
                 } else {
                     LOGGER.info("succeed file: {} will be delete", filePath);
                 }
             } else {
                 LOGGER.error("fail file: {} will be move to  {}", filePath, Paths.get(faceRepository, "#fail"));
-                Files.copy(Paths.get(filePath), Paths.get(desPath,Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(Paths.get(filePath), Paths.get(desPath, Paths.get(filePath).getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
@@ -298,9 +312,9 @@ public class TaskScheduler {
         exclude.add("#fail");
         LOGGER.info("gc {} delete {} files", gcRepoPath, gc(gcRepoPath, gcRepoLimit, exclude));
 
-        LOGGER.info("gc {} delete {} files", String.format("%s\\%s",gcRepoPath,"#succeed"), gc(String.format("%s\\%s",gcRepoPath,"#succeed"), gcRepoLimit, exclude));
+        LOGGER.info("gc {} delete {} files", String.format("%s\\%s", gcRepoPath, "#succeed"), gc(String.format("%s\\%s", gcRepoPath, "#succeed"), gcRepoLimit, exclude));
 
-        LOGGER.info("gc {} delete {} files", String.format("%s\\%s",gcRepoPath,"#fail"), gc(String.format("%s\\%s",gcRepoPath,"#fail"), gcRepoLimit, exclude));
+        LOGGER.info("gc {} delete {} files", String.format("%s\\%s", gcRepoPath, "#fail"), gc(String.format("%s\\%s", gcRepoPath, "#fail"), gcRepoLimit, exclude));
 
         LOGGER.info("end gc used {} ms", used);
     }
@@ -324,7 +338,7 @@ public class TaskScheduler {
         }
         for (File sub : files) {
             try {
-                if ( Files.getLastModifiedTime(sub.toPath()).to(TimeUnit.MILLISECONDS)< gclimit) {
+                if (Files.getLastModifiedTime(sub.toPath()).to(TimeUnit.MILLISECONDS) < gclimit) {
                     if (null != exclude && exclude.contains(sub.getName())) {
                         continue;
                     }

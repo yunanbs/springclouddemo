@@ -11,14 +11,23 @@ import org.springframework.stereotype.Service;
  * Created by GuoWang on 2017/6/1.
  */
 @Service
-public class dwServiceImpl implements DWService {
+public class DWServiceImpl implements DWService {
     @Autowired
     private DWMapper dwMapper;
 
     @Override
-    public DataEntity<DWEntity> listDW() {
+    public DataEntity<DWEntity> listDW(String key) {
         DataEntity<DWEntity> result = new DataEntity<DWEntity>();
-        result.setDataContent(dwMapper.listDW());
+        StringBuilder customerFilterBuilder = new StringBuilder();
+        if("".equals(key))
+        {
+            customerFilterBuilder.append(String.format("%s",key));
+        }
+        else
+        {
+            customerFilterBuilder.append(String.format("and dwmc like '%%%s%%'",key));
+        }
+        result.setDataContent(dwMapper.listDW(customerFilterBuilder.toString()));
 
         return result;
     }

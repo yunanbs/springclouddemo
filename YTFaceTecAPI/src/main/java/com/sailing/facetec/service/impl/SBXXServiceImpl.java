@@ -24,7 +24,7 @@ public class SBXXServiceImpl implements SBXXService{
             customerFilterBuilder.append(String.format(" yhz='%s'", yhz));
         }
         else {
-            customerFilterBuilder.append(String.format(" yhz='%s' and (sbmc like '%%%s%%' or sbbh like '%%%s%%')", yhz,key,key));
+            customerFilterBuilder.append(String.format(" (sbmc like '%%%s%%' or sbbh like '%%%s%%') and yhz='%s'", key,key,yhz));
         }
 
         result.setDataContent(sbxxMapper.listSBXX(customerFilterBuilder.toString()));

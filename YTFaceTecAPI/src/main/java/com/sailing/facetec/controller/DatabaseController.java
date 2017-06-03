@@ -204,8 +204,8 @@ public class DatabaseController {
      * @return
      */
     @RequestMapping("/SXT")
-    public ActionResult listSXT(@RequestParam(value = "name",defaultValue = "")String name) {
-        DataEntity<SxtDetailEntity> rlsxtEntityDataEntity = rlsxtService.listAllXST(name);
+    public ActionResult listSXT(@RequestParam(value = "key",defaultValue = "")String key) {
+        DataEntity<SxtDetailEntity> rlsxtEntityDataEntity = rlsxtService.listAllXST(key);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlsxtEntityDataEntity, null);
     }
 
@@ -388,7 +388,7 @@ public class DatabaseController {
      */
     @RequestMapping(value = "/RL/faces", method = RequestMethod.GET)
     public ActionResult listRlDetail(
-                 @RequestParam(name = "rlkid",defaultValue = "") String rlkid,
+                 @RequestParam(name = "rlkid", defaultValue = "") String rlkid,
                  @RequestParam(name = "status", defaultValue = "1") String status,
                  @RequestParam(name = "key", defaultValue = "") String key,
                  @RequestParam(name = "page", defaultValue = "1") int page,
@@ -399,7 +399,7 @@ public class DatabaseController {
 
 
     /**
-     * 查询人脸库人脸
+     *查询人脸库人脸
      * @param rlkid 人脸库id
      * @param status 人脸库标志位
      * @param page 页码
@@ -556,8 +556,9 @@ public class DatabaseController {
      * @return
      */
     @RequestMapping(value = "/DW", method = RequestMethod.GET)
-    public ActionResult getDWInfo() {
-        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, dwService.listDW(), null);
+    public ActionResult getDWInfo(
+            @RequestParam(name = "key", defaultValue = "") String key) {
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, dwService.listDW(key), null);
     }
 
     @RequestMapping(value = "/SBXX", method = RequestMethod.GET)
