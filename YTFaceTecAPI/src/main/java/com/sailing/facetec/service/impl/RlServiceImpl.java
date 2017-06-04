@@ -161,9 +161,9 @@ public class RlServiceImpl implements RlService {
             // 人脸uri
             String ytFaceUri = faceObject.getString("face_image_uri");
             // 获取图片本地路径及发布路径
-            String[] picPaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), ytFaceID + "-pic");
+            String[] picPaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(),  rlEntity.getSFZH() + "-pic");
             // 获取人脸照片物理路径及发布路径
-            String[] facePaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(), ytFaceID + "-face");
+            String[] facePaths = getPathByPersonID(rlEntity.getRLKID(), rlEntity.getSFZH(),  rlEntity.getSFZH() + "-face");
 
             try {
                 boolean createPic = FileUtils.base64ToFile(rlEntity.getBase64Pic(), picPaths[0]);

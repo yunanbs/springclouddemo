@@ -147,6 +147,8 @@ upload:
 # 人脸平台服务地址
 rlapi:
   api-url: http://localhost:8183
+# 报警服务地址
+alert-api: http://21.0.0.129.8080/sdp/accept/rlbk
 # 文件清理（天）
 gc:
   # 导出查询文件
@@ -157,7 +159,15 @@ gc:
   tmpimage: 7
   # 人脸抓拍
   capture: 90
-alert-api: ip:port/app/
+# 厅县人脸库映射关系
+plant:
+  # 远程平台地址
+  remote-plant-root: http://22.4.0.60/storage/faces/
+  # 多平台人脸库编码映射 本地人脸库id-远程人脸库id
+  plant-map:
+    15: 15
+
+
 
 
 

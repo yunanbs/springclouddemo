@@ -1,10 +1,12 @@
 package com.sailing.facetec.task;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.config.ActionCodeConfig;
+import com.sailing.facetec.config.PlantConfig;
 import com.sailing.facetec.dao.RlgjDetailMapper;
 import com.sailing.facetec.entity.RlgjDetailEntity;
 import com.sailing.facetec.remoteservice.AlertApi;
@@ -62,6 +64,9 @@ public class TaskScheduler {
 
     @Autowired
     private AlertApi alertApi;
+
+    @Autowired
+    private PlantConfig plantConfig;
 
     @Value("${redis-keys.capture-lock}")
     private String captureLock;
@@ -141,9 +146,14 @@ public class TaskScheduler {
             long use = System.currentTimeMillis();
             // 按配置抽取历史数据
             DataEntity result = rlgjService.listRlgjDetail("", "", "", 1, alertCache, alertLimit, "", "", "", "", "", "", "", "");
+
+            // 获取远程平台人像地址
+            makeRemoteImageUrl(result.getDataContent());
+
             // 更新实时数据
             redisService.setVal(alertData, JSON.toJSONString(result, FastJsonUtils.nameFilter, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero), 1, TimeUnit.DAYS);
 
+            // 推送报警
             sendAlerts(result);
 
             // 释放锁
@@ -183,6 +193,7 @@ public class TaskScheduler {
 
         // TODO: 2017/6/1 send alert 需要测试
         String alertResult = alertApi.sendAlert(JSON.toJSONString(sendObj));
+        alertResult = JSONObject.parseObject(alertResult).getString("success");
         if("false".equals((alertResult))){
             return;
         }
@@ -194,6 +205,31 @@ public class TaskScheduler {
         });
 
         rlgjDetailMapper.setAlertSendFlag(String.join("','", ids));
+    }
+
+    /**
+     * 本地没有人像库人像图片时 从远程平台获取图片链接
+     * @param src
+     */
+    private void makeRemoteImageUrl(List<RlgjDetailEntity> src){
+        for(RlgjDetailEntity rlgjDetailEntity : src){
+            if(CommUtils.isNullObject(rlgjDetailEntity.getRLXZXT())){
+                String remotePath = String.format("%s/%s/%s/%s-face.jpg"
+                        ,plantConfig.getRemotePlantRoot()
+                        ,plantConfig.getPlantMap().get(rlgjDetailEntity.getRLKID())
+                        ,getPathByPersonID(rlgjDetailEntity.getRLSFZ())
+                        ,rlgjDetailEntity.getRLSFZ()
+                );
+                rlgjDetailEntity.setRLXZXT(remotePath);
+            }
+        }
+
+    }
+
+    private String getPathByPersonID(String personID){
+        String areaCode = personID.substring(0,5);
+        String year = personID.substring(6,11);
+        return String.format("%s/%s/",areaCode,year);
     }
 
     @Scheduled(cron = "${tasks.scan-face-repository}")

@@ -6,7 +6,7 @@ spring:
     # 配置中心设置
     config:
       # 运行环境
-      profile: demo
+      profile: dev
       # 启用配置中心发现
       discovery:
         enabled: true
