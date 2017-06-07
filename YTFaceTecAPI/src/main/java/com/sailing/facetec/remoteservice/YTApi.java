@@ -134,6 +134,13 @@ public interface YTApi {
     @RequestMapping(value = "/storage/v1/image",method = {RequestMethod.GET})
     String downLoadPic(@RequestParam("uri_base64") String uri_base64,@RequestParam("sid")String sid);
 
+    /**
+     * 人像检索
+     * @param params
+     * @return
+     */
+    @RequestMapping(value="/face/v1/framework/face/retrieval")
+    String queryByFaceID(@RequestHeader("Cookie") String cookie,@RequestBody String params);
 
 
 

@@ -2,6 +2,7 @@ package com.sailing.demo.springcloud.apigateway;
 
 import com.sailing.demo.springcloud.apigateway.filter.JWTFilter;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.Bean;
@@ -25,4 +26,5 @@ public class app {
     public JWTFilter jwtFilter(){
         return new JWTFilter();
     }
+
 }

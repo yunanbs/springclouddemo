@@ -1,5 +1,6 @@
 package com.sailing.facetec.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.entity.RlEntity;
@@ -7,6 +8,7 @@ import com.sailing.facetec.remoteservice.YTApi;
 import com.sailing.facetec.remoteservice.YTTZApi;
 import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
+import com.sun.org.apache.bcel.internal.generic.ReturnInstruction;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -42,6 +44,15 @@ public class YTServiceImpl  implements YTService{
 
     @Value("${ytface.api-url}")
     private String ytServer;
+
+    @Value("${ytface.username}")
+    private String ytUsername;
+
+    @Value("${ytface.password}")
+    private String ytPassword;
+
+    @Value("${ytface.cookie}")
+    private String ytCookie;
 
     @Override
     public String login(String userName, String passWord) {
@@ -425,6 +436,65 @@ public class YTServiceImpl  implements YTService{
     @Override
     public String getSpecByRepoID(String repoID) {
         return yttzApi.getSpecByRepoID(repoID);
+    }
+
+    /**
+     * 上传检索图片
+     *
+     * @param faceStr
+     * @return
+     */
+    @Override
+    public String uploadFaceToQuery(String faceStr) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("picture_image_content_base64",faceStr);
+
+        return ytApi.uploadPic("",jsonObject.toJSONString());
+    }
+
+    /**
+     * 人像检索
+     *
+     * @param faceid
+     * @return
+     */
+    @Override
+    public String queryFacesByID(long faceid,int[] repositorys,double threshold,String[] fields,JSONObject conditions,JSONObject order,int start,int limit) {
+        JSONObject jsonObject = new JSONObject();
+
+        // 组装retrieval
+        JSONObject retrie = new JSONObject();
+        retrie.put("face_image_id",faceid);
+        retrie.put("repository_ids",repositorys);
+        retrie.put("threshold",threshold);
+        jsonObject.put("retrieval",retrie);
+
+        jsonObject.put("fields",fields);
+        jsonObject.put("condition",CommUtils.isNullObject(conditions)?new JSONObject():conditions);
+
+        if(CommUtils.isNullObject(order)){
+            order = new JSONObject();
+            order.put("timestamp",-1);
+        }
+        jsonObject.put("order",order);
+
+        jsonObject.put("start",start);
+        jsonObject.put("limit",limit);
+
+        String sid = loginToYT();
+
+
+        return ytApi.queryByFaceID(String.format(ytCookie,sid,sid),jsonObject.toJSONString());
+    }
+
+    /**
+     * 登录依图平台
+     * @return
+     */
+    private String loginToYT() {
+        JSONObject jsonObject;
+        jsonObject = JSONObject.parseObject(login(ytUsername, ytPassword));
+        return jsonObject.getString("session_id");
     }
 
 }

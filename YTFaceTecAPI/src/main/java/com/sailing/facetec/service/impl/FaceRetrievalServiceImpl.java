@@ -165,7 +165,8 @@ public class FaceRetrievalServiceImpl implements FaceRetrievalService {
             JSONArray dataContent = null;
             if (avgObject != null) {
                 dataContent = avgObject.getJSONArray("dataContent");
-                value = dataContent.getJSONObject(0).getString("fz");
+                value = dataContent.size()>0?dataContent.getJSONObject(0).getString("fz"):"0";
+
             }
         }
         FaceRetrievalResultEntity retrievalResultEntity = new FaceRetrievalResultEntity("yt", value);

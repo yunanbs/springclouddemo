@@ -1,5 +1,6 @@
 package com.sailing.facetec.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sailing.facetec.entity.RlEntity;
 
 import java.io.IOException;
@@ -142,5 +143,19 @@ public interface YTService {
      * @return
      */
     String getSpecByRepoID(String repoID);
+
+    /**
+     * 上传检索图片
+     * @param faceStr
+     * @return
+     */
+    String uploadFaceToQuery(String faceStr);
+
+    /**
+     * 人像检索
+     * @param faceid
+     * @return
+     */
+    String queryFacesByID(long faceid, int[] repositorys, double threshold, String[] fields, JSONObject conditions, JSONObject order, int start, int limit);
 
 }

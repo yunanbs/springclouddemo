@@ -2,13 +2,18 @@ package com.sailing.facetec.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sailing.facetec.comm.ActionResult;
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.comm.PageEntity;
+import com.sailing.facetec.config.ActionCodeConfig;
 import com.sailing.facetec.dao.RllrDetailMapper;
+import com.sailing.facetec.entity.FaceMapInfoEntity;
 import com.sailing.facetec.entity.RllrDetailEntity;
 import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RllrService;
+import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
+import org.apache.coyote.ActionCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,6 +35,9 @@ public class RllrServiceImpl implements RllrService {
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private YTService ytService;
 
 
 
@@ -84,5 +92,75 @@ public class RllrServiceImpl implements RllrService {
         }
         return result.toString();
     }
+
+    @Override
+    public ActionResult listFaceQueryInfo(String picStr, int[] repositorys, double threshold, String beginTime, String endTime) {
+
+        String faceid = uploadFace(picStr);
+
+        // 定义返回的属性
+        String fields="face_image_id,repository_id,timestamp,camera_id,timestamp_end,is_hit,rec_gender,similarity";
+        // 请求检索
+
+        // 设定时间条件
+        JSONObject timeCondition = new JSONObject();
+        timeCondition.put("$gte",CommUtils.stringToDate(beginTime).getTime()/1000);
+        timeCondition.put("$lte",CommUtils.stringToDate(endTime).getTime()/1000);
+
+        // 获取检索结果
+        String queryResult = ytService.queryFacesByID(Long.parseLong(faceid),repositorys,threshold,fields.split(","),timeCondition,null,0,1000);
+        JSONArray faceArray = JSONObject.parseObject(queryResult).getJSONArray("results");
+        getFaceMapInfo(faceArray);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG,JSONArray.toJSONString(faceArray),null);
+    }
+
+    /**
+     * 上传需要检索的人像
+     * @param picStr
+     * @return
+     */
+    private String uploadFace(String picStr){
+        // 上传检索图片
+        String result = ytService.uploadFaceToQuery(picStr);
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        // 获取上传人像的id
+        String faceid = jsonObject.getJSONArray("results").getJSONObject(0).getString("face_image_id");
+        return  faceid;
+    }
+
+    /**
+     * 人像相关业务数据
+     * @param faces
+     * @return
+     */
+    private  void getFaceMapInfo(JSONArray faces){
+        // 获取检索到的人像编号
+        StringBuilder faceIDs = new StringBuilder();
+        faces.forEach(face->{
+            faceIDs.append(String.format("%s,",((JSONObject)face).getString("face_image_id")));
+        });
+        faceIDs.deleteCharAt(faceIDs.length()-1);
+        List<FaceMapInfoEntity> faceMapInfoEntities =  rllrDetailMapper.listFaceMapInfoByFaceIDs(faceIDs.toString());
+        for(Object face:faces){
+            JSONObject faceObj  = (JSONObject) face;
+            for(FaceMapInfoEntity faceMapInfoEntity:faceMapInfoEntities){
+                if(faceMapInfoEntity.getRlid().equals(faceObj.getString("face_image_id"))){
+                    ((JSONObject) face).put("picurl",faceMapInfoEntity.getYlzd1());
+                    ((JSONObject) face).put("faceurl",faceMapInfoEntity.getYlzd2());
+                    ((JSONObject) face).put("longtitude",faceMapInfoEntity.getJd());
+                    ((JSONObject) face).put("latitude",faceMapInfoEntity.getWd());
+                    ((JSONObject) face).put("cameraname",faceMapInfoEntity.getSxtmc());
+                    ((JSONObject) face).put("cameraid",faceMapInfoEntity.getSxtid());
+                    faceMapInfoEntities.remove(faceMapInfoEntity);
+                    continue;
+                }
+            }
+        }
+    }
+
+
+
+
+
 
 }

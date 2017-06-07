@@ -29,7 +29,7 @@ public interface RlsxtMapper {
      *
      * @return
      */
-    @Select("select distinct a.dwbh,a.dwmc,a.dwnbbm from b_rs_dw a ,(select c.dwnbbm from b_tz_rlsxt a left join b_sssb_sbxx b on a.sbbh = b.sbbh left join b_rs_dw c  on b.yhz = c.dwbh)  b where instr(b.dwnbbm,a.dwbh)>0 order by dwbh")
+    @Select("select distinct a.dwbh,a.dwmc,a.dwnbbm from b_rs_dw a ,(select c.dwnbbm from b_tz_rlsxt a left join b_sssb_sbxx b on a.sbbh = b.sbbh left join b_rs_dw c  on b.yhz = c.dwbh where a.ylzd1='1')  b where instr(b.dwnbbm,a.dwbh)>0 order by dwbh")
     List<SxtdwEntity> listAllSXTDW();
 
     /**

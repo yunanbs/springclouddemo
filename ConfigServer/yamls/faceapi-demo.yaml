@@ -2,7 +2,7 @@
 spring:
   # 设置应用名
   application:
-    name: faceapidemo
+    name: faceapi
   # 配置数据库信息
   datasource:
     url: jdbc:oracle:thin:@172.20.22.10:1521:orcl
@@ -135,18 +135,18 @@ ytface:
   password: 21232f297a57a5a743894a0e4a801fc3
 # 文件导出临时目录
 exp:
-  root-dir: D:\Services\exproot\
+  root-dir: D:\Services\storage\exproot\
   web-path: http://www.sailing.com/
 # 人像照片记录
 facepic:
-  face-dir: D:\Services\faces\
+  face-dir: D:\Services\storage\faces\
   web-path: http://www.sailing.com/
-  repository: D:\Services\repository\
+  repository: D:\Services\storage\repository\
   capture: \\172.20.22.10\tomcat5.0.28\webapps\main\images\ytlr\
 # 文件上传根目录
 upload:
-  image-folder: D:\Services\tmpimage\
-  image-url: http://localhost/tmpimage/
+  image-folder: D:\Services\storage\tmpimage\
+  image-url: http://localhost/storage/tmpimage/
 # 人脸平台服务地址
 rlapi:
   api-url: http://localhost:8183

@@ -4,9 +4,9 @@ spring:
     name: faceapi
   # 配置数据库信息
   datasource:
-    url: jdbc:oracle:thin:@172.20.22.10:1521:orcl
-    username: bsits2
-    password: bsits2
+    url: jdbc:oracle:thin:@22.0.251.64:1521:orcl
+    username: bsits
+    password: bsits
     driver-class-name: oracle.jdbc.OracleDriver
   # 输出语法高亮
   output:
@@ -124,23 +124,22 @@ supplys:
 # 依图平台信息
 ytface:
   # 依图平台api地址
-  api-url: http://172.20.25.226:11180
+  api-url: http://22.0.251.72:11180
   # 依图平台特征码api地址
-  tz-api-url: http://172.20.25.226:7120
+  tz-api-url: http://22.0.251.72:7120
   # 依图平台登录信息
   username: admin
   password: 21232f297a57a5a743894a0e4a801fc3
-  cookie: session_id=%s;face_platform_session_id=%s
 # 文件导出临时目录
 exp:
   root-dir: D:\Services\storage\exproot\
-  web-path: http://172.20.22.11/exproot/
+  web-path: http://localhost/storage/exproot/
 # 人像照片记录
 facepic:
   face-dir: D:\Services\storage\faces\
-  web-path: http://172.20.22.11/storage/faces/
+  web-path: http://172.20.22.11/faces/
   repository: D:\Services\storage\repository\
-  capture: \\172.20.22.10\tomcat5.0.28\webapps\main\images\ytlr\
+  capture: D:\Services\storage\images\ytlr\
 # 文件上传根目录
 upload:
   image-folder: D:\Services\storage\tmpimage\

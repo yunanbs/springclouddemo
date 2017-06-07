@@ -3,6 +3,7 @@ package com.sailing.demo.springcloud.apigateway.filter;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -52,6 +53,7 @@ public class JWTFilter extends ZuulFilter {
         RequestContext requestContext = RequestContext.getCurrentContext();
         // 获取请求  HttpServlet 对象
         HttpServletRequest httpServletRequest = requestContext.getRequest();
+        httpServletRequest.getRequestURI();
 
         // // 模拟jwt 从头部获取jwt信息
         // String jwttoken = httpServletRequest.getHeader("jwt");

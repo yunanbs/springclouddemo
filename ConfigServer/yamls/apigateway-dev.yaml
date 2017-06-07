@@ -23,7 +23,7 @@ zuul:
     # faceapi 路由
     - faceapi:
         path: /faceapi/**
-        serviceId: faceapidemo
+        serviceId: faceapi
     # 测试服务 demoapi 路由
     - demoapi:
         path: /demoapi/**
