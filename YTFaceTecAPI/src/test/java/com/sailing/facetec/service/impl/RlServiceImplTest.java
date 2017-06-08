@@ -39,13 +39,13 @@ public class RlServiceImplTest {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sfdm","yt");
         jsonObject.put("rlkid","72");
-        jsonObject.put("rlid","20266198323167235");
+        jsonObject.put("faceID","20266198323167235");
         jsonArray.add(jsonObject);
 
         jsonObject = new JSONObject();
         jsonObject.put("sfdm","yt");
         jsonObject.put("rlkid","72");
-        jsonObject.put("rlid","20266198323167233");
+        jsonObject.put("faceID","20266198323167233");
         jsonArray.add(jsonObject);
 
         result = rlService.listRlDetailByRlidAndSupply(jsonArray);

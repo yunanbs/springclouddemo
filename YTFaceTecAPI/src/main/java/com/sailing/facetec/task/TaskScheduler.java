@@ -65,8 +65,6 @@ public class TaskScheduler {
     @Autowired
     private AlertApi alertApi;
 
-    @Autowired
-    private PlantConfig plantConfig;
 
     @Value("${redis-keys.capture-lock}")
     private String captureLock;
@@ -148,7 +146,7 @@ public class TaskScheduler {
             DataEntity result = rlgjService.listRlgjDetail("", "", "", 1, alertCache, alertLimit, "", "", "", "", "", "", "", "");
 
             // 获取远程平台人像地址
-            makeRemoteImageUrl(result.getDataContent());
+            //makeRemoteImageUrl(result.getDataContent());
 
             // 更新实时数据
             redisService.setVal(alertData, JSON.toJSONString(result, FastJsonUtils.nameFilter, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero), 1, TimeUnit.DAYS);
@@ -205,24 +203,6 @@ public class TaskScheduler {
         });
 
         rlgjDetailMapper.setAlertSendFlag(String.join("','", ids));
-    }
-
-    /**
-     * 本地没有人像库人像图片时 从远程平台获取图片链接
-     * @param src
-     */
-    private void makeRemoteImageUrl(List<RlgjDetailEntity> src){
-        for(RlgjDetailEntity rlgjDetailEntity : src){
-            if(CommUtils.isNullObject(rlgjDetailEntity.getRLXZXT())){
-                String remotePath = String.format("%s/%s/%s.jpg"
-                        ,plantConfig.getRemotePlantRoot()
-                        ,rlgjDetailEntity.getRLSFZ().substring(0,4)
-                        ,rlgjDetailEntity.getRLSFZ()
-                );
-                rlgjDetailEntity.setRLXZXT(remotePath);
-            }
-        }
-
     }
 
     private String getPathByPersonID(String personID){

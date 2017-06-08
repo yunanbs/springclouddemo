@@ -2,6 +2,7 @@ package com.sailing.facetec.service.impl;
 
 import com.sailing.facetec.comm.DataEntity;
 import com.sailing.facetec.comm.PageEntity;
+import com.sailing.facetec.config.PlantConfig;
 import com.sailing.facetec.dao.RlgjDetailMapper;
 import com.sailing.facetec.dao.RlgjbzMapper;
 import com.sailing.facetec.entity.RlgjDetailEntity;
@@ -25,6 +26,10 @@ public class RlgjServiceImpl implements RlgjService {
 
     @Autowired
     private RlgjbzMapper rlgjbzMapper;
+
+
+    @Autowired
+    private PlantConfig plantConfig;
 
     @Override
     public DataEntity<RlgjDetailEntity> listRlgjDetail(String beginTime, String endTime, String orderBy, int page, int size, Double xsd, String bz, String rlid, String lrkids, String sex, String age, String glass, String fringe, String uygur) {
@@ -65,12 +70,35 @@ public class RlgjServiceImpl implements RlgjService {
         int counts = rlgjDetailMapper.countRlgjDetails(beginTime, endTime, customerFilterBuilder.toString());
         List<RlgjDetailEntity> datas = rlgjDetailMapper.listRlgjDetails(beginTime, endTime, orderBy, pages[0], pages[1], customerFilterBuilder.toString());
 
+        // 获取远程平台人像发布路径
+        makeRemoteImageUrl(datas);
+
         PageEntity pageEntity = new PageEntity(counts,page,size);
 
         result.setDataContent(datas);
         result.setPageContent(pageEntity);
 
         return result;
+    }
+
+    /**
+     * 本地没有人像库人像图片时 从远程平台获取图片链接
+     * @param src
+     */
+    private void makeRemoteImageUrl(List<RlgjDetailEntity> src){
+        for(RlgjDetailEntity rlgjDetailEntity : src){
+            if(CommUtils.isNullObject(rlgjDetailEntity.getRLXZXT())){
+                String personID = rlgjDetailEntity.getRLSFZ();
+                personID = personID.contains("_")?personID.split("_")[3]:personID;
+                String remotePath = String.format("%s/%s/%s.jpg"
+                        ,plantConfig.getRemotePlantRoot()
+                        ,personID.substring(0,4)
+                        ,personID
+                );
+                rlgjDetailEntity.setRLXZXT(remotePath);
+            }
+        }
+
     }
 
     @Override
