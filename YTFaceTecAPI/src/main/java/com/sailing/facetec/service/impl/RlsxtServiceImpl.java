@@ -79,13 +79,13 @@ public class RlsxtServiceImpl implements RlsxtService {
         JSONObject jsonObject;
 
         // 登录 获取sid
-        String sid = loginToYT();
+        String sid = ytService.login();
 
         String cameraId;
         String repositoryId;
 
         // 添加摄像头
-        jsonObject = JSONObject.parseObject(ytService.addCamera(sid, sxtEntity.getSXTMC(), sxtEntity.getSPDZ(), 0));
+        jsonObject = JSONObject.parseObject(ytService.addCamera(sid,sxtEntity.getSXTMC(), sxtEntity.getSPDZ(), 0));
         // 获取摄像头Id
         cameraId = jsonObject.getString("id");
         // 获取路人库Id
@@ -116,7 +116,7 @@ public class RlsxtServiceImpl implements RlsxtService {
     @Override
     public int addMonitorByCamera(BkrwEntity bkrwEntity) {
         // 登录 获取sid
-        String sid = loginToYT();
+        String sid = ytService.login();
         // 获取摄像头id
         String cameraId = bkrwEntity.getSXTID();
         // 获取布控库id
@@ -157,7 +157,7 @@ public class RlsxtServiceImpl implements RlsxtService {
     public int removeCamera(String cameraID) {
         int result = 0;
         // 登录 获取sid
-        String sid = loginToYT();
+        String sid = ytService.login();
         JSONObject jsonObject = JSONObject.parseObject(ytService.delCamera(sid, cameraID));
         if ("0".equals(jsonObject.getString("rtn"))) {
             SxtEntity sxtEntity = new SxtEntity();
@@ -180,24 +180,12 @@ public class RlsxtServiceImpl implements RlsxtService {
         int result=0;
         JSONObject jsonObject = new JSONObject();
         // 登录 获取sid
-        String sid = loginToYT();
+        String sid = ytService.login();
         jsonObject = JSONObject.parseObject(ytService.updateCamera(sid, Integer.parseInt(cameraID), "", "", Integer.parseInt(enable)));
         if ("0".equals(jsonObject.getString("rtn"))) {
             result = rlsxtMapper.enableSXT(cameraID,enable);
         }
         return result;
-    }
-
-    /**
-     * 登录依图平台
-     *
-     * @return
-     */
-    private String loginToYT() {
-        JSONObject jsonObject;
-        jsonObject = JSONObject.parseObject(ytService.login(ytUsername, ytPassword));
-
-        return jsonObject.getString("session_id");
     }
 
 }

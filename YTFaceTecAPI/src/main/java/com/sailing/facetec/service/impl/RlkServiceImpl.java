@@ -44,7 +44,7 @@ public class RlkServiceImpl implements RlkService {
     @Override
     public String addFaceLib(RlkEntity rlkEntity) {
         String result="";
-        String sid=loginToYT();
+        String sid=ytService.login();
         JSONObject jsonObject=JSONObject.parseObject(ytService.addFaceLib(sid, rlkEntity.getRLKMC(),rlkEntity.getBZ()));
         if("0".equals(jsonObject.getString("rtn"))){
             rlkEntity.setRLKID(jsonObject.getString("id"));
@@ -66,7 +66,7 @@ public class RlkServiceImpl implements RlkService {
     public int delFaceLib(String rlkID) {
         int result =0;
         // 登录 获取sid
-        String sid = loginToYT();
+        String sid = ytService.login();
         JSONObject jsonObject = JSONObject.parseObject(ytService.delFaceLib(sid,rlkID));
         if("0".equals(jsonObject.getString("rtn"))){
             RlkEntity rlkEntity = new RlkEntity();
@@ -78,9 +78,4 @@ public class RlkServiceImpl implements RlkService {
         return result;
     }
 
-    private String loginToYT() {
-        JSONObject jsonObject;
-        jsonObject = JSONObject.parseObject(ytService.login(ytUsername, ytPassword));
-        return jsonObject.getString("session_id");
-    }
 }

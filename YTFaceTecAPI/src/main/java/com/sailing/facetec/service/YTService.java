@@ -15,7 +15,7 @@ public interface YTService {
      * @param passWord
      * @return
      */
-    String login(String userName,String passWord);
+    String login();
 
     /**
      * 添加摄像头
@@ -156,6 +156,6 @@ public interface YTService {
      * @param faceid
      * @return
      */
-    String queryFacesByID(long faceid, int[] repositorys, double threshold, String[] fields, JSONObject conditions, JSONObject order, int start, int limit);
+    String queryFacesByID(String sid,long faceid, int[] repositorys, double threshold, String[] fields, JSONObject conditions, JSONObject order, int start, int limit);
 
 }

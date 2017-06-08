@@ -45,6 +45,6 @@ public interface RlDetailMapper {
      * @param rlkEntity YLZD1表示标志位，1代表正常，0代表被删除
      * @return
      */
-    @Update("update b_tz_rl set ylzd1='${YLZD1}' where rlid='${RLID}'")
+    @Update("update b_tz_rl set ylzd1='${YLZD1}' where faceID='${RLID}'")
     int delProsonal(RlDetailEntity rlkEntity);
 }

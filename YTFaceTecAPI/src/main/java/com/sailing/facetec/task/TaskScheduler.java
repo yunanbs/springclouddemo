@@ -214,10 +214,9 @@ public class TaskScheduler {
     private void makeRemoteImageUrl(List<RlgjDetailEntity> src){
         for(RlgjDetailEntity rlgjDetailEntity : src){
             if(CommUtils.isNullObject(rlgjDetailEntity.getRLXZXT())){
-                String remotePath = String.format("%s/%s/%s/%s-face.jpg"
+                String remotePath = String.format("%s/%s/%s.jpg"
                         ,plantConfig.getRemotePlantRoot()
-                        ,plantConfig.getPlantMap().get(rlgjDetailEntity.getRLKID())
-                        ,getPathByPersonID(rlgjDetailEntity.getRLSFZ())
+                        ,rlgjDetailEntity.getRLSFZ().substring(0,4)
                         ,rlgjDetailEntity.getRLSFZ()
                 );
                 rlgjDetailEntity.setRLXZXT(remotePath);

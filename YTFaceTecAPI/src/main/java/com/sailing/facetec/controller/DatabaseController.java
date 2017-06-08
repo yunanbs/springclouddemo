@@ -174,7 +174,7 @@ public class DatabaseController {
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "xsd", defaultValue = "0") double xsd,
             @RequestParam(name = "bz", defaultValue = "") String bz,
-            @RequestParam(name = "rlid", defaultValue = "") String rlid,
+            @RequestParam(name = "faceID", defaultValue = "") String rlid,
             @RequestParam(name = "lrkids", defaultValue = "") String lrkids,
             @RequestParam(name = "sex", defaultValue = "") String sex,
             @RequestParam(name = "age", defaultValue = "") String age,
@@ -329,7 +329,7 @@ public class DatabaseController {
     public ActionResult altPersonalInfo(@RequestBody String params) {
         JSONObject jsonObject = JSONObject.parseObject(params);
         ActionResult result;
-        if (jsonObject.containsKey("rlid")) {
+        if (jsonObject.containsKey("faceID")) {
             result = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.altPersonalInfo(jsonObject), null
             );
         } else {
@@ -346,7 +346,7 @@ public class DatabaseController {
      * @return
      */
     @RequestMapping(value = "/RL", method = {RequestMethod.DELETE})
-    public ActionResult delPersonal(@RequestParam("rlid") String rlid) {
+    public ActionResult delPersonal(@RequestParam("faceID") String rlid) {
         ActionResult result = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.delPersonal(rlid), null
         );
         return result;

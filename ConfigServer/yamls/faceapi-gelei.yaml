@@ -33,10 +33,10 @@ supplys:
     supply-map:
         yt_rlk_rlkid: rlk.rlkid1
         yt_rl_rlkid: rl.rlkid
-        yt_rl_rlid: rl.rlid
+        yt_rl_rlid: rl.faceID
         hr_rlk_rlkid: rlk.rlkid2
         hr_rl_rlkid: rl.rlkid
-        hr_rl_rlid: rl.rlid
+        hr_rl_rlid: rl.faceID
 upload:
   image-folder: D:\
 ytface:

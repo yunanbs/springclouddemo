@@ -55,12 +55,12 @@ public class YTServiceImpl  implements YTService{
     private String ytCookie;
 
     @Override
-    public String login(String userName, String passWord) {
+    public String login() {
         long expend = System.currentTimeMillis();
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name",userName);
-        jsonObject.put("password",passWord);
+        jsonObject.put("name",ytUsername);
+        jsonObject.put("password",ytPassword);
         logger.info("yt login params:{}", jsonObject);
 
         String result = ytApi.login(jsonObject.toJSONString());
@@ -68,7 +68,7 @@ public class YTServiceImpl  implements YTService{
 
         expend = System.currentTimeMillis()-expend;
         logger.info("yt login expend:{} ms", expend);
-        return result;
+        return JSONObject.parseObject(result).getString("session_id");
     }
 
     @Override
@@ -81,7 +81,8 @@ public class YTServiceImpl  implements YTService{
         jsonObject.put("type",cameraType);
         logger.info("yt addCamera params:{}", jsonObject);
 
-        String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
+
+        String headerStr = String.format(ytCookie,sid,sid);
         logger.info("yt addCamera headers:{}", headerStr);
 
         String result = ytApi.addCamera(headerStr, jsonObject.toJSONString());
@@ -459,7 +460,7 @@ public class YTServiceImpl  implements YTService{
      * @return
      */
     @Override
-    public String queryFacesByID(long faceid,int[] repositorys,double threshold,String[] fields,JSONObject conditions,JSONObject order,int start,int limit) {
+    public String queryFacesByID(String sid,long faceid,int[] repositorys,double threshold,String[] fields,JSONObject conditions,JSONObject order,int start,int limit) {
         JSONObject jsonObject = new JSONObject();
 
         // 组装retrieval
@@ -481,20 +482,7 @@ public class YTServiceImpl  implements YTService{
         jsonObject.put("start",start);
         jsonObject.put("limit",limit);
 
-        String sid = loginToYT();
-
-
         return ytApi.queryByFaceID(String.format(ytCookie,sid,sid),jsonObject.toJSONString());
-    }
-
-    /**
-     * 登录依图平台
-     * @return
-     */
-    private String loginToYT() {
-        JSONObject jsonObject;
-        jsonObject = JSONObject.parseObject(login(ytUsername, ytPassword));
-        return jsonObject.getString("session_id");
     }
 
 }

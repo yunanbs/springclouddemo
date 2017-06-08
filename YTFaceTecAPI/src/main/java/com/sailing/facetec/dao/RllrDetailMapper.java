@@ -3,6 +3,8 @@ package com.sailing.facetec.dao;
 import com.sailing.facetec.entity.FaceMapInfoEntity;
 import com.sailing.facetec.entity.RllrDetailEntity;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -60,5 +62,14 @@ public interface RllrDetailMapper {
      * @return
      */
     @Select(selRllrDetailByRLID)
+    @Results({
+            @Result(property = "faceID",column = "rlid"),
+            @Result(property = "longtitude",column = "jd"),
+            @Result(property = "latitude",column = "wd"),
+            @Result(property = "cameraName",column = "faceID"),
+            @Result(property = "cameraID",column = "faceID"),
+            @Result(property = "picUrl",column = "faceID"),
+            @Result(property = "faceUrl",column = "faceID")
+    })
     List<FaceMapInfoEntity> listFaceMapInfoByFaceIDs(@Param("faceids") String faceIDs);
 }

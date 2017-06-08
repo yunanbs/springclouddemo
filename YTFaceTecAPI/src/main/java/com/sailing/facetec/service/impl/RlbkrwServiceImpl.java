@@ -53,7 +53,7 @@ public class RlbkrwServiceImpl implements RlbkrwService {
         JSONObject jsonObject;
         int result=0;
         // 登录 获取sid
-        String sid = loginToYT();
+        String sid = ytService.login();
 
         // 计算布控时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -96,7 +96,7 @@ public class RlbkrwServiceImpl implements RlbkrwService {
     @Transactional
     public int delMonitorReposity(String bkids) {
         int result=0;
-        String sid = loginToYT();
+        String sid = ytService.login();
         String[] bkidArray=null;
         bkidArray=bkids.split(",");
         for(String bkid : bkidArray) {
@@ -136,13 +136,4 @@ public class RlbkrwServiceImpl implements RlbkrwService {
 //        return List<> listRlShowDetail.queryMonitorReposity();
     }
 
-    /**
-     * 登录依图平台
-     * @return
-     */
-    private String loginToYT() {
-        JSONObject jsonObject;
-        jsonObject = JSONObject.parseObject(ytService.login(ytUsername, ytPassword));
-        return jsonObject.getString("session_id");
-    }
 }

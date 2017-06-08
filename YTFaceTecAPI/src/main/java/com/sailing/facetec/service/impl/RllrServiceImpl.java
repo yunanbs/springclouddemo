@@ -13,7 +13,6 @@ import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RllrService;
 import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
-import org.apache.coyote.ActionCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -107,8 +106,10 @@ public class RllrServiceImpl implements RllrService {
         timeCondition.put("$gte",CommUtils.stringToDate(beginTime).getTime()/1000);
         timeCondition.put("$lte",CommUtils.stringToDate(endTime).getTime()/1000);
 
+        String sid = ytService.login();
+
         // 获取检索结果
-        String queryResult = ytService.queryFacesByID(Long.parseLong(faceid),repositorys,threshold,fields.split(","),timeCondition,null,0,1000);
+        String queryResult = ytService.queryFacesByID(sid,Long.parseLong(faceid),repositorys,threshold,fields.split(","),timeCondition,null,0,1000);
         JSONArray faceArray = JSONObject.parseObject(queryResult).getJSONArray("results");
         getFaceMapInfo(faceArray);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG,JSONArray.toJSONString(faceArray),null);
@@ -144,13 +145,13 @@ public class RllrServiceImpl implements RllrService {
         for(Object face:faces){
             JSONObject faceObj  = (JSONObject) face;
             for(FaceMapInfoEntity faceMapInfoEntity:faceMapInfoEntities){
-                if(faceMapInfoEntity.getRlid().equals(faceObj.getString("face_image_id"))){
-                    ((JSONObject) face).put("picurl",faceMapInfoEntity.getYlzd1());
-                    ((JSONObject) face).put("faceurl",faceMapInfoEntity.getYlzd2());
-                    ((JSONObject) face).put("longtitude",faceMapInfoEntity.getJd());
-                    ((JSONObject) face).put("latitude",faceMapInfoEntity.getWd());
-                    ((JSONObject) face).put("cameraname",faceMapInfoEntity.getSxtmc());
-                    ((JSONObject) face).put("cameraid",faceMapInfoEntity.getSxtid());
+                if(faceMapInfoEntity.getFaceID().equals(faceObj.getString("face_image_id"))){
+                    ((JSONObject) face).put("picurl",faceMapInfoEntity.getPirUrl());
+                    ((JSONObject) face).put("faceurl",faceMapInfoEntity.getFaceUrl());
+                    ((JSONObject) face).put("longtitude",faceMapInfoEntity.getLongtitude());
+                    ((JSONObject) face).put("latitude",faceMapInfoEntity.getLatitude());
+                    ((JSONObject) face).put("cameraname",faceMapInfoEntity.getCameraName());
+                    ((JSONObject) face).put("cameraid",faceMapInfoEntity.getCameraID());
                     faceMapInfoEntities.remove(faceMapInfoEntity);
                     continue;
                 }

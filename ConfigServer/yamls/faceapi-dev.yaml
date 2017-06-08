@@ -163,7 +163,7 @@ gc:
 # 多平台映射配置
 plant:
   # 远程平台地址
-  remote-plant-root: http://22.4.0.60/storage/faces/
+  remote-plant-root: http://21.0.0.125:11181/docs/zaitaoku/
   # 多平台人脸库编码映射 本地人脸库id-远程人脸库id
   plant-map:
     15: 15
