@@ -83,7 +83,7 @@ public class YTServiceImplTest {
         String faceid = jsonObject.getJSONArray("results").getJSONObject(0).getString("face_image_id");
 
         String fields="face_image_id,repository_id,timestamp,person_id,name,gender,born_year,camera_id,timestamp_end,is_hit,rec_gender,similarity";
-        int[] repositorys = new int[]{57};
+        String[] repositorys = new String[]{"57"};
 
         result = ytService.queryFacesByID(ytService.login(),Long.parseLong(faceid),repositorys,40,fields.split(","),null,null,0,1000);
 

@@ -43,7 +43,7 @@ public interface RllrService {
      * @param endTime
      * @return
      */
-    JSONArray listFaceQueryInfo(String picStr, Integer[] repositorys, double threshold, String beginTime, String endTime);
+    JSONArray listFaceQueryInfo(String picStr, String[] repositorys, double threshold, String beginTime, String endTime);
 
     /**
      * 地图多人脸检索
@@ -56,5 +56,5 @@ public interface RllrService {
      * @param offset 并集情况下的时间偏移量
      * @return
      */
-    JSONObject mapMutilFaceQuery(String[] picStrs, Integer[] repositorys, double threshold, String beginTime, String endTime, int mergeFlag, long offset);
+    JSONObject mapMutilFaceQuery(String[] picStrs, String[] repositorys, double threshold, String beginTime, String endTime, int mergeFlag, long offset);
 }

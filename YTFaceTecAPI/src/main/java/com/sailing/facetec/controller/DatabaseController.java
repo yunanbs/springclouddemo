@@ -592,10 +592,10 @@ public class DatabaseController {
 
         String[] facesStr = new String[faces.size()];
         facesStr = faces.toArray(facesStr);
-        Integer[] reposInt = new Integer[repos.size()];
-        reposInt = repos.toArray(reposInt);
+        String[] reposStr = new String[repos.size()];
+        reposStr = repos.toArray(reposStr);
 
-        JSONObject result = rllrService.mapMutilFaceQuery(facesStr,reposInt,threshold,beginTime,endTime,mergeFlag,offset);
+        JSONObject result = rllrService.mapMutilFaceQuery(facesStr,reposStr,threshold,beginTime,endTime,mergeFlag,offset);
 
 
         return  new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG,result,null);

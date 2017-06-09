@@ -91,7 +91,7 @@ public class RllrServiceImpl implements RllrService {
     }
 
     @Override
-    public JSONArray listFaceQueryInfo(String picStr, Integer[] repositorys, double threshold, String beginTime, String endTime) {
+    public JSONArray listFaceQueryInfo(String picStr, String[] repositorys, double threshold, String beginTime, String endTime) {
 
         String faceid = uploadFace(picStr);
 
@@ -112,7 +112,9 @@ public class RllrServiceImpl implements RllrService {
         // 获取检索结果
         String queryResult = ytService.queryFacesByID(sid, Long.parseLong(faceid), repositorys, threshold, fields.split(","), conditionObj, null, 0, 1000);
         JSONArray faceArray = JSONObject.parseObject(queryResult).getJSONArray("results");
-        getFaceMapInfo(faceArray);
+        if(0<faceArray.size()){
+            getFaceMapInfo(faceArray);
+        }
         return faceArray;
     }
 
@@ -187,12 +189,13 @@ public class RllrServiceImpl implements RllrService {
      * @return
      */
     @Override
-    public JSONObject mapMutilFaceQuery(String[] picStrs, Integer[] repositorys, double threshold, String beginTime, String endTime, int mergeFlag, long offset) {
+    public JSONObject mapMutilFaceQuery(String[] picStrs, String[] repositorys, double threshold, String beginTime, String endTime, int mergeFlag, long offset) {
 
         JSONObject result = new JSONObject();
         List<JSONArray> faceResults = new ArrayList<>();
         JSONArray src = null;
         JSONArray des = null;
+
         for (String pic : picStrs) {
             faceResults.add(listFaceQueryInfo(pic, repositorys, threshold, beginTime, endTime));
         }
@@ -225,7 +228,6 @@ public class RllrServiceImpl implements RllrService {
         } else {
             result = uninArray(src, des, "timestamp_end", offset);
         }
-
         return result;
     }
 

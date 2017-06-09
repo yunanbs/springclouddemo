@@ -25,7 +25,7 @@ public class RllrServiceImplTest {
         String picpath = "C:/Users/yunan/Desktop/TIM图片20170607164937.jpg";
         String picStr = FileUtils.fileToBase64(picpath);
 
-        rllrService.listFaceQueryInfo(picStr,new int[]{57},40,"2017-06-01 00:00:00","2017-06-08 00:00:00");
+        rllrService.listFaceQueryInfo(picStr,new String[]{"57"},40,"2017-06-01 00:00:00","2017-06-08 00:00:00");
     }
 
     @Test
@@ -37,7 +37,7 @@ public class RllrServiceImplTest {
         faces[0] = picStr;
         faces[1] = picStr;
 
-        rllrService.mapMutilFaceQuery(faces,new int[]{57},40,"2017-06-01 00:00:00","2017-06-08 00:00:00",2,4000L);
+        rllrService.mapMutilFaceQuery(faces,new String[]{"57"},40,"2017-06-01 00:00:00","2017-06-08 00:00:00",1,4000L);
 
     }
 

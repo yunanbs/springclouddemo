@@ -19,12 +19,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import sun.security.util.Resources_sv;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by yunan on 2017/5/17.
@@ -447,10 +450,14 @@ public class YTServiceImpl  implements YTService{
      */
     @Override
     public String uploadFaceToQuery(String faceStr) {
+
+        long expend = System.currentTimeMillis();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("picture_image_content_base64",faceStr);
-
-        return ytApi.uploadPic("",jsonObject.toJSONString());
+        String result = ytApi.uploadPic("",jsonObject.toJSONString());
+        expend = System.currentTimeMillis()-expend;
+        logger.info("yt upload face pic expend:{} ms", expend);
+        return result;
     }
 
     /**
@@ -460,13 +467,20 @@ public class YTServiceImpl  implements YTService{
      * @return
      */
     @Override
-    public String queryFacesByID(String sid,long faceid,Integer[] repositorys,double threshold,String[] fields,JSONObject conditions,JSONObject order,int start,int limit) {
+    public String queryFacesByID(String sid,long faceid,String[] repositorys,double threshold,String[] fields,JSONObject conditions,JSONObject order,int start,int limit) {
+
+        long expend = System.currentTimeMillis();
         JSONObject jsonObject = new JSONObject();
 
         // 组装retrieval
         JSONObject retrie = new JSONObject();
         retrie.put("face_image_id",faceid);
-        retrie.put("repository_ids",repositorys);
+
+        List<Integer> repos = new ArrayList<>();
+        for(String repo : repositorys){
+            repos.add(Integer.parseInt(repo));
+        }
+        retrie.put("repository_ids",repos);
         retrie.put("threshold",threshold);
         jsonObject.put("retrieval",retrie);
 
@@ -482,7 +496,11 @@ public class YTServiceImpl  implements YTService{
         jsonObject.put("start",start);
         jsonObject.put("limit",limit);
 
-        return ytApi.queryByFaceID(String.format(ytCookie,sid,sid),jsonObject.toJSONString());
+        String result = ytApi.queryByFaceID(String.format(ytCookie,sid,sid),jsonObject.toJSONString());
+
+        expend = System.currentTimeMillis()-expend;
+        logger.info("yt query face pic expend:{} ms", expend);
+        return result;
     }
 
 }
