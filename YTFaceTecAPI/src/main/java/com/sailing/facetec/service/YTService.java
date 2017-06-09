@@ -156,6 +156,6 @@ public interface YTService {
      * @param faceid
      * @return
      */
-    String queryFacesByID(String sid,long faceid, int[] repositorys, double threshold, String[] fields, JSONObject conditions, JSONObject order, int start, int limit);
+    String queryFacesByID(String sid,long faceid, Integer[] repositorys, double threshold, String[] fields, JSONObject conditions, JSONObject order, int start, int limit);
 
 }

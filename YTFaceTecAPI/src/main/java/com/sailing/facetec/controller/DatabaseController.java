@@ -174,7 +174,7 @@ public class DatabaseController {
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "xsd", defaultValue = "0") double xsd,
             @RequestParam(name = "bz", defaultValue = "") String bz,
-            @RequestParam(name = "faceID", defaultValue = "") String rlid,
+            @RequestParam(name = "rlid", defaultValue = "") String rlid,
             @RequestParam(name = "lrkids", defaultValue = "") String lrkids,
             @RequestParam(name = "sex", defaultValue = "") String sex,
             @RequestParam(name = "age", defaultValue = "") String age,
@@ -329,7 +329,7 @@ public class DatabaseController {
     public ActionResult altPersonalInfo(@RequestBody String params) {
         JSONObject jsonObject = JSONObject.parseObject(params);
         ActionResult result;
-        if (jsonObject.containsKey("faceID")) {
+        if (jsonObject.containsKey("rlid")) {
             result = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.altPersonalInfo(jsonObject), null
             );
         } else {
@@ -346,7 +346,7 @@ public class DatabaseController {
      * @return
      */
     @RequestMapping(value = "/RL", method = {RequestMethod.DELETE})
-    public ActionResult delPersonal(@RequestParam("faceID") String rlid) {
+    public ActionResult delPersonal(@RequestParam("rlid") String rlid) {
         ActionResult result = new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, rlService.delPersonal(rlid), null
         );
         return result;
@@ -566,5 +566,38 @@ public class DatabaseController {
             @RequestParam(name = "yhz") String yhz,
             @RequestParam(name = "key", defaultValue = "") String key) {
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE, ActionCodeConfig.SUCCEED_MSG, sbxxService.listSBXX(yhz,key), null);
+    }
+
+    /**
+     * 多人脸比较查询
+     * picstrs: 人脸base64字符串数组
+     * repositorys：人脸库id数组
+     * threshold： 相似度阈值
+     * begintime： 检索开始时间
+     * endtime： 检索截至时间
+     * mergeflag： 多人集合合并标记 1交集 2并集
+     * offset： 并集时间偏移量 秒
+     * @return
+     */
+    @RequestMapping(value = "/LR/mutifaces",consumes = "application/json",method = RequestMethod.POST)
+    public ActionResult getMutiFacesInfo(@RequestBody String params){
+        JSONObject req = JSONObject.parseObject(params);
+        JSONArray faces = req.getJSONArray("picstrs");
+        JSONArray repos = req.getJSONArray("repositorys");
+        double threshold = Double.parseDouble(req.getString("threshold"));
+        String beginTime = req.getString("begintime");
+        String endTime = req.getString("endtime");
+        int mergeFlag = Integer.parseInt(req.getString("mergeflag"));
+        long offset = Long.parseLong(req.getString("offset"));
+
+        String[] facesStr = new String[faces.size()];
+        facesStr = faces.toArray(facesStr);
+        Integer[] reposInt = new Integer[repos.size()];
+        reposInt = repos.toArray(reposInt);
+
+        JSONObject result = rllrService.mapMutilFaceQuery(facesStr,reposInt,threshold,beginTime,endTime,mergeFlag,offset);
+
+
+        return  new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG,result,null);
     }
 }

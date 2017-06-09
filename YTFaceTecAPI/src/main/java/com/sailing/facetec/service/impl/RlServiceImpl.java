@@ -89,7 +89,7 @@ public class RlServiceImpl implements RlService {
             //                     supplyConfig.getSupplyMap().get(supply+"_rl_rlkid"),
             //                     tmp.getString("rlkid"),
             //                     supplyConfig.getSupplyMap().get(supply+"_rl_rlid"),
-            //                     tmp.getString("faceID")
+            //                     tmp.getString("rlid")
             //             )
             //     );
             //     customerFilterBuilder.append(" ) or ");
@@ -111,7 +111,7 @@ public class RlServiceImpl implements RlService {
                                 // 获取算法厂商人脸id存储列名
                                 supplyConfig.getSupplyMap().get(supply + "_rl_rlid"),
                                 // 获取算法厂商人脸id
-                                tmp.getString("faceID")
+                                tmp.getString("rlid")
                         )
                 );
                 customerFilterBuilder.append(" ) or ");
@@ -290,7 +290,7 @@ public class RlServiceImpl implements RlService {
         // 登录 获取sid
         String sid = ytService.login();
 
-        String rlid = jsonObject.getString("faceID");
+        String rlid = jsonObject.getString("rlid");
         String xm = jsonObject.getString("xm");
         String qybh = jsonObject.getString("qybh");
         String csnf = jsonObject.getString("csnf");
@@ -308,7 +308,7 @@ public class RlServiceImpl implements RlService {
 
         if (customerFilterBuilder.length() > 0) {
             customerFilterBuilder.deleteCharAt(customerFilterBuilder.length() - 1);
-            customerFilterBuilder.append(String.format(" where faceID='%s'", rlid));
+            customerFilterBuilder.append(String.format(" where rlid='%s'", rlid));
         }
 
         jsonObject = JSONObject.parseObject(ytService.altPersonalInfo(sid, rlid, xm, qybh, csnf, xb, mz, sfzh));

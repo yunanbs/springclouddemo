@@ -58,7 +58,7 @@ public interface RllrDetailMapper {
 
     /**
      * 获取人脸相关信息 地图展示用
-     * @param faceIDs
+     * @param rlids
      * @return
      */
     @Select(selRllrDetailByRLID)
@@ -66,10 +66,10 @@ public interface RllrDetailMapper {
             @Result(property = "faceID",column = "rlid"),
             @Result(property = "longtitude",column = "jd"),
             @Result(property = "latitude",column = "wd"),
-            @Result(property = "cameraName",column = "faceID"),
-            @Result(property = "cameraID",column = "faceID"),
-            @Result(property = "picUrl",column = "faceID"),
-            @Result(property = "faceUrl",column = "faceID")
+            @Result(property = "cameraName",column = "sxtmc"),
+            @Result(property = "cameraID",column = "sxtid"),
+            @Result(property = "picUrl",column = "ylzd1"),
+            @Result(property = "faceUrl",column = "ylzd2")
     })
-    List<FaceMapInfoEntity> listFaceMapInfoByFaceIDs(@Param("faceids") String faceIDs);
+    List<FaceMapInfoEntity> listFaceMapInfoByFaceIDs(@Param("rlids") String rlids);
 }

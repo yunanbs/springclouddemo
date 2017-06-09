@@ -460,7 +460,7 @@ public class YTServiceImpl  implements YTService{
      * @return
      */
     @Override
-    public String queryFacesByID(String sid,long faceid,int[] repositorys,double threshold,String[] fields,JSONObject conditions,JSONObject order,int start,int limit) {
+    public String queryFacesByID(String sid,long faceid,Integer[] repositorys,double threshold,String[] fields,JSONObject conditions,JSONObject order,int start,int limit) {
         JSONObject jsonObject = new JSONObject();
 
         // 组装retrieval

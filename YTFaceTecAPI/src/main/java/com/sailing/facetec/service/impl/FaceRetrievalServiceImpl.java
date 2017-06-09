@@ -182,7 +182,7 @@ public class FaceRetrievalServiceImpl implements FaceRetrievalService {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("sfdm", "yt");
                 jsonObject.put("rlkid", String.valueOf(ytRetrievalResultDetailEntity.getRepository_id()));
-                jsonObject.put("faceID", ytRetrievalResultDetailEntity.getFace_image_id_str());
+                jsonObject.put("rlid", ytRetrievalResultDetailEntity.getFace_image_id_str());
                 if (type.equals("stranger")) {//l路人库
                     jsonObject.put("lrid", ytRetrievalResultDetailEntity.getFace_image_id_str());
                 }
@@ -200,7 +200,7 @@ public class FaceRetrievalServiceImpl implements FaceRetrievalService {
                 FaceRetrievalDetailEntity retrievalDetailEntity = new FaceRetrievalDetailEntity();
                 if (dataContent != null) {
                     for (int i = 0; i < dataContent.size(); i++) {
-                        // if (dataContent.getJSONObject(i).get("faceID").toString().equals(ytRetrievalResultDetailEntity.getFace_image_id_str())) {
+                        // if (dataContent.getJSONObject(i).get("rlid").toString().equals(ytRetrievalResultDetailEntity.getFace_image_id_str())) {
                         //     if (type.equals("stranger")) {
                         //         //l路人库
                         //         retrievalDetailEntity.setImgUrl(dataContent.getJSONObject(i).get("ylzd2").toString());
@@ -212,7 +212,7 @@ public class FaceRetrievalServiceImpl implements FaceRetrievalService {
                         // }
 
                         // 2017-06-01 替换
-                        if (dataContent.getJSONObject(i).get("faceID").toString().equals(ytRetrievalResultDetailEntity.getFace_image_id_str())) {
+                        if (dataContent.getJSONObject(i).get("rlid").toString().equals(ytRetrievalResultDetailEntity.getFace_image_id_str())) {
                             if (type.equals("stranger")) {
                                 //l路人库
                                 retrievalDetailEntity.setImgUrl(dataContent.getJSONObject(i).get("ylzd2").toString());

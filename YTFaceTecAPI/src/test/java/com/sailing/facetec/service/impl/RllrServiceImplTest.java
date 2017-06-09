@@ -28,4 +28,18 @@ public class RllrServiceImplTest {
         rllrService.listFaceQueryInfo(picStr,new int[]{57},40,"2017-06-01 00:00:00","2017-06-08 00:00:00");
     }
 
+    @Test
+    public void mapMutilFaceQuery() throws Exception {
+        String picpath = "C:/Users/yunan/Desktop/TIM图片20170607164937.jpg";
+        String picStr = FileUtils.fileToBase64(picpath);
+
+        String[] faces = new String[2];
+        faces[0] = picStr;
+        faces[1] = picStr;
+
+        rllrService.mapMutilFaceQuery(faces,new int[]{57},40,"2017-06-01 00:00:00","2017-06-08 00:00:00",2,4000L);
+
+    }
+
+
 }
