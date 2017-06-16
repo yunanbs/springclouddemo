@@ -32,11 +32,11 @@ actioncodes:
 supplys:
     supply-map:
         yt_rlk_rlkid: rlk.rlkid1
-        yt_rl_rlkid: rl.rlkid
-        yt_rl_rlid: rl.faceID
+        yt_rl_rlkid: rl.rlkid1
+        yt_rl_rlid: rl.rlid1
         hr_rlk_rlkid: rlk.rlkid2
         hr_rl_rlkid: rl.rlkid
-        hr_rl_rlid: rl.faceID
+        hr_rl_rlid: rl.rlid1
 upload:
   image-folder: D:\
 ytface:

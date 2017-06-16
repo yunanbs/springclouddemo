@@ -28,4 +28,6 @@ public class SxtDetailEntity implements Serializable{
     private String YLZD5;
     private String YHZ;
     private String SBMC;
+    private String JD;
+    private String WD;
 }

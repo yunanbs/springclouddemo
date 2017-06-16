@@ -19,7 +19,7 @@ spring:
     port: 6379
   # 是否输出sql语句
   jpa:
-    show-sql: false
+    show-sql: true
   http:
     multipart:
       enabled: true
@@ -46,7 +46,7 @@ eureka:
   client:
     # 服务中心地址
     service-url:
-      defaultZone: http://localhost:8181/eureka/
+      defaultZone: http://172.20.22.11:8181/eureka/
     # 启用健康监测
     healthcheck:
       enabled: true
@@ -86,6 +86,8 @@ tasks:
   sacn-limit: 0
   # gc清理任务
   gc: 0 0 0/24 * * ?
+  # 报警推送开关
+  send-alert: 0
 # 分布式任务相关
 redis-keys:
   # 抓拍任务锁

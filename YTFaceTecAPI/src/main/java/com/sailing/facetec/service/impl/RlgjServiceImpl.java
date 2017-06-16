@@ -89,13 +89,16 @@ public class RlgjServiceImpl implements RlgjService {
         for(RlgjDetailEntity rlgjDetailEntity : src){
             if(CommUtils.isNullObject(rlgjDetailEntity.getRLXZXT())){
                 String personID = rlgjDetailEntity.getRLSFZ();
-                personID = personID.contains("_")?personID.split("_")[3]:personID;
-                String remotePath = String.format("%s/%s/%s.jpg"
-                        ,plantConfig.getRemotePlantRoot()
-                        ,personID.substring(0,4)
-                        ,personID
-                );
-                rlgjDetailEntity.setRLXZXT(remotePath);
+                if(!CommUtils.isNullObject(personID)){
+                    personID = personID.contains("_")?personID.split("_")[3]:personID;
+                    String remotePath = String.format("%s/%s/%s.jpg"
+                            ,plantConfig.getRemotePlantRoot()
+                            ,personID.substring(0,4)
+                            ,personID
+                    );
+                    rlgjDetailEntity.setRLXZXT(remotePath);
+                }
+
             }
         }
 

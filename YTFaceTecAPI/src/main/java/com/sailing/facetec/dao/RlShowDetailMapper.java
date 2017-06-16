@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface RlShowDetailMapper {
 
-    String baseSelSql ="select * from(select  row_number() over (order by a.xh desc) as rn,a.xh,b.rlkid,a.rlid,a.xm ,case when xb=1 then '男' when xb=2 then '女' else '未知'  end as xb, a.csnf, (a.rlsf || a.rlsf) as szqy, a.sfzh,a.xzdtdz as dtdz, a.xzrldz as rldz, a.xzgxdtdz as gxdtdz,a.xzgxrldz as gxrldz,a.lglx,a.zjlb,a.ylzd2 as mz,a.ylzd3 as qybh from b_tz_rl a left join  b_tz_rlk b on a.rlkid = b.rlkid where a.ylzd1='1' ${customerFilter}) where rn>=${min} and rn<=${max}";
+    String baseSelSql ="select * from(select  row_number() over (order by a.xh desc) as rn,a.xh,b.rlkid,a.rlid,a.xm ,case when xb=1 then '男' when xb=2 then '女' else '未知'  end as xb, a.csnf, (a.rlsf || a.rlcs) as szqy, a.sfzh,a.xzdtdz as dtdz, a.xzrldz as rldz, a.xzgxdtdz as gxdtdz,a.xzgxrldz as gxrldz,a.lglx,a.zjlb,a.ylzd2 as mz,a.ylzd3 as qybh from b_tz_rl a left join  b_tz_rlk b on a.rlkid = b.rlkid where a.ylzd1='1' ${customerFilter}) where rn>=${min} and rn<=${max}";
 
     String countSql ="select count(*) as count from b_tz_rl a left join  b_tz_rlk b on a.rlkid = b.rlkid where a.ylzd1='1' ${customerFilter}";
 

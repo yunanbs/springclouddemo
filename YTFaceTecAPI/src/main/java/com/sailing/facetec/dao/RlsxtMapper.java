@@ -21,7 +21,7 @@ public interface RlsxtMapper {
      *
      * @return
      */
-    @Select("select a.*,b.yhz,b.sbmc from B_TZ_RLSXT a left join b_sssb_sbxx b on a.sbbh = b.sbbh where a.ylzd1='1' and a.sxtmc like '%${name}%'")
+    @Select("select a.*,b.yhz,b.sbmc,b.JD,b.WD from B_TZ_RLSXT a left join b_sssb_sbxx b on a.sbbh = b.sbbh where a.ylzd1='1' and a.sxtmc like '%${name}%'")
     List<SxtDetailEntity> listAllSXT(@Param("name") String name);
 
     /**

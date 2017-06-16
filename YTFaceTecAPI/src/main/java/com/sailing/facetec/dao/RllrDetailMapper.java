@@ -64,7 +64,7 @@ public interface RllrDetailMapper {
     @Select(selRllrDetailByRLID)
     @Results({
             @Result(property = "faceID",column = "rlid"),
-            @Result(property = "longtitude",column = "jd"),
+            @Result(property = "longitude",column = "jd"),
             @Result(property = "latitude",column = "wd"),
             @Result(property = "cameraName",column = "sxtmc"),
             @Result(property = "cameraID",column = "sxtid"),

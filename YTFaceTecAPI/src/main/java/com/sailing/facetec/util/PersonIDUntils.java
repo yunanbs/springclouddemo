@@ -3540,15 +3540,8 @@ public class PersonIDUntils {
         // 性别
         String gender = "0".equals(id.substring(16,17))?"女":"男";
 
-        // 判断是否是直辖市
-        if("0".equals(areaCode.substring(2,3))){
-            // 直辖市 省市相同
-            province = String.format("%s0000",areaCode.substring(0,2));
-            city = province;
-        }else{
-            province = String.format("%s0000",areaCode.substring(0,2));
-            city =  String.format("%s00",areaCode.substring(0,4));
-        }
+        province = String.format("%s0000",areaCode.substring(0,2));
+        city =  String.format("%s00",areaCode.substring(0,4));
 
         result.setId(id);
         result.setName(name);

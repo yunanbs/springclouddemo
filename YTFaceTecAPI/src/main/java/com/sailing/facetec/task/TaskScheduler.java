@@ -82,6 +82,8 @@ public class TaskScheduler {
     private int alertCache;
     @Value("${tasks.alert-limit}")
     private double alertLimit;
+    @Value("${tasks.send-alert}")
+    private int sendAlert;
 
     @Value("${redis-keys.repository-lock}")
     private String repositoryLock;
@@ -151,8 +153,10 @@ public class TaskScheduler {
             // 更新实时数据
             redisService.setVal(alertData, JSON.toJSONString(result, FastJsonUtils.nameFilter, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero), 1, TimeUnit.DAYS);
 
-            // 推送报警
-            sendAlerts(result);
+            if(1==sendAlert) {
+                // 推送报警
+                sendAlerts(result);
+            }
 
             // 释放锁
             redisService.delKey(alertLock);

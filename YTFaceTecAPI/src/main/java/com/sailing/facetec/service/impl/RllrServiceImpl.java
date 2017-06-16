@@ -153,7 +153,7 @@ public class RllrServiceImpl implements RllrService {
                 if (faceMapInfoEntity.getFaceID().equals(faceObj.getString("face_image_id"))) {
                     ((JSONObject) face).put("picurl", faceMapInfoEntity.getPicUrl());
                     ((JSONObject) face).put("faceurl", faceMapInfoEntity.getFaceUrl());
-                    ((JSONObject) face).put("longtitude", faceMapInfoEntity.getLongtitude());
+                    ((JSONObject) face).put("longitude", faceMapInfoEntity.getLongitude());
                     ((JSONObject) face).put("latitude", faceMapInfoEntity.getLatitude());
                     ((JSONObject) face).put("cameraname", faceMapInfoEntity.getCameraName());
                     ((JSONObject) face).put("cameraid", faceMapInfoEntity.getCameraID());
@@ -281,6 +281,7 @@ public class RllrServiceImpl implements RllrService {
                     subResult.put("unin_faceurl", desTmp.getString("faceurl"));
                     subResult.put("unin_similarity", desTmp.getString("similarity"));
                     subResult.put("unin_timestamp_end", desTmp.getString("timestamp_end"));
+                    subResult.put("unit_is_hit", desTmp.getString("is_hit"));
                     subResult.put("unin_offset", srcTimestamp - desTimestamp);
                     result.add(subResult);
                     //continue;
@@ -307,7 +308,7 @@ public class RllrServiceImpl implements RllrService {
             JSONObject cameraObj = new JSONObject();
             cameraObj.put("cameraid",faceObj.getString("cameraid"));
             cameraObj.put("cameraname",faceObj.getString("cameraname"));
-            cameraObj.put("longtitude",faceObj.getString("longtitude"));
+            cameraObj.put("longitude",faceObj.getString("longitude"));
             cameraObj.put("latitude",faceObj.getString("latitude"));
             cameraObj.put("repository_id",faceObj.getString("repository_id"));
             result.add(cameraObj);
