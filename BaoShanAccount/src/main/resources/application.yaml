@@ -1,0 +1,80 @@
+spring:
+  # 设置应用名
+  application:
+    name: faceapi
+  # 配置数据库信息
+  datasource:
+    url: jdbc:oracle:thin:@172.20.22.10:1521:orcl
+    username: bsits2
+    password: bsits2
+    driver-class-name: oracle.jdbc.OracleDriver
+  # 输出语法高亮
+  output:
+    ansi:
+      enabled: always
+  # 是否输出sql语句
+  jpa:
+    show-sql: true
+# 服务器设置
+server:
+  # 设置服务端口
+  port: 8192
+  # 启用压缩 压缩json
+  compression:
+    enabled: true
+    mime-types: application/json
+# 设置mybatis实体类包名
+mybatis:
+  type-aliases-package: com.sailing.baoshan.entiry
+# 配置日志模式
+logging:
+  level:
+    root: debug
+  file: logfile.log
+# 服务中心设置
+#eureka:
+#  client:
+#    # 服务中心地址
+#    service-url:
+#      defaultZone: http://172.20.22.11:8181/eureka/
+#    # 启用健康监测
+#    healthcheck:
+#      enabled: true
+#  # 设置心跳包
+#  instance:
+#    lease-expiration-duration-in-seconds: 15
+#    lease-renewal-interval-in-seconds: 5
+# 设置管理权限是否需要安全验证 关闭后 可以使用 actuator 查看服务状态
+management:
+  security:
+    enabled: false
+# 允许远程关闭
+endpoints:
+  shutdown:
+    enabled: true
+    sensitive: false
+info:
+  com: sailing
+  product: baoshan-api
+
+# 自定义操作编码
+actioncodes:
+  # 操作成功编码
+  SUCCEED_CODE: 1000
+  SUCCEED_MSG: 请求成功
+  # 服务端操作失败编码
+  SERVER_ERROR_CODE: 9999
+  SERVER_ERROR_MSG: 服务端异常:%s
+  # 参数错误编码
+  PARAMS_ERROR_CODE: 2001
+  PARAMS_ERROR_MSG: 参数错误:%s
+
+# 文件目录
+path:
+  upload-path: d:/storage/
+  upload-uri: http://127.0.0.1/storage/
+
+
+
+
+
