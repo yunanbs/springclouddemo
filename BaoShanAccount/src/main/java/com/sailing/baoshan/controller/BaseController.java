@@ -1,17 +1,16 @@
 package com.sailing.baoshan.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sailing.baoshan.comm.ActionResult;
 import com.sailing.baoshan.config.ActionCodeConfig;
 import com.sailing.baoshan.entity.AccountEntity;
+import com.sailing.baoshan.service.ExportService;
 import com.sailing.baoshan.service.IllegalAccountService;
 import com.sailing.baoshan.utils.CommUtils;
-import org.apache.ibatis.executor.ReuseExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +22,9 @@ public class BaseController {
 
     @Autowired
     private IllegalAccountService illegalAccountService;
+    @Autowired
+    private ExportService exportService;
+
     @RequestMapping(value = "/account/illegalAccount",method = RequestMethod.GET)
     public ActionResult getIllegalAccount(
             @RequestParam(value = "begintime",defaultValue = "") String beginTime,
@@ -34,5 +36,12 @@ public class BaseController {
         endTime =CommUtils.isNullObject(endTime)?CommUtils.dateToStr(new Date(),"yyyy-MM-dd 23:59:59"):endTime;
         List<AccountEntity> results = illegalAccountService.getIllegalAccountByTimeAndType(beginTime,endTime,top,type);
         return new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG,results,null);
+    }
+
+
+    @RequestMapping(value="/exp/illegalAccount",method = RequestMethod.POST)
+    public ActionResult expIllegalAccount(@RequestBody String params) throws IOException {
+        JSONObject reqParam = JSONObject.parseObject(params);
+        return new ActionResult(ActionCodeConfig.SUCCEED_CODE,ActionCodeConfig.SUCCEED_MSG,exportService.expIllegalAccountData(reqParam.getJSONObject("data"),reqParam.getString("fileName")),null);
     }
 }

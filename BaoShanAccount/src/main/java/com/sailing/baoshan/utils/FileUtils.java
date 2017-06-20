@@ -10,10 +10,7 @@ import org.apache.tomcat.util.codec.binary.Base64;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
@@ -41,6 +38,9 @@ public class FileUtils {
         String result = "";
         // 创建工作簿
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
+        if(!CommUtils.isNullObject(getExistWorkBook(excelFullName))){
+            hssfWorkbook = getExistWorkBook(excelFullName);
+        }
         // 创建sheet
         HSSFSheet hssfSheet = hssfWorkbook.createSheet(CommUtils.isNullObject(sheetName) ? "sheet1" : sheetName);
         // 设置普通单元格格式 边框
@@ -128,6 +128,19 @@ public class FileUtils {
             // 关闭
             // 关闭Excel
             hssfWorkbook.close();
+        }
+        return result;
+    }
+
+    private static HSSFWorkbook getExistWorkBook(String fileName){
+        HSSFWorkbook result = null;
+        File file = new File(fileName);
+        if(file.exists()){
+            try {
+                result = new HSSFWorkbook(Files.newInputStream(Paths.get(fileName)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }

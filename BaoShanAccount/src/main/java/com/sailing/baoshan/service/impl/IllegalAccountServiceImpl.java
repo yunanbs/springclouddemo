@@ -39,7 +39,7 @@ public class IllegalAccountServiceImpl implements IllegalAccountService {
             case "0":
                 tag = "b.SBMC";
                 tagTable= " left join B_SSSB_SBXX b on a.accountKey = b.SBBH";
-                label = "SBBH";
+                label = "BZWZDM";
                 break;
             case "1":
                 tag = "a.accountKey";
