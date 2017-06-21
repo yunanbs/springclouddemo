@@ -324,20 +324,6 @@ public class FileUtils {
         }
         Files.copy(new ByteArrayInputStream(bytes),Paths.get(desFile),StandardCopyOption.REPLACE_EXISTING);
         result = true;
-        // // 获取文件
-        // File file = new File(desFile);
-        // // 创建目录
-        // File path = new File(file.getParent());
-        // if (!path.exists()) {
-        //     path.mkdirs();
-        // }
-        // BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file));
-        // try {
-        //     bufferedOutputStream.write(bytes);
-        //     result = true;
-        // } finally {
-        //     bufferedOutputStream.close();
-        // }
         return result;
     }
 

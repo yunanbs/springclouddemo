@@ -32,8 +32,10 @@ public class IllegalAccountServiceImpl implements IllegalAccountService {
     public List<AccountEntity> getIllegalAccountByTimeAndType(String beginTime, String endTime, String top, String type) {
 
         List<AccountEntity> result = new ArrayList<>();
+        // 统计标签
         String tag = "";
         String tagTable = "";
+        // 统计字段
         String label = "";
         switch (type){
             case "0":

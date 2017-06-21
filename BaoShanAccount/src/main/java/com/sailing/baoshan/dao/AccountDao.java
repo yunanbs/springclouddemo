@@ -8,8 +8,10 @@ import java.util.List;
 
 /**
  * Created by yunan on 2017/6/20.
+ * 统计DAO
  */
 public interface AccountDao {
+    // 违法行为统计基础语句
     String baseIllegalAccountSql = "select * from (SELECT row_number() OVER (ORDER BY a.accountValue DESC ) AS id,a.*,${tag} AS accountTag FROM(SELECT ${label} AS accountKey,count(*) AS accountValue FROM B_KKQP_WFTC WHERE JGSJ >= to_date('${beginTime}', 'yyyy-mm-dd hh24:mi:ss') AND JGSJ <= to_date('${endTime}', 'yyyy-mm-dd hh24:mi:ss') GROUP BY ${label}) a ${tagTable}) where id<=${top}";
 
     @Select(baseIllegalAccountSql)

@@ -29,7 +29,7 @@ mybatis:
 # 配置日志模式
 logging:
   level:
-    root: debug
+    root: info
   file: logfile.log
 # 服务中心设置
 #eureka:

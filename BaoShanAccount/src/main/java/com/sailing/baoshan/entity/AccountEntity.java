@@ -9,11 +9,14 @@ import java.io.Serializable;
  * 统计结果实体类
  */
 @Data
-public class AccountEntity implements Serializable{
+public class AccountEntity implements Serializable {
     private static final long serialVersionID = -1L;
-
+    // 序号
     private String id;
+    // 统计字段
     private String accountKey;
+    // 统计结果
     private String accountValue;
+    // 统计标签
     private String accountTag;
 }
