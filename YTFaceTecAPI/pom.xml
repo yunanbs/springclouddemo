@@ -116,7 +116,11 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
             <version>1.5.3.RELEASE</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.6</version>
+        </dependency>
         <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-bus-amqp &ndash;&gt;-->
         <!--<dependency>-->
             <!--<groupId>org.springframework.cloud</groupId>-->

@@ -58,6 +58,54 @@ public class YTServiceImpl  implements YTService{
     private String ytCookie;
 
     @Override
+    public String getYTFaceDetail(int faceDetailIndexData,String faceDetailIndexRespoity){
+        if(faceDetailIndexData < 0){
+            faceDetailIndexData = 0;
+            logger.warn("ytService getytfaceDetail facetailIndex < 0");
+        } else if(faceDetailIndexRespoity.equals("") || faceDetailIndexRespoity == null){
+            faceDetailIndexRespoity = "0";
+            logger.warn("ytService getytfaceDetail faceDetailIndexRespoity isEmpty");
+        }
+
+    	//登录并获取sid
+    	String sid = login();
+
+    	//添加header
+        String headerStr = String.format("session_id=%s;face_platform_session_id=%s",sid,sid);
+        logger.info("yt getYTFaceDetail headers:{}", headerStr);
+
+        //组装JSON
+        String[] fieldsGroup = new String[]{"name", "person_id", "repository_id"};
+
+        String[] inStrGroup = faceDetailIndexRespoity.split(",");
+        int[] inIntGroup = new int[inStrGroup.length];
+        for (int index = 0; index < inStrGroup.length; index++){
+            inIntGroup[index] = Integer.valueOf(inStrGroup[index]);
+        }
+
+        JSONObject inJSObject = new JSONObject();
+        inJSObject.put("$in", inIntGroup);
+
+        JSONObject conditionJSObject = new JSONObject();
+        conditionJSObject.put("repository_id", inJSObject);
+
+        JSONObject orderJSObject = new JSONObject();
+        orderJSObject.put("timestamp", 1);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("fields", fieldsGroup);
+        jsonObject.put("condition", conditionJSObject);
+        jsonObject.put("order", orderJSObject);
+        jsonObject.put("start", faceDetailIndexData);
+        jsonObject.put("limit", 1000);
+        logger.info("yt request ytface detail params:{}", jsonObject);
+
+        String result = ytApi.getYTFaceDetail(headerStr, jsonObject.toJSONString());
+        logger.info("yt request ytface detail result:{}", result);
+    	return result;
+    }
+
+    @Override
     public String login() {
         long expend = System.currentTimeMillis();
 

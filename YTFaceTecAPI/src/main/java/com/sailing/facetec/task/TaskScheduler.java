@@ -14,6 +14,7 @@ import com.sailing.facetec.service.RedisService;
 import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.service.RlgjService;
 import com.sailing.facetec.service.RllrService;
+import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FastJsonUtils;
 import com.sailing.facetec.util.FileUtils;
@@ -31,7 +32,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -65,6 +68,11 @@ public class TaskScheduler {
     @Autowired
     private AlertApi alertApi;
 
+    @Autowired
+    private PlantConfig plantConfig;
+    
+    @Autowired
+    private YTService ytService;
 
     @Value("${redis-keys.capture-lock}")
     private String captureLock;
@@ -76,6 +84,10 @@ public class TaskScheduler {
     private String captureData;
     @Value("${redis-keys.alert-data}")
     private String alertData;
+    @Value("${redis-keys.face-detail-index-data}")
+    private int faceDetailIndexData;
+    @Value("${redis-keys.face-detail-respoity}")
+    private String faceDetailIndexRespoity;
     @Value("${tasks.capture-cache}")
     private int captureCache;
     @Value("${tasks.alert-cache}")
@@ -84,7 +96,8 @@ public class TaskScheduler {
     private double alertLimit;
     @Value("${tasks.send-alert}")
     private int sendAlert;
-
+    @Value("${redis-keys.facedetail-lock}")
+    private String faceDteailLock;
     @Value("${redis-keys.repository-lock}")
     private String repositoryLock;
     @Value("${facepic.repository}")
@@ -110,6 +123,47 @@ public class TaskScheduler {
     @Value("${facepic.capture}")
     private String gcCaturePath;
 
+    /**
+     * 抽取YT人像库
+     */
+    @Scheduled(cron = "${tasks.take-face-detail-repository}")
+    @Transactional
+    public void getYTFacesScheduler() {
+        // 获取锁
+        if (!redisService.setValNX(faceDteailLock, lockVal, 10, TimeUnit.SECONDS)) {
+            return;
+        }
+        try {
+            //转换Respoitory
+            Map configMap = plantConfig.getPlantMap();
+
+            String[] inStrGroup = faceDetailIndexRespoity.split(",");
+            String newFaceDetailIndexRespoity = "";
+
+            for(int index = 0; index < inStrGroup.length; index++){
+
+                if(configMap.containsKey(inStrGroup[index])){
+                    newFaceDetailIndexRespoity += newFaceDetailIndexRespoity == ""? configMap.get(inStrGroup[index]) : "," + configMap.get(inStrGroup[index]);
+                }else {
+                    newFaceDetailIndexRespoity += newFaceDetailIndexRespoity == ""? inStrGroup[index] : "," + inStrGroup[index];
+                }
+            }
+            //获取indexData
+            String redisFaceDetail = redisService.getVal("faceDetailIndexData");
+            faceDetailIndexData = redisFaceDetail == null ? faceDetailIndexData : Integer.valueOf(redisFaceDetail);
+            //取数据
+        	String faceDetails = ytService.getYTFaceDetail(faceDetailIndexData, newFaceDetailIndexRespoity);
+
+        	//插入
+            faceDetailIndexData = rlService.saveFaceDetailToDB(faceDetails, faceDetailIndexData, newFaceDetailIndexRespoity);
+            redisService.setVal("faceDetailIndexData",String.valueOf(faceDetailIndexData),1,TimeUnit.DAYS);
+        } finally {
+            // 释放锁
+            redisService.delKey(faceDteailLock);
+        }
+
+    }
+    
     /**
      * 抽取抓拍记录
      */

@@ -9,6 +9,15 @@ import java.io.IOException;
  * Created by yunan on 2017/5/17.
  */
 public interface YTService {
+
+    /**
+     * 获取人像信息
+     * @param 人像索引ID
+	 * @param 资源库String
+     * @return
+     */
+    String getYTFaceDetail(int faceDetailIndexData, String faceDetailIndexRespoity);
+
     /**
      * 登录依图平台
      * @param userName
@@ -19,16 +28,18 @@ public interface YTService {
 
     /**
      * 添加摄像头
+     *
      * @param sid
      * @param cameraName
      * @param url
      * @param cameraType
      * @return
      */
-    String addCamera(String sid,String cameraName,String url,int cameraType);
+    String addCamera(String sid, String cameraName, String url, int cameraType);
 
     /**
      * 更新摄像头信息
+     *
      * @param sid
      * @param cameraId
      * @param cameraName
@@ -36,7 +47,7 @@ public interface YTService {
      * @param enabled
      * @return
      */
-    String updateCamera(String sid,int cameraId,String cameraName,String cameraUrl,int enabled);
+    String updateCamera(String sid, int cameraId, String cameraName, String cameraUrl, int enabled);
 
     /**
      * 添加布控任务
@@ -48,44 +59,49 @@ public interface YTService {
      * @param endSec
      * @return
      */
-    String setMonitorRepository(String sid,int cameraId,int repositoryId,double limit,long stSec,long endSec,String name);
+    String setMonitorRepository(String sid, int cameraId, int repositoryId, double limit, long stSec, long endSec, String name);
 
     /**
      * 删除布控任务
+     *
      * @param id 布控任务id
      * @return
      */
-    String delMonitorReposity(String sid,Long id);
+    String delMonitorReposity(String sid, Long id);
 
     /**
      * 布控摄像头
+     *
      * @param sid
      * @param cameraId
      * @param repositoryId
      * @param limit
      * @return
      */
-    String setMonitorByCamera(String sid,String monitorName,int cameraId,int repositoryId,double limit);
+    String setMonitorByCamera(String sid, String monitorName, int cameraId, int repositoryId, double limit);
 
     /**
      * 删除摄像头
+     *
      * @param sid
      * @param cameraID
      * @return
      */
-    String delCamera(String sid,String cameraID);
+    String delCamera(String sid, String cameraID);
 
     /**
      * 新增人脸库
+     *
      * @param sid
      * @param facelibName
      * @param comment
      * @return
      */
-    String addFaceLib(String sid,String facelibName,String comment);
+    String addFaceLib(String sid, String facelibName, String comment);
 
     /**
      * 删除人脸库
+     *
      * @param sid
      * @param rlkID
      * @return
@@ -94,13 +110,14 @@ public interface YTService {
 
     /**
      * 修改人员信息
+     *
      * @param sid
      * @param rlid 人脸id
-     * @param xm 性别
+     * @param xm   性别
      * @param qybh 区域编号
      * @param csnf 出生年份
-     * @param xb 性别
-     * @param mz 名族
+     * @param xb   性别
+     * @param mz   名族
      * @param sfzh 身份证号
      * @return
      */
@@ -108,13 +125,16 @@ public interface YTService {
 
     /**
      * 删除人员
+     *
      * @param sid
      * @param rlid
      * @return
      */
     String delPersonal(String sid, String rlid);
+
     /**
      * 添加人像库记录
+     *
      * @param sid
      * @param rlEntity
      * @return
@@ -123,15 +143,17 @@ public interface YTService {
 
     /**
      * 下载图片
+     *
      * @param picUris
      * @param localFile
      * @return
      * @throws IOException
      */
-    boolean downLoadPic(String picUris,String localFile) throws IOException;
+    boolean downLoadPic(String picUris, String localFile) throws IOException;
 
     /**
      * 获取人脸对应的特征码
+     *
      * @param faceID
      * @return
      */
@@ -139,6 +161,7 @@ public interface YTService {
 
     /**
      * 获取人像库特征码
+     *
      * @param repoID
      * @return
      */
@@ -146,6 +169,7 @@ public interface YTService {
 
     /**
      * 上传检索图片
+     *
      * @param faceStr
      * @return
      */
@@ -153,9 +177,9 @@ public interface YTService {
 
     /**
      * 人像检索
+     *
      * @param faceid
      * @return
      */
-    String queryFacesByID(String sid,long faceid, String[] repositorys, double threshold, String[] fields, JSONObject conditions, JSONObject order, int start, int limit);
-
+    String queryFacesByID(String sid, long faceid, String[] repositorys, double threshold, String[] fields, JSONObject conditions, JSONObject order, int start, int limit);
 }

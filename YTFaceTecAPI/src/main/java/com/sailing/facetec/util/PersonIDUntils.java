@@ -3527,6 +3527,12 @@ public class PersonIDUntils {
     public static PersonIDEntity getPersonInfo(String name,String id){
         PersonIDEntity result = new PersonIDEntity();
 
+        if(id == null || id.equals("")){
+            result.setId("");
+            result.setName(name);
+            return result;
+        }
+
         // 获取区域编码
         String areaCode = id.substring(0,6);
         // 省份

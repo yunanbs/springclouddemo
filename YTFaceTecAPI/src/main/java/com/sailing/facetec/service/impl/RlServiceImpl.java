@@ -10,6 +10,7 @@ import com.sailing.facetec.dao.RlDetailMapper;
 import com.sailing.facetec.dao.RlMapper;
 import com.sailing.facetec.dao.RlShowDetailMapper;
 import com.sailing.facetec.dao.RllrDetailMapper;
+import com.sailing.facetec.entity.PersonIDEntity;
 import com.sailing.facetec.entity.RlDetailEntity;
 import com.sailing.facetec.entity.RlEntity;
 import com.sailing.facetec.entity.RlShowDetailEntity;
@@ -18,6 +19,8 @@ import com.sailing.facetec.service.RlService;
 import com.sailing.facetec.service.YTService;
 import com.sailing.facetec.util.CommUtils;
 import com.sailing.facetec.util.FileUtils;
+
+import com.sailing.facetec.util.PersonIDUntils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -417,4 +420,86 @@ public class RlServiceImpl implements RlService {
         return result;
     }
 
+    @Override
+    public int saveFaceDetailToDB(String resultStr, int indexGroup, String faceDetailIndexRespoity)
+    {
+        if(indexGroup < 0){
+            indexGroup = 0;
+            logger.warn("rlService saveFaceDetailToDB facetailIndex < 0");
+        } else if(faceDetailIndexRespoity.equals("") || faceDetailIndexRespoity == null){
+            logger.warn("rlService saveFaceDetailToDB faceDetailIndexRespoity isEmpty");
+        }
+
+        int faceDetailIndex = indexGroup;
+
+    	JSONObject jsonObject = JSONObject.parseObject(resultStr);
+
+        if(jsonObject == null || jsonObject.equals("")){
+            return faceDetailIndex;
+        }
+
+        String mesaageStr = jsonObject.getString("message");
+        JSONArray array = jsonObject.getJSONArray("results");
+
+        if(!mesaageStr.equals("OK") || array.size() == 0){
+            return faceDetailIndex;
+        }
+
+        for(int i = 0; i < array.size(); i++)
+        {
+            JSONObject jOb = array.getJSONObject(i);
+            String name = jOb.getString("name");
+            String person = jOb.getString("person_id");
+            String face_id = jOb.getString("face_image_id_str");
+            String repository_id = jOb.getString("repository_id");
+            PersonIDEntity personEntity = PersonIDUntils.getPersonInfo(name, person);
+            String csnfStr = personEntity.getId() == ""?"":personEntity.getId().substring(6, 10);
+
+            RlEntity rlEntity = new RlEntity();
+            rlEntity.setRLID(face_id);//'人脸id';
+   		    rlEntity.setRLKID(repository_id);//'人脸库id';
+    		rlEntity.setSFZH(personEntity.getId());//'身份证号';
+            rlEntity.setRKSJ(CommUtils.getCurrentDate());//入库时间
+            rlEntity.setCSNF(csnfStr);//'出生年份;
+
+            if(personEntity.getGender() == null){
+                rlEntity.setXB(-1);//1 = 未知
+            }
+    		else if(personEntity.getGender().equals("男")){
+    			rlEntity.setXB(1);//1 = 男
+    		}else{
+    			rlEntity.setXB(2);//2 = 女
+    		}
+
+    		rlEntity.setXM(personEntity.getName());//'姓名'
+    		rlEntity.setZJLB("身份证");//'证件类别';
+    		rlEntity.setZJHM(personEntity.getId());//'证件号码';
+    		rlEntity.setRLSF(personEntity.getProvince());//'省份';
+    		rlEntity.setRLCS(personEntity.getCity());//'城市';
+    		rlEntity.setRLGJ("中国");//'国籍';
+
+            rlEntity.setRLKID1(repository_id);//'算法厂商1人脸库id';
+
+    		rlEntity.setRLID1(face_id);//'算法厂商1人脸id';
+            rlEntity.setTJSJ(CommUtils.getCurrentDate());
+            rlEntity.setXGSJ(CommUtils.getCurrentDate());
+    		// 添加人像信息记录
+            rlMapper.insertRl(rlEntity);
+
+            faceDetailIndex++;
+        }
+
+        return faceDetailIndex;
+    }
+    
+    /**
+     * 登录依图平台
+     *
+     * @return
+     */
+    private String loginToYT() {
+        JSONObject jsonObject;
+        jsonObject = JSONObject.parseObject(ytService.login());
+        return jsonObject.getString("session_id");
+    }
 }

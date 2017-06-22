@@ -2,6 +2,7 @@ package com.sailing.demo.microservice.demorestapi.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.sailing.demo.microservice.demorestapi.service.KafkaServer;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,17 +27,19 @@ import java.util.Map;
  */
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
-@RefreshScope
 public class DemoController {
 
     private final Logger logger = LoggerFactory.getLogger(DemoController.class);
 
-    @Qualifier("discoveryClient")
-    @Autowired
-    private DiscoveryClient client;
+    // @Qualifier("discoveryClient")
+    // @Autowired
+    // private DiscoveryClient client;
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private KafkaServer kafkaServer;
 
     @Value("${server.port}")
     private String port;
@@ -91,5 +94,12 @@ public class DemoController {
     @RequestMapping("/login")
     public String login(@RequestBody String params){
         return  "";
+    }
+
+    @RequestMapping("/kafka")
+    public String send(@RequestParam("message")String message){
+        kafkaServer.sendMessage("test","123");
+        kafkaServer.sendMessage("test","456");
+        return "123";
     }
 }
